@@ -13,9 +13,7 @@ const About = () => {
           />
         </div>
         <div className="col-md-4">
-          <p className="text-justify mt-2">
-            Add text
-          </p>
+          <p className="text-justify mt-2">Add text</p>
         </div>
       </div>
     </Layout>

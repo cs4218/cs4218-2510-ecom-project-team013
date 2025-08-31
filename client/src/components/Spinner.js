@@ -9,7 +9,8 @@ const Spinner = ({ path = "login" }) => {
     const interval = setInterval(() => {
       setCount((prevValue) => --prevValue);
     }, 1000);
-    count === 0 && navigate(`/${path}`, {
+    count === 0 &&
+      navigate(`/${path}`, {
         state: location.pathname,
       });
     return () => clearInterval(interval);
