@@ -3,7 +3,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import UserMenu from "../../components/UserMenu";
 import { useAuth } from "../../context/auth";
-import Layout from "./../../components/Layout";
+import Layout from "../../components/Layout";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);

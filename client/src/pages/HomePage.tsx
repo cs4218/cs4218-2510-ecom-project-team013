@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Prices } from "../components/Prices";
 import { useCart } from "../context/cart";
 import "../styles/Homepages.css";
-import Layout from "./../components/Layout";
+import Layout from "../components/Layout";
 
 const HomePage = () => {
   const navigate = useNavigate();
