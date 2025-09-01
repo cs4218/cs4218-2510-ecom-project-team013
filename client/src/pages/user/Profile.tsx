@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import UserMenu from "../../components/UserMenu";
 import { useAuth } from "../../context/auth";
-import Layout from "./../../components/Layout";
+import Layout from "../../components/Layout";
 const Profile = () => {
   //context
   const [auth, setAuth] = useAuth();

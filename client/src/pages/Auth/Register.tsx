@@ -3,7 +3,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import "../../styles/AuthStyles.css";
-import Layout from "./../../components/Layout";
+import Layout from "../../components/Layout";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

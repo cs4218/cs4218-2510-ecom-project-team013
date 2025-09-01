@@ -3,8 +3,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import CategoryForm from "../../components/Form/CategoryForm";
-import AdminMenu from "./../../components/AdminMenu";
-import Layout from "./../../components/Layout";
+import AdminMenu from "../../components/AdminMenu";
+import Layout from "../../components/Layout";
 const CreateCategory = () => {
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");
