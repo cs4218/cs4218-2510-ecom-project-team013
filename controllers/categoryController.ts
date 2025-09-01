@@ -1,6 +1,7 @@
 import slugify from "slugify";
 import categoryModel from "../models/categoryModel.js";
-export const createCategoryController = async (req, res) => {
+import type { RequestHandler } from "express";
+export const createCategoryController: RequestHandler = async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
@@ -33,7 +34,7 @@ export const createCategoryController = async (req, res) => {
 };
 
 //update category
-export const updateCategoryController = async (req, res) => {
+export const updateCategoryController: RequestHandler = async (req, res) => {
   try {
     const { name } = req.body;
     const { id } = req.params;
@@ -58,7 +59,7 @@ export const updateCategoryController = async (req, res) => {
 };
 
 // get all cat
-export const categoryControlller = async (req, res) => {
+export const categoryControlller: RequestHandler = async (req, res) => {
   try {
     const category = await categoryModel.find({});
     res.status(200).send({
@@ -77,7 +78,7 @@ export const categoryControlller = async (req, res) => {
 };
 
 // single category
-export const singleCategoryController = async (req, res) => {
+export const singleCategoryController: RequestHandler = async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
     res.status(200).send({
@@ -96,7 +97,7 @@ export const singleCategoryController = async (req, res) => {
 };
 
 //delete category
-export const deleteCategoryCOntroller = async (req, res) => {
+export const deleteCategoryCOntroller: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
     await categoryModel.findByIdAndDelete(id);

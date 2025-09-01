@@ -3,8 +3,9 @@ import userModel from "../models/userModel.js";
 
 import JWT from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../helpers/authHelper.js";
+import type { RequestHandler } from "express";
 
-export const registerController = async (req, res) => {
+export const registerController: RequestHandler = async (req, res) => {
   try {
     const { name, email, password, phone, address, answer } = req.body;
     //validations
@@ -63,7 +64,7 @@ export const registerController = async (req, res) => {
 };
 
 //POST LOGIN
-export const loginController = async (req, res) => {
+export const loginController: RequestHandler = async (req, res) => {
   try {
     const { email, password } = req.body;
     //validation
@@ -117,7 +118,7 @@ export const loginController = async (req, res) => {
 
 //forgotPasswordController
 
-export const forgotPasswordController = async (req, res) => {
+export const forgotPasswordController: RequestHandler = async (req, res) => {
   try {
     const { email, answer, newPassword } = req.body;
     if (!email) {
@@ -165,7 +166,7 @@ export const testController = (req, res) => {
 };
 
 //update prfole
-export const updateProfileController = async (req, res) => {
+export const updateProfileController: RequestHandler = async (req, res) => {
   try {
     const { name, email, password, address, phone } = req.body;
     const user = await userModel.findById(req.user._id);
@@ -200,7 +201,7 @@ export const updateProfileController = async (req, res) => {
 };
 
 //orders
-export const getOrdersController = async (req, res) => {
+export const getOrdersController: RequestHandler = async (req, res) => {
   try {
     const orders = await orderModel
       .find({ buyer: req.user._id })
@@ -217,7 +218,7 @@ export const getOrdersController = async (req, res) => {
   }
 };
 //orders
-export const getAllOrdersController = async (req, res) => {
+export const getAllOrdersController: RequestHandler = async (req, res) => {
   try {
     const orders = await orderModel
       .find({})
@@ -236,7 +237,7 @@ export const getAllOrdersController = async (req, res) => {
 };
 
 //order status
-export const orderStatusController = async (req, res) => {
+export const orderStatusController: RequestHandler = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
