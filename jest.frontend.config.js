@@ -11,7 +11,7 @@ export default {
 
   // jest does not recognise jsx files by default, so we use babel to transform any jsx files
   transform: {
-    "^.+\\.jsx?$": "babel-jest",
+    "^.+\\.(t|j)sx?$": "babel-jest",
   },
 
   // tells jest how to handle css/scss imports in your tests
@@ -23,7 +23,7 @@ export default {
   transformIgnorePatterns: ["/node_modules/(?!(styleMock\\.js)$)"],
 
   // only run these tests
-  testMatch: ["<rootDir>/client/src/pages/Auth/*.test.js"],
+  testMatch: ["<rootDir>/client/src/pages/Auth/*.test.(js|jsx|ts|tsx)"],
 
   // jest code coverage
   collectCoverage: true,

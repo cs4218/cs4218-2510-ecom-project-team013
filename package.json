@@ -41,6 +41,7 @@
     "@babel/core": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
     "@playwright/test": "^1.44.0",
     "@types/bcrypt": "^5.0.2",
     "@types/braintree": "^3.4.0",
