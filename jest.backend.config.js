@@ -1,3 +1,6 @@
+// @ts-check
+
+/** @type {import("jest").Config} */
 export default {
   // display name
   displayName: "backend",

@@ -1,3 +1,6 @@
+// @ts-check
+
+/** @type {import("jest").Config} */
 export default {
   // name displayed during tests
   displayName: "frontend",
