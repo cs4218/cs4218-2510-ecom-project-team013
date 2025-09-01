@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import Layout from "./../components/Layout";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "../styles/ProductDetailsStyles.css";
+import Layout from "./../components/Layout";
 
 const ProductDetails = () => {
   const params = useParams();

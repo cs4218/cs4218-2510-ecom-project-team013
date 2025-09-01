@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 const Spinner = ({ path = "login" }) => {
   const [count, setCount] = useState(3);
   const navigate = useNavigate();
