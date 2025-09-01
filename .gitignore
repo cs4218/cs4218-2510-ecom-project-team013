@@ -4,3 +4,7 @@ node_modules
 /blob-report/
 /playwright/.cache/
 /coverage
+
+.env
+.env*
+!.env*.example

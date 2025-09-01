@@ -78,7 +78,7 @@ To download and use the MERN (MongoDB, Express.js, React.js, Node.js) app from G
      ```
 
 3. **Add database connection string to `.env`**
-   - Add the connection string copied from MongoDB Atlas to the `.env` file inside the project directory (replace the necessary placeholders):
+   - Copy the example environment variables from `.env.example` to `.env` in the project directory, then add the connection string copied from MongoDB Atlas, replacing the necessary placeholders:
      ```env
      MONGO_URL = <connection string>
      ```
