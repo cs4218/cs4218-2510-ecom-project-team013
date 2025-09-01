@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Checkbox, Radio } from "antd";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { AiOutlineReload } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import { Prices } from "../components/Prices";
 import { useCart } from "../context/cart";
-import axios from "axios";
-import toast from "react-hot-toast";
-import Layout from "./../components/Layout";
-import { AiOutlineReload } from "react-icons/ai";
 import "../styles/Homepages.css";
+import Layout from "./../components/Layout";
 
 const HomePage = () => {
   const navigate = useNavigate();

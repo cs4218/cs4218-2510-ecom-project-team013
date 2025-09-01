@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
-import Layout from "./../components/Layout";
-import { useCart } from "../context/cart";
-import { useAuth } from "../context/auth";
-import { useNavigate } from "react-router-dom";
-import DropIn from "braintree-web-drop-in-react";
-import { AiFillWarning } from "react-icons/ai";
 import axios from "axios";
+import DropIn from "braintree-web-drop-in-react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/auth";
+import { useCart } from "../context/cart";
 import "../styles/CartStyles.css";
+import Layout from "./../components/Layout";
 
 const CartPage = () => {
   const [auth, setAuth] = useAuth();
