@@ -1,0 +1,81 @@
+name: Enforce Linear PR Branches
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  check-linear-history:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v5
+        with:
+          # Fetch complete history to allow for accurate linearity checks
+          fetch-depth: 0
+
+      - name: Check if branch is linear
+        id: linear_check
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          PR_COMMITS=$(git rev-list $BASE..$HEAD | wc -l)
+          LINEAR_COMMITS=$(git rev-list --first-parent $BASE..$HEAD | wc -l)
+
+          echo "PR commits: $PR_COMMITS"
+          echo "Linear commits: $LINEAR_COMMITS"
+
+          if [ "$PR_COMMITS" -ne "$LINEAR_COMMITS" ]; then
+            echo "status=fail" >> $GITHUB_OUTPUT
+          else
+            echo "status=pass" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update PR comment with status
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.issue.number;
+            const status = "${{ steps.linear_check.outputs.status }}";
+
+            const header = "<!-- linear-history-check -->";
+            const passMsg = `${header}\n\n## ✅ Branch history is **linear**\n\nNo merge commits in PR branch. Safe to merge.`;
+            const failMsg = `${header}\n\n## ❌ Merge commits detected in this PR branch.\n\nBranch history is **not linear**. Please rebase your branch on top of \`main\`.`;
+
+            const body = status === "pass" ? passMsg : failMsg;
+
+            // Find existing bot comment (by header marker)
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: prNumber,
+            });
+
+            const botComment = comments.find(
+              c =>
+                c.user.type === "Bot" &&
+                c.body.startsWith(header)
+            );
+
+            if (botComment) {
+              // Update existing
+              await github.rest.issues.updateComment({
+                ...context.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              // Create new
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: prNumber,
+                body,
+              });
+            }
+
+      - name: Fail job if branch not linear
+        if: steps.linear_check.outputs.status == 'fail'
+        run: exit 1
