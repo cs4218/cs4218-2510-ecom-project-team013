@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
 import { useAuth } from "../../context/auth";
+
 const { Option } = Select;
 
-const AdminOrders = () => {
+const AdminOrders: React.FC = () => {
   const [status, setStatus] = useState([
     "Not Process",
     "Processing",

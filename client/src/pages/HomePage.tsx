@@ -9,7 +9,7 @@ import { useCart } from "../context/cart";
 import "../styles/Homepages.css";
 import Layout from "../components/Layout";
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useCart();
   const [products, setProducts] = useState([]);

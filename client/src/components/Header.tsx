@@ -6,7 +6,8 @@ import { useCart } from "../context/cart";
 import useCategory from "../hooks/useCategory";
 import "../styles/Header.css";
 import SearchInput from "./Form/SearchInput";
-const Header = () => {
+
+const Header: React.FC = () => {
   const [auth, setAuth] = useAuth();
   const [cart] = useCart();
   const categories = useCategory();

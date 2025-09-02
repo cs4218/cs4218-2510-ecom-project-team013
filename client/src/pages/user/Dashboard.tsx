@@ -1,7 +1,8 @@
 import Layout from "../../components/Layout";
 import UserMenu from "../../components/UserMenu";
 import { useAuth } from "../../context/auth";
-const Dashboard = () => {
+
+const Dashboard: React.FC = () => {
   const [auth] = useAuth();
   return (
     <Layout title={"Dashboard - Ecommerce App"}>

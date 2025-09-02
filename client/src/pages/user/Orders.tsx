@@ -5,7 +5,7 @@ import UserMenu from "../../components/UserMenu";
 import { useAuth } from "../../context/auth";
 import Layout from "../../components/Layout";
 
-const Orders = () => {
+const Orders: React.FC = () => {
   const [orders, setOrders] = useState([]);
   const [auth, setAuth] = useAuth();
   const getOrders = async () => {

@@ -1,6 +1,6 @@
 import Layout from "../components/Layout";
 
-const Policy = () => {
+const Policy: React.FC = () => {
   return (
     <Layout title={"Privacy Policy"}>
       <div className="row contactus ">

@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
-const UserMenu = () => {
+
+const UserMenu: React.FC = () => {
   return (
     <div>
       <div className="text-center">

@@ -1,7 +1,8 @@
 import AdminMenu from "../../components/AdminMenu";
 import { useAuth } from "../../context/auth";
 import Layout from "../../components/Layout";
-const AdminDashboard = () => {
+
+const AdminDashboard: React.FC = () => {
   const [auth] = useAuth();
   return (
     <Layout>

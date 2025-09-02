@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
-const AdminMenu = () => {
+
+const AdminMenu: React.FC = () => {
   return (
     <>
       <div className="text-center">

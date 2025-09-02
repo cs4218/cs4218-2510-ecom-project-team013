@@ -5,9 +5,10 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
+
 const { Option } = Select;
 
-const CreateProduct = () => {
+const CreateProduct: React.FC = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");

@@ -1,6 +1,7 @@
 import { useSearch } from "../context/search";
 import Layout from "../components/Layout";
-const Search = () => {
+
+const Search: React.FC = () => {
   const [values, setValues] = useSearch();
   return (
     <Layout title={"Search results"}>

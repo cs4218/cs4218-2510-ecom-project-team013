@@ -4,7 +4,8 @@ import toast from "react-hot-toast";
 import UserMenu from "../../components/UserMenu";
 import { useAuth } from "../../context/auth";
 import Layout from "../../components/Layout";
-const Profile = () => {
+
+const Profile: React.FC = () => {
   //context
   const [auth, setAuth] = useAuth();
   //state
