@@ -1,3 +1,6 @@
+// @ts-check
+
+/** @type {import("jest").Config} */
 export default {
   // display name
   displayName: "backend",
@@ -6,7 +9,7 @@ export default {
   testEnvironment: "node",
 
   // which test to run
-  testMatch: ["<rootDir>/controllers/*.test.js"],
+  testMatch: ["<rootDir>/controllers/*.test.(js|ts)"],
 
   // jest code coverage
   collectCoverage: true,

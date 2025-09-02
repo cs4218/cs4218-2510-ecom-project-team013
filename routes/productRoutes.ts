@@ -1,4 +1,5 @@
 import express from "express";
+import formidable from "express-formidable";
 import {
   brainTreePaymentController,
   braintreeTokenController,
@@ -16,7 +17,6 @@ import {
   updateProductController,
 } from "../controllers/productController.js";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
-import formidable from "express-formidable";
 
 const router = express.Router();
 
