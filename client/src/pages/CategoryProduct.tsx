@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import "../styles/CategoryProductStyles.css";
+
 const CategoryProduct = () => {
   const params = useParams();
   const navigate = useNavigate();
