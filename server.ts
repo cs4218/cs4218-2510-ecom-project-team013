@@ -8,29 +8,25 @@ import authRoutes from "./routes/authRoute.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 
-// configure env
+// Configure env
 dotenv.config();
 
-//database config
+// Database config
 connectDB();
 
-const app = express();
-
-//middlewares
-app.use(cors());
-app.use(express.json());
-app.use(morgan("dev"));
-
-//routes
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/category", categoryRoutes);
-app.use("/api/v1/product", productRoutes);
-
-// rest api
-
-app.get("/", (req, res) => {
-  res.send("<h1>Welcome to ecommerce app</h1>");
-});
+const app = express()
+  // Middleware
+  .use(cors())
+  .use(express.json())
+  .use(morgan("dev"))
+  // Routes
+  .use("/api/v1/auth", authRoutes)
+  .use("/api/v1/category", categoryRoutes)
+  .use("/api/v1/product", productRoutes)
+  // REST API
+  .get("/", (req, res) => {
+    res.send("<h1>Welcome to ecommerce app</h1>");
+  });
 
 const PORT = process.env.PORT || 6060;
 
