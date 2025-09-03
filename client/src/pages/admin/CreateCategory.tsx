@@ -5,7 +5,8 @@ import toast from "react-hot-toast";
 import CategoryForm from "../../components/Form/CategoryForm";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
-const CreateCategory = () => {
+
+const CreateCategory: React.FC = () => {
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");
   const [visible, setVisible] = useState(false);

@@ -5,9 +5,10 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
+
 const { Option } = Select;
 
-const UpdateProduct = () => {
+const UpdateProduct: React.FC = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [categories, setCategories] = useState([]);

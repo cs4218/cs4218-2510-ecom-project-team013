@@ -1,6 +1,6 @@
 import Layout from "../components/Layout";
 
-const About = () => {
+const About: React.FC = () => {
   return (
     <Layout title={"About us - Ecommerce app"}>
       <div className="row contactus ">

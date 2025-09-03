@@ -1,6 +1,7 @@
 import { BiMailSend, BiPhoneCall, BiSupport } from "react-icons/bi";
 import Layout from "../components/Layout";
-const Contact = () => {
+
+const Contact: React.FC = () => {
   return (
     <Layout title={"Contact us"}>
       <div className="row contactus ">

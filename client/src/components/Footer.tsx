@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const Footer = () => {
+const Footer: React.FC = () => {
   return (
     <div className="footer">
       <h4 className="text-center">All Rights Reserved &copy; TestingComp</h4>

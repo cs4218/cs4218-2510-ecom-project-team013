@@ -4,7 +4,8 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import "../../styles/AuthStyles.css";
 import Layout from "../../components/Layout";
-const Register = () => {
+
+const Register: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

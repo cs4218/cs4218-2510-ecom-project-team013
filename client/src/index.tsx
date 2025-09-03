@@ -1,22 +1,18 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./context/auth";
-import { SearchProvider } from "./context/search";
-import { CartProvider } from "./context/cart";
 import "antd/dist/reset.css";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { AuthProvider } from "./context/auth";
+import { CartProvider } from "./context/cart";
+import { SearchProvider } from "./context/search";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <AuthProvider>
     <SearchProvider>
       <CartProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <App />
       </CartProvider>
     </SearchProvider>
   </AuthProvider>

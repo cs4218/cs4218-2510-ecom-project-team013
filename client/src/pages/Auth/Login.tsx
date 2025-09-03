@@ -6,7 +6,7 @@ import { useAuth } from "../../context/auth";
 import "../../styles/AuthStyles.css";
 import Layout from "../../components/Layout";
 
-const Login = () => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [auth, setAuth] = useAuth();

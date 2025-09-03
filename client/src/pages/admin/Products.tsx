@@ -4,7 +4,8 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
-const Products = () => {
+
+const Products: React.FC = () => {
   const [products, setProducts] = useState([]);
 
   //getall products

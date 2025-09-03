@@ -8,7 +8,7 @@ import { useCart } from "../context/cart";
 import "../styles/CartStyles.css";
 import Layout from "../components/Layout";
 
-const CartPage = () => {
+const CartPage: React.FC = () => {
   const [auth, setAuth] = useAuth();
   const [cart, setCart] = useCart();
   const [clientToken, setClientToken] = useState("");

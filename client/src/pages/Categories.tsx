@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import useCategory from "../hooks/useCategory";
-const Categories = () => {
+
+const Categories: React.FC = () => {
   const categories = useCategory();
   return (
     <Layout title={"All Categories"}>

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../styles/ProductDetailsStyles.css";
 import Layout from "../components/Layout";
 
-const ProductDetails = () => {
+const ProductDetails: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState({});
