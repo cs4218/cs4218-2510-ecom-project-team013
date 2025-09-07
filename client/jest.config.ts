@@ -22,11 +22,12 @@ const config: Config = {
   transformIgnorePatterns: ["/node_modules/(?!(styleMock\\.js)$)"],
 
   // only run these tests
-  testMatch: ["<rootDir>/src/pages/Auth/*.test.(js|jsx|ts|tsx)"],
+
+  testMatch: ["<rootDir>/client/src/**/*.test.(js|jsx|ts|tsx)"],
 
   // jest code coverage
   collectCoverage: true,
-  collectCoverageFrom: ["src/pages/Auth/**"],
+  collectCoverageFrom: ["client/src/**"],
   coverageThreshold: {
     // TODO: Increase coverage threshold back to 100%
     // after adding more tests
