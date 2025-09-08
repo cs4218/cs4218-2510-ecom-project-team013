@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 import formidable from "express-formidable";
 import {
   brainTreePaymentController,
@@ -18,60 +18,46 @@ import {
 } from "../controllers/productController.js";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 
-const router = express.Router();
-
-//routes
-router.post(
-  "/create-product",
-  requireSignIn,
-  isAdmin,
-  formidable(),
-  createProductController
-);
-//routes
-router.put(
-  "/update-product/:pid",
-  requireSignIn,
-  isAdmin,
-  formidable(),
-  updateProductController
-);
-
-//get products
-router.get("/get-product", getProductController);
-
-//single product
-router.get("/get-product/:slug", getSingleProductController);
-
-//get photo
-router.get("/product-photo/:pid", productPhotoController);
-
-//delete rproduct
-router.delete("/delete-product/:pid", deleteProductController);
-
-//filter product
-router.post("/product-filters", productFiltersController);
-
-//product count
-router.get("/product-count", productCountController);
-
-//product per page
-router.get("/product-list/:page", productListController);
-
-//search product
-router.get("/search/:keyword", searchProductController);
-
-//similar product
-router.get("/related-product/:pid/:cid", realtedProductController);
-
-//category wise product
-router.get("/product-category/:slug", productCategoryController);
-
-//payments routes
-//token
-router.get("/braintree/token", braintreeTokenController);
-
-//payments
-router.post("/braintree/payment", requireSignIn, brainTreePaymentController);
+const router = Router()
+  .post(
+    "/create-product",
+    requireSignIn,
+    isAdmin,
+    formidable(),
+    createProductController
+  )
+  // Routes
+  .put(
+    "/update-product/:pid",
+    requireSignIn,
+    isAdmin,
+    formidable(),
+    updateProductController
+  )
+  // Get products
+  .get("/get-product", getProductController)
+  // Single product
+  .get("/get-product/:slug", getSingleProductController)
+  // Get photo
+  .get("/product-photo/:pid", productPhotoController)
+  // Delete rproduct
+  .delete("/delete-product/:pid", deleteProductController)
+  // Filter product
+  .post("/product-filters", productFiltersController)
+  // Product count
+  .get("/product-count", productCountController)
+  // Product per page
+  .get("/product-list/:page", productListController)
+  // Search product
+  .get("/search/:keyword", searchProductController)
+  // Similar product
+  .get("/related-product/:pid/:cid", realtedProductController)
+  // Category wise product
+  .get("/product-category/:slug", productCategoryController)
+  // Payments routes
+  // Token
+  .get("/braintree/token", braintreeTokenController)
+  // Payments
+  .post("/braintree/payment", requireSignIn, brainTreePaymentController);
 
 export default router;
