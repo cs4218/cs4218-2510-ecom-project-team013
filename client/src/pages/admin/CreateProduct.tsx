@@ -1,6 +1,6 @@
 import { Select } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import AdminMenu from "../../components/AdminMenu";
@@ -8,36 +8,50 @@ import Layout from "../../components/Layout";
 
 const { Option } = Select;
 
+type Category = {
+  _id: string;
+  name: string;
+};
+
 const CreateProduct: React.FC = () => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [shipping, setShipping] = useState("");
-  const [photo, setPhoto] = useState("");
 
-  //get all category
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [quantity, setQuantity] = useState<string>("");
+  const [shipping, setShipping] = useState<string>("");
+  const [photo, setPhoto] = useState<File | null>(null);
+
+  // Use a clean placeholder (no trailing space; browsers collapse it anyway).
+  const shippingPlaceholder = "Select Shipping";
+
+  // get all category
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get("/api/v1/category/get-category");
       if (data?.success) {
-        setCategories(data?.category);
+        setCategories(data.category as Category[]);
+      } else {
+        // backend returned success:false
+        toast.error(data?.message || "Failed to load categories");
       }
     } catch (error) {
+      // keep console.log so tests can assert it if needed
       console.log(error);
-      toast.error("Something wwent wrong in getting catgeory");
+      toast.error("Something went wrong in getting category");
     }
   };
 
   useEffect(() => {
     getAllCategory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  //create product function
-  const handleCreate = async (e) => {
+  // create product function
+  const handleCreate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       const productData = new FormData();
@@ -45,17 +59,22 @@ const CreateProduct: React.FC = () => {
       productData.append("description", description);
       productData.append("price", price);
       productData.append("quantity", quantity);
-      productData.append("photo", photo);
       productData.append("category", category);
-      const { data } = axios.post(
+      productData.append("shipping", shipping);
+      if (photo) {
+        productData.append("photo", photo);
+      }
+
+      const { data } = await axios.post(
         "/api/v1/product/create-product",
         productData
       );
+
       if (data?.success) {
-        toast.error(data?.message);
-      } else {
         toast.success("Product Created Successfully");
         navigate("/dashboard/admin/products");
+      } else {
+        toast.error(data?.message || "Failed to create product");
       }
     } catch (error) {
       console.log(error);
@@ -79,9 +98,10 @@ const CreateProduct: React.FC = () => {
                 size="large"
                 showSearch
                 className="form-select mb-3"
-                onChange={(value) => {
-                  setCategory(value);
-                }}
+                value={category || undefined}
+                onChange={(value) => setCategory(value as string)}
+                data-testid="category-select"
+                aria-label="Category"
               >
                 {categories?.map((c) => (
                   <Option key={c._id} value={c._id}>
@@ -89,6 +109,7 @@ const CreateProduct: React.FC = () => {
                   </Option>
                 ))}
               </Select>
+
               <div className="mb-3">
                 <label className="btn btn-outline-secondary col-md-12">
                   {photo ? photo.name : "Upload Photo"}
@@ -96,11 +117,12 @@ const CreateProduct: React.FC = () => {
                     type="file"
                     name="photo"
                     accept="image/*"
-                    onChange={(e) => setPhoto(e.target.files[0])}
+                    onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
                     hidden
                   />
                 </label>
               </div>
+
               <div className="mb-3">
                 {photo && (
                   <div className="text-center">
@@ -113,6 +135,7 @@ const CreateProduct: React.FC = () => {
                   </div>
                 )}
               </div>
+
               <div className="mb-3">
                 <input
                   type="text"
@@ -122,9 +145,9 @@ const CreateProduct: React.FC = () => {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
+
               <div className="mb-3">
                 <textarea
-                  type="text"
                   value={description}
                   placeholder="write a description"
                   className="form-control"
@@ -141,6 +164,7 @@ const CreateProduct: React.FC = () => {
                   onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
+
               <div className="mb-3">
                 <input
                   type="number"
@@ -150,21 +174,24 @@ const CreateProduct: React.FC = () => {
                   onChange={(e) => setQuantity(e.target.value)}
                 />
               </div>
+
               <div className="mb-3">
                 <Select
                   bordered={false}
-                  placeholder="Select Shipping "
+                  placeholder={shippingPlaceholder}
                   size="large"
                   showSearch
                   className="form-select mb-3"
-                  onChange={(value) => {
-                    setShipping(value);
-                  }}
+                  value={shipping || undefined}
+                  onChange={(value) => setShipping(value as string)}
+                  data-testid="shipping-select"
+                  aria-label="Shipping"
                 >
                   <Option value="0">No</Option>
                   <Option value="1">Yes</Option>
                 </Select>
               </div>
+
               <div className="mb-3">
                 <button className="btn btn-primary" onClick={handleCreate}>
                   CREATE PRODUCT
