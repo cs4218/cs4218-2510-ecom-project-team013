@@ -5,7 +5,7 @@ import Layout from "../../components/Layout";
 import UserMenu from "../../components/UserMenu";
 import { useAuth } from "../../context/auth";
 
-type OrderRowData = {
+export type OrderRowData = {
   _id: string;
   status: string;
   buyer: { name: string };
