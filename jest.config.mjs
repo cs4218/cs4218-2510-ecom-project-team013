@@ -17,10 +17,10 @@ export default {
   testEnvironment: "node",
 
   // which test to run
-  testMatch: ["<rootDir>/controllers/*.test.(js|ts)"],
+  testMatch: ["<rootDir>/**/*.test.(js|ts)"],
 
   // jest code coverage
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: ["controllers/**"],
   coverageThreshold: {
     global: {
