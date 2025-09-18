@@ -3,7 +3,7 @@ import slugify from "slugify";
 import categoryModel from "../models/categoryModel";
 
 // Create category
-export const createCategoryController: RequestHandler = async (req, res) => {
+export const createCategoryController = (async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
@@ -34,10 +34,10 @@ export const createCategoryController: RequestHandler = async (req, res) => {
       message: "Error in Category",
     });
   }
-};
+}) satisfies RequestHandler;
 
 // Update category
-export const updateCategoryController: RequestHandler = async (req, res) => {
+export const updateCategoryController = (async (req, res) => {
   try {
     const { name } = req.body;
     const { id } = req.params;
@@ -59,10 +59,10 @@ export const updateCategoryController: RequestHandler = async (req, res) => {
       message: "Error while updating category",
     });
   }
-};
+}) satisfies RequestHandler;
 
 // Get all categories
-export const categoryController: RequestHandler = async (req, res) => {
+export const categoryController = (async (req, res) => {
   try {
     const category = await categoryModel.find({});
     res.status(200).send({
@@ -78,10 +78,10 @@ export const categoryController: RequestHandler = async (req, res) => {
       message: "Error while getting all categories",
     });
   }
-};
+}) satisfies RequestHandler;
 
 // Get single category
-export const singleCategoryController: RequestHandler = async (req, res) => {
+export const singleCategoryController = (async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
     res.status(200).send({
@@ -97,10 +97,10 @@ export const singleCategoryController: RequestHandler = async (req, res) => {
       message: "Error While getting Single Category",
     });
   }
-};
+}) satisfies RequestHandler;
 
 // Delete category
-export const deleteCategoryController: RequestHandler = async (req, res) => {
+export const deleteCategoryController = (async (req, res) => {
   try {
     const { id } = req.params;
     await categoryModel.findByIdAndDelete(id);
@@ -116,4 +116,4 @@ export const deleteCategoryController: RequestHandler = async (req, res) => {
       error,
     });
   }
-};
+}) satisfies RequestHandler;
