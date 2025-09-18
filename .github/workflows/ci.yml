@@ -8,6 +8,26 @@ on:
       - main
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            client/package-lock.json
+      - name: Install dependencies (backend)
+        run: npm ci
+      - name: Install dependencies (frontend)
+        working-directory: client
+        run: npm ci
+      - name: Run frontend and backend tests in parallel
+        run: npm run test
   format:
     runs-on: ubuntu-latest
     steps:

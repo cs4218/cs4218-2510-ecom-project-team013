@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["node"],
+    "types": ["node", "jest"],
     "target": "es2020",
     "allowJs": true,
     "skipLibCheck": true,
