@@ -7,7 +7,7 @@ import { useAuth } from "../../context/auth";
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState([]);
-  const [auth, setAuth] = useAuth();
+  const [auth] = useAuth();
   const getOrders = async () => {
     try {
       const { data } = await api.auth.getOrders();
