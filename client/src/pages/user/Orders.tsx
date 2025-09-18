@@ -55,16 +55,16 @@ const Orders: React.FC = () => {
                     <tbody>
                       <tr>
                         <td>{i + 1}</td>
-                        <td>{o?.status}</td>
-                        <td>{o?.buyer?.name}</td>
-                        <td>{moment(o?.createAt).fromNow()}</td>
-                        <td>{o?.payment.success ? "Success" : "Failed"}</td>
-                        <td>{o?.products?.length}</td>
+                        <td>{o.status}</td>
+                        <td>{o.buyer.name}</td>
+                        <td>{moment(o.createAt).fromNow()}</td>
+                        <td>{o.payment.success ? "Success" : "Failed"}</td>
+                        <td>{o.products.length}</td>
                       </tr>
                     </tbody>
                   </table>
                   <div className="container">
-                    {o?.products?.map((p, i) => (
+                    {o.products.map((p) => (
                       <div className="row mb-2 p-3 card flex-row" key={p._id}>
                         <div className="col-md-4">
                           <img
