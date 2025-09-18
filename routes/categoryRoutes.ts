@@ -1,8 +1,8 @@
 import { Router } from "express";
 import {
-  categoryControlller,
+  categoryController,
   createCategoryController,
-  deleteCategoryCOntroller,
+  deleteCategoryController,
   singleCategoryController,
   updateCategoryController,
 } from "../controllers/categoryController.js";
@@ -14,7 +14,7 @@ const router = Router()
   // Update category
   .put("/update-category/:id", requireSignIn, isAdmin, updateCategoryController)
   // GetALl category
-  .get("/get-category", categoryControlller)
+  .get("/get-category", categoryController)
   // Single category
   .get("/single-category/:slug", singleCategoryController)
   // Delete category
@@ -22,7 +22,7 @@ const router = Router()
     "/delete-category/:id",
     requireSignIn,
     isAdmin,
-    deleteCategoryCOntroller
+    deleteCategoryController
   );
 
 export default router;

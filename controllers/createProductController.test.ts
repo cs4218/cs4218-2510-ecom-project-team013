@@ -94,7 +94,7 @@ describe("createCategoryController (thorough, focused)", () => {
     // Keep the controller’s current (typo’d) shape:
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      errro: expect.any(Error), // controller should assign error here to avoid ReferenceError
+      error: expect.any(Error), // controller should assign error here to avoid ReferenceError
       message: "Error in Category",
     });
   });
@@ -109,7 +109,7 @@ describe("createCategoryController (thorough, focused)", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      errro: expect.any(Error),
+      error: expect.any(Error),
       message: "Error in Category",
     });
   });
