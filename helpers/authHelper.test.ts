@@ -160,13 +160,19 @@ describe("authHelper", () => {
 
         expect(result).toBe(false);
       });
+
+      it("should handle both empty password and hash", async () => {
+        mockedCompare.mockResolvedValue(false);
+        const result = await comparePassword("", "");
+        expect(result).toBe(false);
+      });
     });
 
-    describe("edge cases", () => {
+    describe("invalid inputs (bypassing TypeScript)", () => {
       it("should handle null password", async () => {
         mockedCompare.mockResolvedValue(false);
 
-        // @ts-ignore - Testing runtime behavior with invalid input
+        // @ts-expect-error - Testing runtime behavior with invalid input
         const result = await comparePassword(null, mockHashedPassword);
         expect(result).toBe(false);
       });
@@ -174,7 +180,7 @@ describe("authHelper", () => {
       it("should handle undefined password", async () => {
         mockedCompare.mockResolvedValue(false);
 
-        // @ts-ignore - Testing runtime behavior with invalid input
+        // @ts-expect-error - Testing runtime behavior with invalid input
         const result = await comparePassword(undefined, mockHashedPassword);
         expect(result).toBe(false);
       });
@@ -182,11 +188,21 @@ describe("authHelper", () => {
       it("should handle null hash", async () => {
         mockedCompare.mockResolvedValue(false);
 
-        // @ts-ignore - Testing runtime behavior with invalid input
+        // @ts-expect-error - Testing runtime behavior with invalid input
         const result = await comparePassword(mockPassword, null);
         expect(result).toBe(false);
       });
 
+      it("should handle undefined hash", async () => {
+        mockedCompare.mockResolvedValue(false);
+
+        // @ts-expect-error - Testing runtime behavior with invalid input
+        const result = await comparePassword(mockPassword, undefined);
+        expect(result).toBe(false);
+      });
+    });
+
+    describe("error handling", () => {
       it("should handle malformed hash", async () => {
         const malformedHash = "notAValidBcryptHash";
         const mockError = new Error("Invalid hash format");
@@ -196,9 +212,7 @@ describe("authHelper", () => {
           comparePassword(mockPassword, malformedHash)
         ).rejects.toThrow("Invalid hash format");
       });
-    });
 
-    describe("error handling", () => {
       it("should propagate bcrypt.compare errors", async () => {
         const mockError = new Error("Bcrypt comparison failed");
         mockedCompare.mockRejectedValue(mockError);
