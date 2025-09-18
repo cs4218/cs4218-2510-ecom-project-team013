@@ -11,7 +11,7 @@ import slugify from "slugify";
 dotenv.config();
 
 //payment gateway
-var gateway = new braintree.BraintreeGateway({
+const gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,
   merchantId: process.env.BRAINTREE_MERCHANT_ID,
   publicKey: process.env.BRAINTREE_PUBLIC_KEY,
@@ -197,7 +197,7 @@ export const updateProductController: RequestHandler = async (req, res) => {
 export const productFiltersController: RequestHandler = async (req, res) => {
   try {
     const { checked, radio } = req.body;
-    let args = {};
+    const args = {};
     if (checked.length > 0) args.category = checked;
     if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
     const products = await productModel.find(args);
@@ -351,7 +351,7 @@ export const brainTreePaymentController: RequestHandler = async (req, res) => {
     cart.map((i) => {
       total += i.price;
     });
-    let newTransaction = gateway.transaction.sale(
+    const newTransaction = gateway.transaction.sale(
       {
         amount: total,
         paymentMethodNonce: nonce,
