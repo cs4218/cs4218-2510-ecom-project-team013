@@ -1,25 +1,43 @@
-import mongoose from "mongoose";
+import { model, Schema, type Document, type Types } from "mongoose";
 
-const orderSchema = new mongoose.Schema(
+export enum StatusEnum {
+  NotProcess = "Not Process",
+  Processing = "Processing",
+  Shipped = "Shipped",
+  Deliverd = "deliverd",
+  Cancel = "cancel",
+}
+
+export type Order = Document & {
+  products: Types.ObjectId[];
+  // TODO: Figure out the proper typing for payment
+  payment: Record<string, any>;
+  buyer: Types.ObjectId;
+  status: StatusEnum;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+const orderSchema = new Schema<Order>(
   {
     products: [
       {
-        type: mongoose.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Products",
       },
     ],
     payment: {},
     buyer: {
-      type: mongoose.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "users",
     },
     status: {
       type: String,
-      default: "Not Process",
-      enum: ["Not Process", "Processing", "Shipped", "deliverd", "cancel"],
+      default: StatusEnum.NotProcess,
+      enum: StatusEnum,
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Order", orderSchema);
+export default model("Order", orderSchema);
