@@ -10,16 +10,15 @@ const tsJestTransformCfg = createDefaultEsmPreset(tsJestOptions).transform;
 
 /** @type {import("jest").Config} */
 export default {
-  // display name
   displayName: "backend",
-
-  // when testing backend
   testEnvironment: "node",
 
-  // which test to run
   testMatch: ["<rootDir>/**/*.test.(js|ts)"],
+  // Ignore frontend folder from backend tests
+  testPathIgnorePatterns: ["/node_modules/", "<rootDir>/client/"],
 
-  // jest code coverage
+  // Coverage configuration
+  // TODO: Reenable coverage once more tests are added
   collectCoverage: false,
   collectCoverageFrom: ["controllers/**"],
   coverageThreshold: {
