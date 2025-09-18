@@ -1,6 +1,6 @@
-import categoryModel from "../models/categoryModel.js";
-import orderModel from "../models/orderModel.js";
-import productModel from "../models/productModel.js";
+import categoryModel from "../models/categoryModel";
+import orderModel from "../models/orderModel";
+import productModel from "../models/productModel";
 
 import braintree from "braintree";
 import dotenv from "dotenv";

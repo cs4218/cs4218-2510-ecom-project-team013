@@ -1,7 +1,9 @@
-import slugify from "slugify";
-import categoryModel from "../models/categoryModel.js";
 import type { RequestHandler } from "express";
-export const createCategoryController: RequestHandler = async (req, res) => {
+import slugify from "slugify";
+import categoryModel from "../models/categoryModel";
+
+// Create category
+export const createCategoryController = (async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
@@ -27,14 +29,14 @@ export const createCategoryController: RequestHandler = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      errro,
-      message: "Errro in Category",
+      error,
+      message: "Error in Category",
     });
   }
-};
+}) satisfies RequestHandler;
 
-//update category
-export const updateCategoryController: RequestHandler = async (req, res) => {
+// Update category
+export const updateCategoryController = (async (req, res) => {
   try {
     const { name } = req.body;
     const { id } = req.params;
@@ -56,10 +58,10 @@ export const updateCategoryController: RequestHandler = async (req, res) => {
       message: "Error while updating category",
     });
   }
-};
+}) satisfies RequestHandler;
 
-// get all cat
-export const categoryControlller: RequestHandler = async (req, res) => {
+// Get all categories
+export const categoryController = (async (req, res) => {
   try {
     const category = await categoryModel.find({});
     res.status(200).send({
@@ -75,10 +77,10 @@ export const categoryControlller: RequestHandler = async (req, res) => {
       message: "Error while getting all categories",
     });
   }
-};
+}) satisfies RequestHandler;
 
-// single category
-export const singleCategoryController: RequestHandler = async (req, res) => {
+// Get single category
+export const singleCategoryController = (async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
     res.status(200).send({
@@ -94,10 +96,10 @@ export const singleCategoryController: RequestHandler = async (req, res) => {
       message: "Error While getting Single Category",
     });
   }
-};
+}) satisfies RequestHandler;
 
-//delete category
-export const deleteCategoryCOntroller: RequestHandler = async (req, res) => {
+// Delete category
+export const deleteCategoryController = (async (req, res) => {
   try {
     const { id } = req.params;
     await categoryModel.findByIdAndDelete(id);
@@ -113,4 +115,4 @@ export const deleteCategoryCOntroller: RequestHandler = async (req, res) => {
       error,
     });
   }
-};
+}) satisfies RequestHandler;
