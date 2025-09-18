@@ -1,6 +1,6 @@
-import JWT from "jsonwebtoken";
-import userModel from "../models/userModel.js";
 import type { RequestHandler } from "express";
+import JWT from "jsonwebtoken";
+import userModel from "../models/userModel";
 
 // Protected routes token base
 export const requireSignIn: RequestHandler = async (req, res, next) => {

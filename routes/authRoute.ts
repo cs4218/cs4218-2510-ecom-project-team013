@@ -8,8 +8,8 @@ import {
   registerController,
   testController,
   updateProfileController,
-} from "../controllers/authController.js";
-import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+} from "../controllers/authController";
+import { isAdmin, requireSignIn } from "../middlewares/authMiddleware";
 
 const router = Router()
   // REGISTER || METHOD POST
