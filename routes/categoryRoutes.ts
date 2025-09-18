@@ -5,8 +5,8 @@ import {
   deleteCategoryController,
   singleCategoryController,
   updateCategoryController,
-} from "../controllers/categoryController.js";
-import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+} from "../controllers/categoryController";
+import { isAdmin, requireSignIn } from "../middlewares/authMiddleware";
 
 const router = Router()
   // Create category
