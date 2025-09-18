@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "ecommerce rest api",
   "private": true,
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610",
   "main": "server.js",
   "scripts": {
     "start": "tsx server.ts",
