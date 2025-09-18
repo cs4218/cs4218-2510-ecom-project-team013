@@ -206,7 +206,8 @@ export const getOrdersController = (async (req, res) => {
     const orders = await orderModel
       .find({ buyer: req.user._id })
       .populate("products", "-photo")
-      .populate("buyer", "name");
+      .populate("buyer", "name")
+      .exec();
     res.json(orders);
   } catch (error) {
     console.log(error);
@@ -225,7 +226,8 @@ export const getAllOrdersController = (async (req, res) => {
       .find({})
       .populate("products", "-photo")
       .populate("buyer", "name")
-      .sort({ createdAt: "-1" });
+      .sort({ createdAt: -1 })
+      .exec();
     res.json(orders);
   } catch (error) {
     console.log(error);
