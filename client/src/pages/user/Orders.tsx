@@ -5,8 +5,17 @@ import Layout from "../../components/Layout";
 import UserMenu from "../../components/UserMenu";
 import { useAuth } from "../../context/auth";
 
+type OrderRowData = {
+  _id: string;
+  status: string;
+  buyer: { name: string };
+  createAt: string;
+  payment: { success: boolean };
+  products: { _id: string; name: string; description: string; price: number }[];
+};
+
 const Orders: React.FC = () => {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<OrderRowData[]>([]);
   const [auth] = useAuth();
   const getOrders = async () => {
     try {
