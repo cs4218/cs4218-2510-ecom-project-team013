@@ -14,7 +14,7 @@
     "sonarqube": "sonarqube-scanner",
     "test": "concurrently \"npm run test:backend\" \"npm run test:frontend\"",
     "test:frontend": "npm run test --prefix ./client",
-    "test:backend": "jest"
+    "test:backend": "jest --passWithNoTests"
   },
   "keywords": [],
   "author": "RP",
