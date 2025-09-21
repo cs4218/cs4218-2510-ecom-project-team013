@@ -1,21 +1,19 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import axios from "axios";
 import Products from "./Products";
 import { toast } from "react-hot-toast";
+import userEvent from "@testing-library/user-event";
 
 
 // Setup Mock Components
+jest.mock("../../components/Layout", () => ({ children }: any) => (
+  <div data-testid="layout">{children}</div>
+));
+
 jest.mock("../../components/AdminMenu", () => () => <div>Mocked AdminMenu</div>);
 
-jest.mock("../../components/Layout", () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="mock-layout">{children}</div>
-  ),
-}));
-
-// Segup Mock Toast
+// Setup Mock Toast
 jest.mock("react-hot-toast", () => ({
   toast: {
     error: jest.fn(),
@@ -85,12 +83,14 @@ const fakeProducts = [
 
 
 // Setup Render 
-
 const renderPage = () => {
     render(
-      <BrowserRouter>
-        <Products />
-      </BrowserRouter>
+      <MemoryRouter initialEntries={["/dashboard/admin/products"]}>
+      <Routes>
+        <Route path="/dashboard/admin/products" element={<Products />} />
+        <Route path="/dashboard/admin/product/:slug" element={<div>Mock Product Page</div>} />
+      </Routes>
+    </MemoryRouter>
     );
 }
 
@@ -113,5 +113,17 @@ describe ("Products Page", () =>{
          await waitFor(() => {
             expect(toast.error).toHaveBeenCalledWith("Something Went Wrong");
         });
+    });
+
+    it("navigates to product detail page on click", async () => {
+      mockedAxiosGet.mockResolvedValueOnce({ data: { products: fakeProducts } });
+
+        renderPage();
+
+        const renderedProducts = await screen.findAllByTestId(/div-product-/i);
+
+        await userEvent.click(renderedProducts[0]);
+
+        expect(await screen.findByText("Mock Product Page")).toBeInTheDocument();
     });
 }) 
