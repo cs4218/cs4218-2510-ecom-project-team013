@@ -1,6 +1,6 @@
-import categoryModel from "../models/categoryModel.js";
-import orderModel from "../models/orderModel.js";
-import productModel from "../models/productModel.js";
+import categoryModel from "../models/categoryModel";
+import orderModel from "../models/orderModel";
+import productModel from "../models/productModel";
 
 import braintree from "braintree";
 import dotenv from "dotenv";
@@ -63,7 +63,7 @@ export const createProductController: RequestHandler = async (req, res) => {
 };
 
 //get all products
-export const getProductController: RequestHandler = async (req, res) => {
+export const getProductController: RequestHandler = async (req, res, next) => {
   try {
     const products = await productModel
       .find({})
@@ -71,13 +71,15 @@ export const getProductController: RequestHandler = async (req, res) => {
       .select("-photo")
       .limit(12)
       .sort({ createdAt: -1 });
+
     res.status(200).send({
       success: true,
       counTotal: products.length,
-      message: "ALlProducts ",
+      message: "All Products",
       products,
     });
-  } catch (error) {
+
+  } catch (error: any) {
     console.log(error);
     res.status(500).send({
       success: false,
@@ -86,6 +88,7 @@ export const getProductController: RequestHandler = async (req, res) => {
     });
   }
 };
+
 // get single product
 export const getSingleProductController: RequestHandler = async (req, res) => {
   try {
