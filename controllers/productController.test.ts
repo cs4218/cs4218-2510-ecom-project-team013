@@ -13,7 +13,7 @@ describe("getProductController", () => {
     mockReq = {};
     mockRes = {
       status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis()
+      send: jest.fn().mockReturnThis(),
     };
     mockNext = jest.fn();
 
@@ -21,10 +21,7 @@ describe("getProductController", () => {
   });
 
   it("should return products successfully", async () => {
-    const mockProducts = [
-      { name: "Product 1" },
-      { name: "Product 2" },
-    ];
+    const mockProducts = [{ name: "Product 1" }, { name: "Product 2" }];
 
     // Mock the chain of mongoose calls
     (productModel.find as jest.Mock).mockReturnValue({
@@ -34,9 +31,7 @@ describe("getProductController", () => {
       sort: jest.fn().mockReturnThis().mockResolvedValue(mockProducts),
     });
 
-
     await getProductController(mockReq, mockRes, mockNext);
-
 
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
@@ -56,9 +51,7 @@ describe("getProductController", () => {
       sort: jest.fn().mockReturnThis().mockRejectedValue(new Error("DB error")),
     });
 
-
     await getProductController(mockReq, mockRes, mockNext);
-
 
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({

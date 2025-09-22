@@ -78,7 +78,6 @@ export const getProductController: RequestHandler = async (req, res, next) => {
       message: "All Products",
       products,
     });
-
   } catch (error: any) {
     console.log(error);
     res.status(500).send({

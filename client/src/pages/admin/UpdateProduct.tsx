@@ -1,32 +1,37 @@
 import { Select } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
+import ICategory from "../../interfaces/ICategory";
+import React from "react";
 
 const { Option } = Select;
 
 const UpdateProduct: React.FC = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const [categories, setCategories] = useState([]);
+
+  const [categories, setCategories] = useState<ICategory[]>([]);
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState("");
-  const [photo, setPhoto] = useState("");
+  const [photo, setPhoto] = useState<File | null>(null);
   const [id, setId] = useState("");
 
-  //get single product
+  // Get Product
   const getSingleProduct = async () => {
     try {
       const { data } = await axios.get(
         `/api/v1/product/get-product/${params.slug}`
       );
+
       setName(data.product.name);
       setId(data.product._id);
       setDescription(data.product.description);
@@ -37,13 +42,11 @@ const UpdateProduct: React.FC = () => {
       setCategory(data.product.category._id);
     } catch (error) {
       console.log(error);
+      toast.error("Something wwent wrong in getting product");
     }
   };
-  useEffect(() => {
-    getSingleProduct();
-    //eslint-disable-next-line
-  }, []);
-  //get all category
+
+  // Get Categories
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get("/api/v1/category/get-category");
@@ -52,17 +55,19 @@ const UpdateProduct: React.FC = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something wwent wrong in getting catgeory");
+      toast.error("Something went wrong in getting category");
     }
   };
 
   useEffect(() => {
+    getSingleProduct();
     getAllCategory();
   }, []);
 
-  //create product function
-  const handleUpdate = async (e) => {
+  // Update Product
+  const handleUpdate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
     try {
       const productData = new FormData();
       productData.append("name", name);
@@ -71,19 +76,21 @@ const UpdateProduct: React.FC = () => {
       productData.append("quantity", quantity);
       photo && productData.append("photo", photo);
       productData.append("category", category);
-      const { data } = axios.put(
+
+      const { data } = await axios.put(
         `/api/v1/product/update-product/${id}`,
         productData
       );
+
       if (data?.success) {
-        toast.error(data?.message);
-      } else {
         toast.success("Product Updated Successfully");
         navigate("/dashboard/admin/products");
+      } else {
+        toast.error(data?.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error("something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
@@ -95,20 +102,22 @@ const UpdateProduct: React.FC = () => {
       const { data } = await axios.delete(
         `/api/v1/product/delete-product/${id}`
       );
-      toast.success("Product DEleted Succfully");
+      toast.success("Product Deleted Successfully");
       navigate("/dashboard/admin/products");
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
     }
   };
+
   return (
-    <Layout title={"Dashboard - Create Product"}>
+    <Layout title={"Dashboard - Update Product"}>
       <div className="container-fluid m-3 p-3">
         <div className="row">
           <div className="col-md-3">
             <AdminMenu />
           </div>
+
           <div className="col-md-9">
             <h1>Update Product</h1>
             <div className="m-1 w-75">
@@ -122,42 +131,58 @@ const UpdateProduct: React.FC = () => {
                   setCategory(value);
                 }}
                 value={category}
+                data-testid="category-input"
               >
                 {categories?.map((c) => (
-                  <Option key={c._id} value={c._id}>
+                  <Option
+                    key={c._id}
+                    value={c._id}
+                    data-testid={`category-option-${c._id}`}
+                  >
                     {c.name}
                   </Option>
                 ))}
               </Select>
               <div className="mb-3">
-                <label className="btn btn-outline-secondary col-md-12">
+                <label
+                  className="btn btn-outline-secondary col-md-12"
+                  data-testid="photo-label"
+                >
                   {photo ? photo.name : "Upload Photo"}
                   <input
                     type="file"
                     name="photo"
                     accept="image/*"
-                    onChange={(e) => setPhoto(e.target.files[0])}
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setPhoto(e.target.files[0]);
+                      }
+                    }}
                     hidden
+                    data-testid="photo-input"
                   />
                 </label>
               </div>
+
               <div className="mb-3">
                 {photo ? (
-                  <div className="text-center">
+                  <div className="text-center" data-testid="photo-preview">
                     <img
                       src={URL.createObjectURL(photo)}
                       alt="product_photo"
                       height={"200px"}
                       className="img img-responsive"
+                      data-testid="photo-img"
                     />
                   </div>
                 ) : (
-                  <div className="text-center">
+                  <div className="text-center" data-testid="existing-photo">
                     <img
                       src={`/api/v1/product/product-photo/${id}`}
                       alt="product_photo"
                       height={"200px"}
                       className="img img-responsive"
+                      data-testid="photo-img"
                     />
                   </div>
                 )}
@@ -166,17 +191,18 @@ const UpdateProduct: React.FC = () => {
                 <input
                   type="text"
                   value={name}
-                  placeholder="write a name"
+                  placeholder="Write a name"
                   className="form-control"
+                  data-testid="name-input"
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div className="mb-3">
                 <textarea
-                  type="text"
                   value={description}
-                  placeholder="write a description"
+                  placeholder="Write a description"
                   className="form-control"
+                  data-testid="description-input"
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
@@ -185,8 +211,9 @@ const UpdateProduct: React.FC = () => {
                 <input
                   type="number"
                   value={price}
-                  placeholder="write a Price"
+                  placeholder="Write a Price"
                   className="form-control"
+                  data-testid="price-input"
                   onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
@@ -194,8 +221,9 @@ const UpdateProduct: React.FC = () => {
                 <input
                   type="number"
                   value={quantity}
-                  placeholder="write a quantity"
+                  placeholder="Write a quantity"
                   className="form-control"
+                  data-testid="quantity-input"
                   onChange={(e) => setQuantity(e.target.value)}
                 />
               </div>
@@ -209,10 +237,15 @@ const UpdateProduct: React.FC = () => {
                   onChange={(value) => {
                     setShipping(value);
                   }}
-                  value={shipping ? "yes" : "No"}
+                  value={shipping ? "Yes" : "No"}
+                  data-testid="shipping-input"
                 >
-                  <Option value="0">No</Option>
-                  <Option value="1">Yes</Option>
+                  <Option value="0" data-testid="no-shipping-option">
+                    No
+                  </Option>
+                  <Option value="1" data-testid="yes-shipping-option">
+                    Yes
+                  </Option>
                 </Select>
               </div>
               <div className="mb-3">
