@@ -4,6 +4,14 @@ import productModel from "../models/productModel";
 // mock the productModel
 jest.mock("../models/productModel");
 
+// mock braintee - payment
+jest.mock("braintree", () => {
+  return {
+    BraintreeGateway: jest.fn().mockImplementation(() => ({})),
+    Environment: { Sandbox: "Sandbox", Production: "Production" },
+  };
+});
+
 describe("getProductController", () => {
   let mockReq: any;
   let mockRes: any;

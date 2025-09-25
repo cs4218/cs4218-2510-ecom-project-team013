@@ -1,7 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import axios from "axios";
-import Products from "./Products";
 import { toast } from "react-hot-toast";
 import userEvent from "@testing-library/user-event";
 
@@ -23,7 +22,10 @@ jest.mock("react-hot-toast", () => ({
 
 // Setup Mock API
 jest.mock("axios");
-const mockedAxiosGet = axios.get as jest.MockedFunction<typeof axios.get>;
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+// Component Under test
+import Products from "./Products";
 
 const fakeProducts = [
   {
@@ -99,7 +101,7 @@ const renderPage = () => {
 
 describe("Products Page", () => {
   it("Renders products from API", async () => {
-    mockedAxiosGet.mockResolvedValueOnce({ data: { products: fakeProducts } });
+    mockedAxios.get.mockResolvedValueOnce({ data: { products: fakeProducts } });
 
     renderPage();
 
@@ -108,7 +110,7 @@ describe("Products Page", () => {
   });
 
   it("Calls toast with error message when API fails", async () => {
-    mockedAxiosGet.mockRejectedValueOnce(new Error("Network Error"));
+    mockedAxios.get.mockRejectedValueOnce(new Error("Network Error"));
 
     renderPage();
 
@@ -118,13 +120,15 @@ describe("Products Page", () => {
   });
 
   it("navigates to product detail page on click", async () => {
-    mockedAxiosGet.mockResolvedValueOnce({ data: { products: fakeProducts } });
+    mockedAxios.get.mockResolvedValueOnce({ data: { products: fakeProducts } });
 
     renderPage();
 
     const renderedProducts = await screen.findAllByTestId(/div-product-/i);
 
-    await userEvent.click(renderedProducts[0]);
+    await act(async () => {
+      userEvent.click(renderedProducts[0]);
+    });
 
     expect(await screen.findByText("Mock Product Page")).toBeInTheDocument();
   });
