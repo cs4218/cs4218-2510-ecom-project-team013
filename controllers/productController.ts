@@ -127,13 +127,28 @@ export const getSingleProductController: RequestHandler = async (
 };
 
 // get photo
-export const productPhotoController: RequestHandler = async (req, res) => {
+export const productPhotoController: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
   try {
     const product = await productModel.findById(req.params.pid).select("photo");
-    if (product.photo.data) {
-      res.set("Content-type", product.photo.contentType);
-      return res.status(200).send(product.photo.data);
+
+    if (
+      !product ||
+      !product.photo ||
+      !product.photo.data ||
+      !product.photo.contentType
+    ) {
+      return res.status(404).send({
+        success: false,
+        message: "Photo not found for this product",
+      });
     }
+
+    res.set("Content-Type", product.photo.contentType);
+    return res.status(200).send(product.photo.data);
   } catch (error) {
     console.log(error);
     res.status(500).send({
