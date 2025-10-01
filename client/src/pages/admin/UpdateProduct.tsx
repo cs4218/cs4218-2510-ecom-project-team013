@@ -178,13 +178,17 @@ const UpdateProduct: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-center" data-testid="existing-photo">
-                    <img
-                      src={`/api/v1/product/product-photo/${id}`}
-                      alt="product_photo"
-                      height={"200px"}
-                      className="img img-responsive"
-                      data-testid="existing-photo-img"
-                    />
+                    {id && (
+                      <div className="text-center" data-testid="existing-photo">
+                        <img
+                          src={`/api/v1/product/product-photo/${id}`}
+                          alt="product_photo"
+                          height={"200px"}
+                          className="img img-responsive"
+                          data-testid="existing-photo-img"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
