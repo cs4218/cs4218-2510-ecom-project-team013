@@ -97,15 +97,18 @@ const UpdateProduct: React.FC = () => {
       const { data } = await axios.delete(
         `/api/v1/product/delete-product/${id}`
       );
-      if (data?.success) {
-        toast.success("Product Deleted Successfully");
-        navigate("/dashboard/admin/products");
-      } else {
-        toast.error(data?.message);
-      }
-    } catch (error) {
+
+      if (!data.success) throw new Error(data.message);
+
+      toast.success("Product Deleted Successfully");
+      navigate("/dashboard/admin/products");
+    } catch (error: any) {
       console.log(error);
-      toast.error("Something went wrong");
+      const message =
+        error?.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      toast.error(message);
     }
   };
 

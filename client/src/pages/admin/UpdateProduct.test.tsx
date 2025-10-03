@@ -749,7 +749,7 @@ describe("Update Product", () => {
     expect(mockedNavigate).not.toHaveBeenCalled();
   });
 
-  it("shows error toast when API call throws", async () => {
+  it("shows error toast with custom msg when API call throws with msg", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
     mockedAxios.get.mockImplementation((url) => {
@@ -762,6 +762,43 @@ describe("Update Product", () => {
 
     jest.spyOn(window, "confirm").mockReturnValue(true);
     mockedAxios.delete.mockRejectedValue(new Error("Network Error"));
+
+    renderPage();
+
+    // Wait for data to be loaded
+    const categorySelect = (await screen.findByTestId(
+      "category-input"
+    )) as HTMLSelectElement;
+    await waitFor(() => {
+      expect(categorySelect.value).toBe(productData.product.category._id);
+    });
+
+    // Act
+    const deleteBtn = screen.getByTestId("delete-btn");
+    await act(async () => {
+      userEvent.click(deleteBtn);
+    });
+
+    expect(mockedAxios.delete).toHaveBeenCalledWith(
+      `/api/v1/product/delete-product/1`
+    );
+    expect(toast.error).toHaveBeenCalledWith("Network Error");
+    expect(mockedNavigate).not.toHaveBeenCalled();
+  });
+
+  it("shows error toast with default msg when API call throws without msg", async () => {
+    mockedUseParams.mockReturnValue({ slug: "test-slug" });
+
+    mockedAxios.get.mockImplementation((url) => {
+      if (url.includes("/get-product/"))
+        return Promise.resolve({ data: productData });
+      if (url.includes("/get-category"))
+        return Promise.resolve({ data: categoriesData });
+      return Promise.reject(new Error("Error"));
+    });
+
+    jest.spyOn(window, "confirm").mockReturnValue(true);
+    mockedAxios.delete.mockRejectedValue(new Error());
 
     renderPage();
 

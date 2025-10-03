@@ -375,7 +375,6 @@ describe("deleteProductController", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       message: "Error while deleting product",
-      error: expect.any(Error),
     });
   });
 });

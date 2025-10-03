@@ -184,7 +184,6 @@ export const deleteProductController: RequestHandler = async (
     res.status(500).send({
       success: false,
       message: "Error while deleting product",
-      error,
     });
   }
 };
