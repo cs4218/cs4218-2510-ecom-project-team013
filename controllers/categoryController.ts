@@ -1,6 +1,7 @@
+import type { RequestHandler } from "express";
 import slugify from "slugify";
 import categoryModel from "../models/categoryModel.js";
-import type { RequestHandler } from "express";
+
 export const createCategoryController: RequestHandler = async (req, res) => {
   try {
     const { name } = req.body;
@@ -18,16 +19,17 @@ export const createCategoryController: RequestHandler = async (req, res) => {
       name,
       slug: slugify(name),
     }).save();
-    res.status(201).send({
+    return res.status(201).send({
       success: true,
       message: "new category created",
       category,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send({
+
+    return res.status(500).send({
       success: false,
-      errro,
+      errro: error,
       message: "Errro in Category",
     });
   }
