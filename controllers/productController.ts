@@ -20,9 +20,9 @@ const gateway = new braintree.BraintreeGateway({
 export const createProductController: RequestHandler = async (req, res) => {
   try {
     const { name, description, price, category, quantity, shipping } =
-      req.fields;
-    const { photo } = req.files;
-    //alidation
+      (req as any).fields || {};
+    const { photo } = (req as any).files || {};
+    // validation
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name is Required" });
@@ -40,7 +40,10 @@ export const createProductController: RequestHandler = async (req, res) => {
           .send({ error: "photo is Required and should be less then 1mb" });
     }
 
-    const products = new productModel({ ...req.fields, slug: slugify(name) });
+    const products = new productModel({
+      ...(req as any).fields,
+      slug: slugify(name),
+    });
     if (photo) {
       products.photo.data = fs.readFileSync(photo.path);
       products.photo.contentType = photo.type;
@@ -82,7 +85,7 @@ export const getProductController: RequestHandler = async (req, res, next) => {
     res.status(500).send({
       success: false,
       message: "Erorr in getting products",
-      error: error.message,
+      error: (error as any).message,
     });
   }
 };
@@ -94,7 +97,13 @@ export const getSingleProductController: RequestHandler = async (
   next
 ) => {
   try {
-    const { slug } = req.params;
+    const slug = req.params?.slug;
+    if (!slug) {
+      return res.status(400).send({
+        success: false,
+        message: "slug is required",
+      });
+    }
 
     const product = await productModel
       .findOne({ slug })
@@ -102,24 +111,22 @@ export const getSingleProductController: RequestHandler = async (
       .populate("category");
 
     if (!product) {
-      res.status(404).send({
+      return res.status(404).send({
         success: false,
         message: "Product not found",
-        product,
       });
     }
 
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
-      message: "Single Product Fetched",
+      message: "Single product fetched",
       product,
     });
   } catch (error) {
     console.log(error);
-
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
-      message: "Eror while getitng single product",
+      message: "Error while getting single product",
       error,
     });
   }
@@ -132,27 +139,32 @@ export const productPhotoController: RequestHandler = async (
   next
 ) => {
   try {
-    const product = await productModel.findById(req.params.pid).select("photo");
+    const { pid } = req.params || {};
+    const product = await productModel.findById(pid).select("photo");
 
-    if (
-      !product ||
-      !product.photo ||
-      !product.photo.data ||
-      !product.photo.contentType
-    ) {
+    if (!product) {
       return res.status(404).send({
         success: false,
-        message: "Photo not found for this product",
+        message: "Product not found",
       });
     }
 
-    res.set("Content-Type", product.photo.contentType);
-    return res.status(200).send(product.photo.data);
+    const data = product?.photo?.data;
+    if (!data || (Buffer.isBuffer(data) && data.length === 0)) {
+      return res.status(404).send({
+        success: false,
+        message: "Photo not found",
+      });
+    }
+
+    const contentType = product.photo.contentType || "application/octet-stream";
+    res.set("Content-Type", contentType);
+    return res.status(200).send(data);
   } catch (error) {
     console.log(error);
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
-      message: "Erorr while getting photo",
+      message: "Error while getting photo",
       error,
     });
   }
@@ -275,7 +287,7 @@ export const updateProductController: RequestHandler = async (req, res) => {
 export const productFiltersController: RequestHandler = async (req, res) => {
   try {
     const { checked, radio } = req.body;
-    const args = {};
+    const args: any = {};
     if (checked.length > 0) args.category = checked;
     if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
     const products = await productModel.find(args);
@@ -315,7 +327,9 @@ export const productCountController: RequestHandler = async (req, res) => {
 export const productListController: RequestHandler = async (req, res) => {
   try {
     const perPage = 6;
-    const page = req.params.page ? req.params.page : 1;
+    const page = (req.params as any).page
+      ? Number((req.params as any).page)
+      : 1;
     const products = await productModel
       .find({})
       .select("-photo")
@@ -362,7 +376,14 @@ export const searchProductController: RequestHandler = async (req, res) => {
 // similar products
 export const realtedProductController: RequestHandler = async (req, res) => {
   try {
-    const { pid, cid } = req.params;
+    const { pid, cid } = req.params || {};
+    if (!pid || !cid) {
+      return res.status(400).send({
+        success: false,
+        message: "Both pid and cid are required",
+      });
+    }
+
     const products = await productModel
       .find({
         category: cid,
@@ -371,21 +392,22 @@ export const realtedProductController: RequestHandler = async (req, res) => {
       .select("-photo")
       .limit(3)
       .populate("category");
-    res.status(200).send({
+
+    return res.status(200).send({
       success: true,
       products,
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send({
+    return res.status(500).send({
       success: false,
-      message: "error while geting related product",
+      message: "Error while getting related products",
       error,
     });
   }
 };
 
-// get prdocyst by catgory
+// get products by category
 export const productCategoryController: RequestHandler = async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
@@ -424,9 +446,9 @@ export const braintreeTokenController: RequestHandler = async (req, res) => {
 //payment
 export const brainTreePaymentController: RequestHandler = async (req, res) => {
   try {
-    const { nonce, cart } = req.body;
+    const { nonce, cart } = req.body as any;
     let total = 0;
-    cart.map((i) => {
+    cart.map((i: any) => {
       total += i.price;
     });
     const newTransaction = gateway.transaction.sale(
@@ -439,10 +461,10 @@ export const brainTreePaymentController: RequestHandler = async (req, res) => {
       },
       function (error, result) {
         if (result) {
-          const order = new orderModel({
+          const order = new (orderModel as any)({
             products: cart,
             payment: result,
-            buyer: req.user._id,
+            buyer: (req as any).user._id,
           }).save();
           res.json({ ok: true });
         } else {
