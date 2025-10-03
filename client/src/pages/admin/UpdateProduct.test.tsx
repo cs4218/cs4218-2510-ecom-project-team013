@@ -570,7 +570,7 @@ describe("Update Product", () => {
     expect(mockedNavigate).not.toHaveBeenCalled();
   });
 
-  it("shows toast error when update throws an exception", async () => {
+  it("shows toast error with exception msg when update throws an exception with msg", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
     mockedAxios.get.mockImplementation((url) => {
@@ -582,6 +582,39 @@ describe("Update Product", () => {
     });
 
     mockedAxios.put.mockRejectedValue(new Error("Network Error"));
+
+    renderPage();
+
+    // Wait for data to be loaded
+    const categorySelect = (await screen.findByTestId(
+      "category-input"
+    )) as HTMLSelectElement;
+    await waitFor(() => {
+      expect(categorySelect.value).toBe(productData.product.category._id);
+    });
+
+    // Act
+    const updateBtn = screen.getByTestId("update-btn");
+    await act(async () => {
+      userEvent.click(updateBtn);
+    });
+
+    expect(toast.error).toHaveBeenCalledWith("Network Error");
+    expect(mockedNavigate).not.toHaveBeenCalled();
+  });
+
+  it("shows toast error without exception msg when update throws an exception without msg", async () => {
+    mockedUseParams.mockReturnValue({ slug: "test-slug" });
+
+    mockedAxios.get.mockImplementation((url) => {
+      if (url.includes("/get-product/"))
+        return Promise.resolve({ data: productData });
+      if (url.includes("/get-category"))
+        return Promise.resolve({ data: categoriesData });
+      return Promise.reject(new Error("Error"));
+    });
+
+    mockedAxios.put.mockRejectedValue(new Error());
 
     renderPage();
 

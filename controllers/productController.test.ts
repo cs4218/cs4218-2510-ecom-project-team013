@@ -505,7 +505,6 @@ describe("updateProductController", () => {
       expect.objectContaining({
         success: false,
         message: "Error in Update product",
-        error: expect.any(Error),
       })
     );
   });
@@ -516,7 +515,12 @@ describe("updateProductController", () => {
     await updateProductController(mockReq, mockRes, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
-    expect(mockRes.send).toHaveBeenCalledWith({ error: "Name is Required" });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: false,
+        message: "Name is Required",
+      })
+    );
   });
 
   it("should return validation error if description is missing", async () => {
@@ -525,9 +529,12 @@ describe("updateProductController", () => {
     await updateProductController(mockReq, mockRes, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
-    expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Description is Required",
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: false,
+        message: "Description is Required",
+      })
+    );
   });
 
   it("should return validation error if price is missing", async () => {
@@ -536,7 +543,12 @@ describe("updateProductController", () => {
     await updateProductController(mockReq, mockRes, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
-    expect(mockRes.send).toHaveBeenCalledWith({ error: "Price is Required" });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: false,
+        message: "Price is Required",
+      })
+    );
   });
 
   it("should return validation error if category is missing", async () => {
@@ -545,9 +557,12 @@ describe("updateProductController", () => {
     await updateProductController(mockReq, mockRes, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
-    expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Category is Required",
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: false,
+        message: "Category is Required",
+      })
+    );
   });
 
   it("should return validation error if quantity is missing", async () => {
@@ -556,9 +571,12 @@ describe("updateProductController", () => {
     await updateProductController(mockReq, mockRes, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
-    expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Quantity is Required",
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: false,
+        message: "Quantity is Required",
+      })
+    );
   });
 
   it("should return validation error if shipping is undefined", async () => {
@@ -567,9 +585,12 @@ describe("updateProductController", () => {
     await updateProductController(mockReq, mockRes, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
-    expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Shipping is Required",
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: false,
+        message: "Shipping is Required",
+      })
+    );
   });
 
   it("should return validation error if shipping is null", async () => {
@@ -578,9 +599,12 @@ describe("updateProductController", () => {
     await updateProductController(mockReq, mockRes, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
-    expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Shipping is Required",
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: false,
+        message: "Shipping is Required",
+      })
+    );
   });
 
   it("should return validation error if photo size exceeds 1MB", async () => {
@@ -593,8 +617,11 @@ describe("updateProductController", () => {
     await updateProductController(mockReq, mockRes, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
-    expect(mockRes.send).toHaveBeenCalledWith({
-      error: "Photo should be less than 1MB",
-    });
+    expect(mockRes.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        success: false,
+        message: "Photo should be less than 1MB",
+      })
+    );
   });
 });

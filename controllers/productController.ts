@@ -199,19 +199,33 @@ export const updateProductController: RequestHandler = async (req, res) => {
     // Validation
     switch (true) {
       case !name:
-        return res.status(400).send({ error: "Name is Required" });
+        return res
+          .status(400)
+          .send({ success: false, message: "Name is Required" });
       case !description:
-        return res.status(400).send({ error: "Description is Required" });
+        return res
+          .status(400)
+          .send({ success: false, message: "Description is Required" });
       case !price:
-        return res.status(400).send({ error: "Price is Required" });
+        return res
+          .status(400)
+          .send({ success: false, message: "Price is Required" });
       case !category:
-        return res.status(400).send({ error: "Category is Required" });
+        return res
+          .status(400)
+          .send({ success: false, message: "Category is Required" });
       case !quantity:
-        return res.status(400).send({ error: "Quantity is Required" });
+        return res
+          .status(400)
+          .send({ success: false, message: "Quantity is Required" });
       case shipping === undefined || shipping === null:
-        return res.status(400).send({ error: "Shipping is Required" });
+        return res
+          .status(400)
+          .send({ success: false, message: "Shipping is Required" });
       case photo && (photo as any).size > 1000000:
-        return res.status(400).send({ error: "Photo should be less than 1MB" });
+        return res
+          .status(400)
+          .send({ success: false, message: "Photo should be less than 1MB" });
     }
 
     const updateData: any = {
@@ -255,7 +269,6 @@ export const updateProductController: RequestHandler = async (req, res) => {
     res.status(500).send({
       success: false,
       message: "Error in Update product",
-      error,
     });
   }
 };

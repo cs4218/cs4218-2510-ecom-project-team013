@@ -44,9 +44,7 @@ const UpdateProduct: React.FC = () => {
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get("/api/v1/category/get-category");
-      if (data?.success) {
-        setCategories(data?.category);
-      }
+      setCategories(data.category);
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong in getting category");
@@ -77,15 +75,17 @@ const UpdateProduct: React.FC = () => {
         productData
       );
 
-      if (data?.success) {
-        toast.success("Product Updated Successfully");
-        navigate("/dashboard/admin/products");
-      } else {
-        toast.error(data?.message);
-      }
-    } catch (error) {
+      if (!data.success) throw new Error(data.message);
+
+      toast.success(data.message);
+      navigate("/dashboard/admin/products");
+    } catch (error: any) {
       console.log(error);
-      toast.error("Something went wrong");
+      const message =
+        error?.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      toast.error(message);
     }
   };
 
