@@ -30,7 +30,7 @@ export const createCategoryController: RequestHandler = async (req, res) => {
     return res.status(500).send({
       success: false,
       errro: error,
-      message: "Errro in Category",
+      message: "Error in Category",
     });
   }
 };
