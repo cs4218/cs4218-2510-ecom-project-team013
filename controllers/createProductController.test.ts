@@ -59,7 +59,7 @@ describe("createCategoryController (thorough, focused)", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith({
       success: true,
-      message: "Category Already Exisits",
+      message: "Category Already Exists",
     });
     expect(mockSave).not.toHaveBeenCalled();
   });
