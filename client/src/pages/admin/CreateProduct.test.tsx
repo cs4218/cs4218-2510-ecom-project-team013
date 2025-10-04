@@ -56,8 +56,6 @@ jest.mock("react-router-dom", () => {
 
 // AntD Select mock — respects explicit data-testid; falls back to placeholder for convenience
 jest.mock("antd", () => {
-  const React = require("react");
-
   const Option = ({ value, children }: any) =>
     React.createElement(
       "option",

@@ -1,68 +1,53 @@
 import type { Request, Response } from "express";
+import fs from "fs";
+import slugify from "slugify";
+import productModel from "../models/productModel";
+import { createProductController } from "./productController";
 
 jest.mock("braintree", () => ({
-  __esModule: true,
-  default: {
-    BraintreeGateway: jest.fn().mockImplementation(() => ({})),
-    Environment: { Sandbox: "Sandbox" },
-  },
+  BraintreeGateway: jest.fn().mockImplementation(() => ({})),
+  Environment: { Sandbox: "Sandbox" },
 }));
 
 const mockProductSave = jest.fn();
 
-const MockProductModel = jest.fn().mockImplementation(function (
-  this: any,
-  payload: any
-) {
-  Object.assign(this, payload);
-  // ensure .photo exists like in mongoose schema shape
-  this.photo = this.photo || {};
-  this.save = mockProductSave;
-  return this;
-});
-
 jest.mock(
   "../models/productModel",
-  () => ({
-    __esModule: true,
-    default: MockProductModel,
-  }),
-  { virtual: true }
-);
-
-jest.mock(
-  "slugify",
-  () => ({
-    __esModule: true,
-    default: jest.fn((s: string) => `slug-${String(s)}`),
-  }),
-  { virtual: true }
-);
-
-// The controller imports `fs` as a default import then calls `fs.readFileSync(...)`.
-// So provide a default export that has readFileSync.
-jest.mock(
-  "fs",
   () => {
-    const readFileSync = jest.fn();
-    return {
-      __esModule: true,
-      default: { readFileSync },
-      readFileSync, // also expose at module root (harmless; keeps flexibility)
-    };
+    const MockProductModel = jest.fn().mockImplementation(function (
+      this: any,
+      payload: any
+    ) {
+      Object.assign(this, payload);
+      // ensure .photo exists like in mongoose schema shape
+      this.photo = this.photo || {};
+      this.save = mockProductSave;
+      return this;
+    });
+    return MockProductModel;
   },
   { virtual: true }
 );
 
-// Now require after mocks are set up
-const { createProductController } = require("./productController");
-const slugify = require("slugify").default as (s: string) => string;
-const fs = require("fs") as { readFileSync: jest.Mock };
+jest.mock("slugify", () => jest.fn((s: string) => `slug-${String(s)}`), {
+  virtual: true,
+});
+
+jest.mock(
+  "fs",
+  () => ({
+    ...jest.requireActual("fs"),
+    readFileSync: jest.fn(),
+  }),
+  { virtual: true }
+);
 
 describe("createProductController", () => {
   let res: Response & { status: jest.Mock; send: jest.Mock };
   const reqOf = (fields: any = {}, files: any = {}) =>
     ({ fields, files }) as unknown as Request;
+
+  const MockProductModel = productModel as unknown as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -169,7 +154,7 @@ describe("createProductController", () => {
     });
     expect(slugify).toHaveBeenCalledWith("Phone");
 
-    const instance = (MockProductModel as jest.Mock).mock.instances[0];
+    const instance = MockProductModel.mock.instances[0];
     expect(mockProductSave).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.send).toHaveBeenCalledWith({
@@ -199,7 +184,7 @@ describe("createProductController", () => {
       undefined as any
     );
 
-    const instance = (MockProductModel as jest.Mock).mock.instances[0];
+    const instance = MockProductModel.mock.instances[0];
     expect(fs.readFileSync).toHaveBeenCalledWith("C:\\img.png");
     expect(instance.photo.data).toBeInstanceOf(Buffer);
     expect(instance.photo.contentType).toBe("image/png");
