@@ -114,9 +114,17 @@ function renderPage() {
   return render(<CreateCategory />);
 }
 
+let consoleLogSpy: jest.SpyInstance;
+
 beforeEach(() => {
   jest.resetAllMocks();
   cleanup();
+  // silence console.log noise from mocked rejections in these tests
+  consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  consoleLogSpy?.mockRestore();
 });
 
 /* ===================== Tests ===================== */
@@ -210,7 +218,8 @@ describe("Admin/CreateCategory (unit) — tests uncover bugs first", () => {
       expect(mockedAxios.get).toHaveBeenCalledTimes(2);
     });
 
-    expect(screen.getByText("NewCat")).toBeInTheDocument();
+    // Wait for the re-fetched row to render
+    expect(await screen.findByText("NewCat")).toBeInTheDocument();
   });
 
   test("create category API returns success:false → shows error toast with API message", async () => {
@@ -362,7 +371,10 @@ describe("Admin/CreateCategory (unit) — tests uncover bugs first", () => {
       expect(mockedAxios.get).toHaveBeenCalledTimes(2);
     });
 
-    expect(screen.queryByText("Phones")).not.toBeInTheDocument();
+    // Wait for the row to be removed after refetch
+    await waitFor(() =>
+      expect(screen.queryByText("Phones")).not.toBeInTheDocument()
+    );
   });
 
   test("delete API returns success:false → shows error toast", async () => {
