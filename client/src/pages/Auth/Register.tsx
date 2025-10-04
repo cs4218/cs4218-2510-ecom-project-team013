@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import "../../styles/AuthStyles.css";
+import api, { type RegisterData } from "../../api";
 import Layout from "../../components/Layout";
+import "../../styles/AuthStyles.css";
 
 const Register: React.FC = () => {
   const [name, setName] = useState("");
@@ -19,7 +19,7 @@ const Register: React.FC = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/v1/auth/register", {
+      const data: RegisterData = {
         name,
         email,
         password,
@@ -27,7 +27,8 @@ const Register: React.FC = () => {
         address,
         DOB,
         answer,
-      });
+      };
+      const res = await api.auth.register(data);
       if (res && res.data.success) {
         toast.success("Register Successfully, please login");
         navigate("/login");

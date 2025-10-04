@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import api, { ProductData } from "../../api";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
 import ICategory from "../../interfaces/ICategory";
@@ -23,9 +23,7 @@ const UpdateProduct: React.FC = () => {
   // Get product
   const getSingleProduct = async () => {
     try {
-      const { data } = await axios.get(
-        `/api/v1/product/get-product/${params.slug}`
-      );
+      const { data } = await api.product.getSingleProduct(params.slug);
       setName(data.product.name);
       setId(data.product._id);
       setDescription(data.product.description);
@@ -43,7 +41,7 @@ const UpdateProduct: React.FC = () => {
   // Get all category
   const getAllCategory = async () => {
     try {
-      const { data } = await axios.get("/api/v1/category/get-category");
+      const { data } = await api.category.getAllCategories();
       setCategories(data.category);
     } catch (error) {
       console.log(error);
@@ -61,19 +59,17 @@ const UpdateProduct: React.FC = () => {
     e.preventDefault();
 
     try {
-      const productData = new FormData();
-      productData.append("name", name);
-      productData.append("description", description);
-      productData.append("price", price);
-      productData.append("quantity", quantity);
-      photo && productData.append("photo", photo);
-      productData.append("category", category);
-      productData.append("shipping", shipping.toString());
+      const productData: ProductData = {
+        name: name,
+        description: description,
+        price: price,
+        quantity: quantity,
+        photo: photo ?? undefined,
+        category: category,
+        shipping: shipping.toString(),
+      };
 
-      const { data } = await axios.put(
-        `/api/v1/product/update-product/${id}`,
-        productData
-      );
+      const { data } = await api.product.updateProduct(id, productData);
 
       if (!data.success) throw new Error(data.message);
 
@@ -94,9 +90,7 @@ const UpdateProduct: React.FC = () => {
     try {
       let answer = window.confirm("Are You Sure want to delete this product ?");
       if (!answer) return;
-      const { data } = await axios.delete(
-        `/api/v1/product/delete-product/${id}`
-      );
+      const { data } = await api.product.deleteProduct(id);
 
       if (!data.success) throw new Error(data.message);
 

@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import api from "../api";
 
 type Category = { _id: string; name: string };
 
@@ -11,7 +11,7 @@ export default function useCategory() {
 
     (async () => {
       try {
-        const { data } = await axios.get("/api/v1/category/get-category");
+        const { data } = await api.category.getAllCategories();
 
         if (!mounted) return;
 

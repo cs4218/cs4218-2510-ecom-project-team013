@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import api from "../../api";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
 import IProduct from "../../interfaces/IProduct";
@@ -12,7 +12,7 @@ const Products: React.FC = () => {
   //GET all products
   const getAllProducts = async () => {
     try {
-      const { data } = await axios.get("/api/v1/product/get-product");
+      const { data } = await api.product.getAllProducts();
       setProducts(data.products);
     } catch (error) {
       console.log(error);

@@ -1,8 +1,8 @@
 import { Select } from "antd";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import api, { ProductData } from "../../api";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
 
@@ -31,7 +31,7 @@ const CreateProduct: React.FC = () => {
   // get all category
   const getAllCategory = async () => {
     try {
-      const { data } = await axios.get("/api/v1/category/get-category");
+      const { data } = await api.category.getAllCategories();
       if (data?.success) {
         setCategories(data.category as Category[]);
       } else {
@@ -54,21 +54,16 @@ const CreateProduct: React.FC = () => {
   const handleCreate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      const productData = new FormData();
-      productData.append("name", name);
-      productData.append("description", description);
-      productData.append("price", price);
-      productData.append("quantity", quantity);
-      productData.append("category", category);
-      productData.append("shipping", shipping);
-      if (photo) {
-        productData.append("photo", photo);
-      }
-
-      const { data } = await axios.post(
-        "/api/v1/product/create-product",
-        productData
-      );
+      const productData: ProductData = {
+        name: name,
+        description: description,
+        price: price,
+        quantity: quantity,
+        category: category,
+        shipping: shipping,
+        photo: photo ?? undefined,
+      };
+      const { data } = await api.product.createProduct(productData);
 
       if (data?.success) {
         toast.success("Product Created Successfully");

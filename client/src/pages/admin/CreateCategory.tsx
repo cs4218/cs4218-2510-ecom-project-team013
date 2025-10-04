@@ -1,9 +1,9 @@
 import { Modal } from "antd";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import CategoryForm from "../../components/Form/CategoryForm";
+import api from "../../api";
 import AdminMenu from "../../components/AdminMenu";
+import CategoryForm from "../../components/Form/CategoryForm";
 import Layout from "../../components/Layout";
 
 const CreateCategory: React.FC = () => {
@@ -16,9 +16,7 @@ const CreateCategory: React.FC = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("/api/v1/category/create-category", {
-        name,
-      });
+      const { data } = await api.category.createCategory(name);
       if (data?.success) {
         toast.success(`${name} is created`);
         getAllCategory();
@@ -34,13 +32,13 @@ const CreateCategory: React.FC = () => {
   //get all cat
   const getAllCategory = async () => {
     try {
-      const { data } = await axios.get("/api/v1/category/get-category");
+      const { data } = await api.category.getAllCategories();
       if (data.success) {
         setCategories(data.category);
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something wwent wrong in getting catgeory");
+      toast.error("Something went wrong in getting category");
     }
   };
 
@@ -52,9 +50,9 @@ const CreateCategory: React.FC = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.put(
-        `/api/v1/category/update-category/${selected._id}`,
-        { name: updatedName }
+      const { data } = await api.category.updateCategory(
+        selected._id,
+        updatedName
       );
       if (data.success) {
         toast.success(`${updatedName} is updated`);
@@ -72,9 +70,7 @@ const CreateCategory: React.FC = () => {
   //delete category
   const handleDelete = async (pId) => {
     try {
-      const { data } = await axios.delete(
-        `/api/v1/category/delete-category/${pId}`
-      );
+      const { data } = await api.category.deleteCategory(pId);
       if (data.success) {
         toast.success(`category is deleted`);
 
