@@ -3,162 +3,9 @@ import slugify from "slugify";
 import categoryModel from "../models/categoryModel";
 import { createCategoryController } from "./categoryController";
 
-const mockSave = jest.fn();
-
 jest.mock("slugify", () =>
   jest.fn((s: string) => `slug-${String(s).trim().toLowerCase()}`)
 );
-
-jest.mock("../models/categoryModel", () => {
-  const mockCategoryModel = jest.fn().mockImplementation(function (
-    this: any,
-    payload: any
-  ) {
-    this.payload = payload;
-    this.save = mockSave;
-    return this;
-  });
-  (mockCategoryModel as any).findOne = jest.fn();
-  return mockCategoryModel;
-});
-
-describe("createCategoryController — spec-driven", () => {
-  let res: Response & { status: jest.Mock; send: jest.Mock };
-  let consoleSpy: jest.SpyInstance;
-  const mockCategoryModel = categoryModel;
-  const mockFindOne = mockCategoryModel.findOne as jest.Mock;
-
-  const reqOf = (body: any = {}): Request => ({ body }) as any;
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    res = { status: jest.fn().mockReturnThis(), send: jest.fn() } as any;
-    consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
-  });
-
-  afterEach(() => consoleSpy.mockRestore());
-
-  test("400 when name is missing", async () => {
-    await createCategoryController(reqOf({}), res, undefined as any);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      message: "Name is required",
-    });
-    expect(mockFindOne).not.toHaveBeenCalled();
-    expect(mockSave).not.toHaveBeenCalled();
-  });
-
-  test("400 when name is blank (after trim)", async () => {
-    await createCategoryController(
-      reqOf({ name: "   " }),
-      res,
-      undefined as any
-    );
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      message: "Name is required",
-    });
-  });
-
-  test("400 when name is not a string", async () => {
-    await createCategoryController(
-      reqOf({ name: 42 as any }),
-      res,
-      undefined as any
-    );
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      message: "Name must be a string",
-    });
-  });
-
-  test("409 when duplicate exists (case-insensitive), success:false", async () => {
-    (mockFindOne as jest.Mock).mockResolvedValueOnce({
-      _id: "id1",
-      name: "Phones",
-    });
-    await createCategoryController(
-      reqOf({ name: "phones" }),
-      res,
-      undefined as any
-    );
-    expect(mockFindOne).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(409);
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      message: "Category already exists",
-    });
-    expect(mockSave).not.toHaveBeenCalled();
-  });
-
-  test("201 on success: trims, slugifies, returns created doc", async () => {
-    (mockFindOne as jest.Mock).mockResolvedValueOnce(null);
-    const saved = { _id: "new1", name: "Gadgets", slug: "slug-gadgets" };
-    (mockSave as jest.Mock).mockResolvedValueOnce(saved);
-
-    await createCategoryController(
-      reqOf({ name: "  Gadgets  " }),
-      res,
-      undefined as any
-    );
-
-    expect(slugify).toHaveBeenCalledWith("Gadgets");
-    expect(mockCategoryModel).toHaveBeenCalledWith({
-      name: "Gadgets",
-      slug: "slug-gadgets",
-    });
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.send).toHaveBeenCalledWith({
-      success: true,
-      message: "Category created",
-      category: saved,
-    });
-  });
-
-  test("500 when lookup throws: returns error payload", async () => {
-    (mockFindOne as jest.Mock).mockRejectedValueOnce(new Error("db down"));
-    await createCategoryController(reqOf({ name: "X" }), res, undefined as any);
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      message: "Error creating category",
-      error: "db down",
-    });
-  });
-
-  test("500 when save throws: returns error payload", async () => {
-    (mockFindOne as jest.Mock).mockResolvedValueOnce(null);
-    (mockSave as jest.Mock).mockRejectedValueOnce(new Error("write failed"));
-    await createCategoryController(reqOf({ name: "Y" }), res, undefined as any);
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      message: "Error creating category",
-      error: "write failed",
-    });
-  });
-
-  test("409 duplicate when name has regex metacharacters", async () => {
-    (mockFindOne as jest.Mock).mockResolvedValueOnce({
-      _id: "id1",
-      name: "C++",
-    });
-    await createCategoryController(
-      reqOf({ name: "C++" }),
-      res,
-      undefined as any
-    );
-    expect(mockFindOne).toHaveBeenCalledWith({
-      name: { $regex: /^C\+\+$/i }, // or new RegExp('^C\\+\\+$','i')
-    });
-    expect(res.status).toHaveBeenCalledWith(409);
-  });
-});
-
-jest.mock("slugify", () => jest.fn((s) => `slug-${String(s)}`));
 
 jest.mock("../models/categoryModel", () => {
   const mockSave = jest.fn();
@@ -187,56 +34,93 @@ const reqOf = (body: Record<string, unknown> = {}) => ({ body }) as Request;
 const mockFindOne = categoryModel.findOne as jest.Mock;
 const mockSave = (categoryModel as any).save as jest.Mock;
 
-describe("createCategoryController (thorough, focused)", () => {
+describe("createCategoryController — spec-driven", () => {
   const MockCategoryModel = categoryModel as unknown as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test("401 when name is missing; no DB calls", async () => {
+  test("400 when name is missing", async () => {
     const res = mockResponse();
     await createCategoryController(reqOf({}), res);
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.send).toHaveBeenCalledWith({ message: "Name is required" });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Name is required",
+    });
     expect(mockFindOne).not.toHaveBeenCalled();
     expect(mockSave).not.toHaveBeenCalled();
   });
 
-  test("200 + success:true when duplicate exists (repo message preserved)", async () => {
-    mockFindOne.mockResolvedValueOnce({ _id: "dup", name: "Phones" });
-
+  test("400 when name is blank (after trim)", async () => {
     const res = mockResponse();
-    await createCategoryController(reqOf({ name: "Phones" }), res);
-
-    expect(mockFindOne).toHaveBeenCalledWith({ name: "Phones" });
-    expect(res.status).toHaveBeenCalledWith(200);
+    await createCategoryController(reqOf({ name: "   " }), res);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.send).toHaveBeenCalledWith({
-      success: true,
-      message: "Category Already Exists",
+      success: false,
+      message: "Name is required",
+    });
+  });
+
+  test("400 when name is not a string", async () => {
+    const res = mockResponse();
+    await createCategoryController(reqOf({ name: 42 as any }), res);
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Name must be a string",
+    });
+  });
+
+  test("409 when duplicate exists (case-insensitive), success:false", async () => {
+    (mockFindOne as jest.Mock).mockResolvedValueOnce({
+      _id: "id1",
+      name: "Phones",
+    });
+    const res = mockResponse();
+    await createCategoryController(reqOf({ name: "phones" }), res);
+    expect(mockFindOne).toHaveBeenCalledTimes(1);
+    expect(mockFindOne).toHaveBeenCalledWith({ name: "Phones" });
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Category already exists",
     });
     expect(mockSave).not.toHaveBeenCalled();
   });
 
-  test("201 on success: slugify called, model created with slug, returns saved doc", async () => {
+  test("201 on success: trims, slugifies, returns created doc", async () => {
     mockFindOne.mockResolvedValueOnce(null);
-    const saved = { _id: "n1", name: "Gadgets", slug: "slug-Gadgets" };
+    const saved = { _id: "new1", name: "Gadgets", slug: "slug-gadgets" };
     mockSave.mockResolvedValueOnce(saved);
 
     const res = mockResponse();
-    await createCategoryController(reqOf({ name: "Gadgets" }), res);
+    await createCategoryController(reqOf({ name: "  Gadgets  " }), res);
 
     expect(slugify).toHaveBeenCalledWith("Gadgets");
     expect(MockCategoryModel).toHaveBeenCalledWith({
       name: "Gadgets",
-      slug: "slug-Gadgets",
+      slug: "slug-gadgets",
     });
     expect(mockSave).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.send).toHaveBeenCalledWith({
       success: true,
-      message: "new category created",
+      message: "Category created",
       category: saved,
+    });
+  });
+
+  test("500 when lookup throws: returns error payload", async () => {
+    (mockFindOne as jest.Mock).mockRejectedValueOnce(new Error("db down"));
+    const res = mockResponse();
+    await createCategoryController(reqOf({ name: "X" }), res);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith({
+      success: false,
+      message: "Error creating category",
+      error: "db down",
     });
   });
 
@@ -256,20 +140,20 @@ describe("createCategoryController (thorough, focused)", () => {
     });
   });
 
-  test("500 when save throws: returns repo-typo payload and logs", async () => {
+  test("500 when save throws: returns error payload", async () => {
     jest.spyOn(console, "log");
     mockFindOne.mockResolvedValueOnce(null);
     mockSave.mockRejectedValueOnce(new Error("write failed"));
 
     const res = mockResponse();
-    await createCategoryController(reqOf({ name: "Books" }), res);
+    await createCategoryController(reqOf({ name: "Y" }), res);
 
     expect(console.log).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
+      message: "Error creating category",
       error: expect.any(Error),
-      message: "Error in Category",
     });
   });
 
@@ -283,6 +167,19 @@ describe("createCategoryController (thorough, focused)", () => {
       expect.objectContaining({ slug: expect.any(String) })
     );
     expect(mockSave).not.toHaveBeenCalled();
+  });
+
+  test("409 duplicate when name has regex metacharacters", async () => {
+    (mockFindOne as jest.Mock).mockResolvedValueOnce({
+      _id: "id1",
+      name: "C++",
+    });
+    const res = mockResponse();
+    await createCategoryController(reqOf({ name: "C++" }), res);
+    expect(mockFindOne).toHaveBeenCalledWith({
+      name: { $regex: /^C\+\+$/i }, // or new RegExp('^C\\+\\+$','i')
+    });
+    expect(res.status).toHaveBeenCalledWith(409);
   });
 
   test("happy-path call order: findOne → constructor → save → 201 (using built-in call order)", async () => {
