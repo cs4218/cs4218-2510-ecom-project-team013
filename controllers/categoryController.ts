@@ -1,6 +1,7 @@
-import slugify from "slugify";
-import categoryModel from "../models/categoryModel.js";
 import type { RequestHandler } from "express";
+import slugify from "slugify";
+import categoryModel from "../models/categoryModel";
+
 export const createCategoryController: RequestHandler = async (req, res) => {
   try {
     const { name } = req.body;
@@ -11,24 +12,25 @@ export const createCategoryController: RequestHandler = async (req, res) => {
     if (existingCategory) {
       return res.status(200).send({
         success: true,
-        message: "Category Already Exisits",
+        message: "Category Already Exists",
       });
     }
     const category = await new categoryModel({
       name,
       slug: slugify(name),
     }).save();
-    res.status(201).send({
+    return res.status(201).send({
       success: true,
       message: "new category created",
       category,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send({
+
+    return res.status(500).send({
       success: false,
-      errro,
-      message: "Errro in Category",
+      errro: error,
+      message: "Error in Category",
     });
   }
 };
