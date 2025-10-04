@@ -17,7 +17,7 @@ const gateway = new braintree.BraintreeGateway({
   privateKey: process.env.BRAINTREE_PRIVATE_KEY,
 });
 
-export const createProductController: RequestHandler = async (req, res) => {
+export const createProductController = (async (req, res) => {
   try {
     const { name, description, price, category, quantity, shipping } =
       (req as any).fields || {};
@@ -62,10 +62,10 @@ export const createProductController: RequestHandler = async (req, res) => {
       message: "Error in creating product",
     });
   }
-};
+}) satisfies RequestHandler;
 
 //get all products
-export const getProductController: RequestHandler = async (req, res, next) => {
+export const getProductController = (async (req, res) => {
   try {
     const products = await productModel
       .find({})
@@ -88,14 +88,10 @@ export const getProductController: RequestHandler = async (req, res, next) => {
       error: (error as any).message,
     });
   }
-};
+}) satisfies RequestHandler;
 
 // get single product
-export const getSingleProductController: RequestHandler = async (
-  req,
-  res,
-  next
-) => {
+export const getSingleProductController = (async (req, res) => {
   try {
     const slug = req.params?.slug;
     if (!slug) {
@@ -130,14 +126,10 @@ export const getSingleProductController: RequestHandler = async (
       error,
     });
   }
-};
+}) satisfies RequestHandler;
 
 // get photo
-export const productPhotoController: RequestHandler = async (
-  req,
-  res,
-  next
-) => {
+export const productPhotoController = (async (req, res) => {
   try {
     const { pid } = req.params || {};
     const product = await productModel.findById(pid).select("photo");
@@ -168,14 +160,10 @@ export const productPhotoController: RequestHandler = async (
       error,
     });
   }
-};
+}) satisfies RequestHandler;
 
-//delete controller
-export const deleteProductController: RequestHandler = async (
-  req,
-  res,
-  next
-) => {
+// delete controller
+export const deleteProductController = (async (req, res) => {
   try {
     const product = await productModel.findByIdAndDelete(req.params.pid);
 
@@ -197,10 +185,10 @@ export const deleteProductController: RequestHandler = async (
       message: "Error while deleting product",
     });
   }
-};
+}) satisfies RequestHandler;
 
 // Update Product
-export const updateProductController: RequestHandler = async (req, res) => {
+export const updateProductController = (async (req, res) => {
   try {
     const { name, description, price, category, quantity, shipping } =
       req.fields ?? {};
@@ -281,10 +269,10 @@ export const updateProductController: RequestHandler = async (req, res) => {
       message: "Error in Update product",
     });
   }
-};
+}) satisfies RequestHandler;
 
 // filters
-export const productFiltersController: RequestHandler = async (req, res) => {
+export const productFiltersController = (async (req, res) => {
   try {
     const { checked, radio } = req.body;
     const args: any = {};
@@ -303,10 +291,10 @@ export const productFiltersController: RequestHandler = async (req, res) => {
       error,
     });
   }
-};
+}) satisfies RequestHandler;
 
 // product count
-export const productCountController: RequestHandler = async (req, res) => {
+export const productCountController = (async (req, res) => {
   try {
     const total = await productModel.find({}).estimatedDocumentCount();
     res.status(200).send({
@@ -321,10 +309,10 @@ export const productCountController: RequestHandler = async (req, res) => {
       success: false,
     });
   }
-};
+}) satisfies RequestHandler;
 
 // product list base on page
-export const productListController: RequestHandler = async (req, res) => {
+export const productListController = (async (req, res) => {
   try {
     const perPage = 6;
     const page = (req.params as any).page
@@ -348,10 +336,10 @@ export const productListController: RequestHandler = async (req, res) => {
       error,
     });
   }
-};
+}) satisfies RequestHandler;
 
 // search product
-export const searchProductController: RequestHandler = async (req, res) => {
+export const searchProductController = (async (req, res) => {
   try {
     const { keyword } = req.params;
     const resutls = await productModel
@@ -371,10 +359,10 @@ export const searchProductController: RequestHandler = async (req, res) => {
       error,
     });
   }
-};
+}) satisfies RequestHandler;
 
 // similar products
-export const realtedProductController: RequestHandler = async (req, res) => {
+export const realtedProductController = (async (req, res) => {
   try {
     const { pid, cid } = req.params || {};
     if (!pid || !cid) {
@@ -405,10 +393,10 @@ export const realtedProductController: RequestHandler = async (req, res) => {
       error,
     });
   }
-};
+}) satisfies RequestHandler;
 
 // get products by category
-export const productCategoryController: RequestHandler = async (req, res) => {
+export const productCategoryController = (async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
     const products = await productModel.find({ category }).populate("category");
@@ -425,11 +413,11 @@ export const productCategoryController: RequestHandler = async (req, res) => {
       message: "Error While Getting products",
     });
   }
-};
+}) satisfies RequestHandler;
 
 //payment gateway api
 //token
-export const braintreeTokenController: RequestHandler = async (req, res) => {
+export const braintreeTokenController = (async (req, res) => {
   try {
     gateway.clientToken.generate({}, function (err, response) {
       if (err) {
@@ -441,10 +429,10 @@ export const braintreeTokenController: RequestHandler = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-};
+}) satisfies RequestHandler;
 
 //payment
-export const brainTreePaymentController: RequestHandler = async (req, res) => {
+export const brainTreePaymentController = (async (req, res) => {
   try {
     const { nonce, cart } = req.body as any;
     let total = 0;
@@ -475,4 +463,4 @@ export const brainTreePaymentController: RequestHandler = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-};
+}) satisfies RequestHandler;
