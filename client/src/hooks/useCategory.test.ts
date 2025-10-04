@@ -52,7 +52,9 @@ describe("hooks/useCategory (unit) — bug-hunting tests", () => {
   });
 
   test("API rejects → logs error and keeps state as an empty array", async () => {
-    const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
     mockedAxios.get.mockRejectedValueOnce(new Error("network"));
 
     const { result } = renderHook(() => useCategory());
