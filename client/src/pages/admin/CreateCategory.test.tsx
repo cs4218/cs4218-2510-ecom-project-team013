@@ -22,7 +22,7 @@ jest.mock("axios", () => {
     create: () => mock,
     defaults: { headers: { common: {} } },
   };
-  return { __esModule: true, default: mock };
+  return mock;
 });
 const mockedAxios = axios as unknown as {
   get: jest.Mock;
@@ -35,47 +35,47 @@ const mockedAxios = axios as unknown as {
 jest.mock("react-hot-toast", () => {
   const success = jest.fn();
   const error = jest.fn();
-  const api = { success, error };
-  return { __esModule: true, default: api, success, error };
+  return { success, error };
 });
 
 // Layout/AdminMenu pass-through
-jest.mock("../../components/Layout", () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="layout">{children}</div>
-  ),
-}));
-jest.mock("../../components/AdminMenu", () => ({
-  __esModule: true,
-  default: () => <div data-testid="admin-menu">AdminMenu</div>,
-}));
+jest.mock(
+  "../../components/Layout",
+  () =>
+    ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="layout">{children}</div>
+    )
+);
+jest.mock("../../components/AdminMenu", () => () => (
+  <div data-testid="admin-menu">AdminMenu</div>
+));
 
 // CategoryForm mock
-jest.mock("../../components/Form/CategoryForm", () => ({
-  __esModule: true,
-  default: ({
-    value,
-    setValue,
-    handleSubmit,
-    "data-testid": testId,
-  }: {
-    value: string;
-    setValue: (v: string) => void;
-    handleSubmit: (e: React.FormEvent) => void;
-    "data-testid"?: string;
-  }) => (
-    <form onSubmit={handleSubmit} data-testid={testId ?? "category-form"}>
-      <input
-        data-testid={(testId ?? "category-form") + "-input"}
-        value={value}
-        onChange={(e) => setValue?.(e.target.value)}
-        placeholder="Category name"
-      />
-      <button type="submit">Submit</button>
-    </form>
-  ),
-}));
+jest.mock(
+  "../../components/Form/CategoryForm",
+  () =>
+    ({
+      value,
+      setValue,
+      handleSubmit,
+      "data-testid": testId,
+    }: {
+      value: string;
+      setValue: (v: string) => void;
+      handleSubmit: (e: React.FormEvent) => void;
+      "data-testid"?: string;
+    }) => (
+      <form onSubmit={handleSubmit} data-testid={testId ?? "category-form"}>
+        <input
+          data-testid={(testId ?? "category-form") + "-input"}
+          value={value}
+          onChange={(e) => setValue?.(e.target.value)}
+          placeholder="Category name"
+        />
+        <button type="submit">Submit</button>
+      </form>
+    )
+);
 
 /**
  * AntD Modal mock — emulate AntD v5 (uses `open`, not `visible`).
@@ -103,7 +103,7 @@ jest.mock("antd", () => {
       ) : null}
     </div>
   );
-  return { __esModule: true, Modal };
+  return { Modal };
 });
 
 /* ===================== Helpers ===================== */

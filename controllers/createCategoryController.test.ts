@@ -4,41 +4,37 @@ import categoryModel from "../models/categoryModel";
 import { createCategoryController } from "./categoryController";
 
 const mockSave = jest.fn();
-const mockFindOne = jest.fn();
-const mockCategoryModel = jest.fn().mockImplementation(function (
-  this: any,
-  payload: any
-) {
-  this.payload = payload;
-  this.save = mockSave;
-  return this;
-});
-(mockCategoryModel as any).findOne = mockFindOne;
 
 jest.mock(
   "slugify",
-  () => ({
-    __esModule: true,
-    default: jest.fn((s: string) => `slug-${String(s).trim().toLowerCase()}`),
-  }),
+  () => jest.fn((s: string) => `slug-${String(s).trim().toLowerCase()}`),
   { virtual: true }
 );
 
 jest.mock(
   "../models/categoryModel",
-  () => ({
-    __esModule: true,
-    default: mockCategoryModel,
-  }),
-  { virtual: true }
+  () => {
+    const mockCategoryModel = jest.fn().mockImplementation(function (
+      this: any,
+      payload: any
+    ) {
+      this.payload = payload;
+      this.save = mockSave;
+      return this;
+    });
+    (mockCategoryModel as any).findOne = jest.fn();
+    return mockCategoryModel;
+  },
+  {
+    virtual: true,
+  }
 );
-
-const { createCategoryController } = require("./categoryController");
-const slugify = require("slugify").default as (s: string) => string;
 
 describe("createCategoryController — spec-driven", () => {
   let res: Response & { status: jest.Mock; send: jest.Mock };
   let consoleSpy: jest.SpyInstance;
+  const mockCategoryModel = categoryModel;
+  const mockFindOne = mockCategoryModel.findOne as jest.Mock;
 
   const reqOf = (body: any = {}): Request => ({ body }) as any;
 
