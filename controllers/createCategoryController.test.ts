@@ -25,7 +25,7 @@ jest.mock(
 );
 
 jest.mock(
-  "../models/categoryModel.js",
+  "../models/categoryModel",
   () => ({
     __esModule: true,
     default: mockCategoryModel,
@@ -151,6 +151,22 @@ describe("createCategoryController — spec-driven", () => {
       message: "Error creating category",
       error: "write failed",
     });
+  });
+
+  test("409 duplicate when name has regex metacharacters", async () => {
+    (mockFindOne as jest.Mock).mockResolvedValueOnce({
+      _id: "id1",
+      name: "C++",
+    });
+    await createCategoryController(
+      reqOf({ name: "C++" }),
+      res,
+      undefined as any
+    );
+    expect(mockFindOne).toHaveBeenCalledWith({
+      name: { $regex: /^C\+\+$/i }, // or new RegExp('^C\\+\\+$','i')
+    });
+    expect(res.status).toHaveBeenCalledWith(409);
   });
 });
 

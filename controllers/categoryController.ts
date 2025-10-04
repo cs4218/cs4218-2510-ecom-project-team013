@@ -2,6 +2,10 @@ import type { RequestHandler } from "express";
 import slugify from "slugify";
 import categoryModel from "../models/categoryModel";
 
+function escapeRegex(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 // Create category
 export const createCategoryController = (async (req, res) => {
   try {
@@ -25,8 +29,9 @@ export const createCategoryController = (async (req, res) => {
         .send({ success: false, message: "Name is required" });
     }
 
+    const regex = new RegExp(`^${escapeRegex(name)}$`, "i");
     const existingCategory = await categoryModel.findOne({
-      name: { $regex: `^${name}$`, $options: "i" },
+      name: { $regex: regex },
     });
     if (existingCategory) {
       return res
