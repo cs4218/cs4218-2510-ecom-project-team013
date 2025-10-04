@@ -56,7 +56,7 @@ export const createProductController: RequestHandler = async (req, res) => {
     res.status(500).send({
       success: false,
       error,
-      message: "Error in crearing product",
+      message: "Error in creating product",
     });
   }
 };

@@ -1,13 +1,5 @@
-import "@testing-library/jest-dom";
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
-import React from "react";
 import { error as toastError, success as toastSuccess } from "react-hot-toast";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import CreateProduct from "./CreateProduct";
@@ -56,14 +48,11 @@ jest.mock("react-router-dom", () => {
 
 // AntD Select mock — respects explicit data-testid; falls back to placeholder for convenience
 jest.mock("antd", () => {
-  const React = require("react");
-
-  const Option = ({ value, children }: any) =>
-    React.createElement(
-      "option",
-      { value, "data-testid": `option-${value}` },
-      children
-    );
+  const Option = ({ value, children }: any) => (
+    <option value={value} data-testid={`option-${value}`}>
+      {children}
+    </option>
+  );
 
   const Select = ({
     onChange,
@@ -116,7 +105,6 @@ describe("Admin/CreateProduct (unit)", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    cleanup();
     (URL as any).createObjectURL = jest.fn(() => "blob:preview-url");
   });
 

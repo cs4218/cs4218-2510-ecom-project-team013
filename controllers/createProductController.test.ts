@@ -1,154 +1,236 @@
 import type { Request, Response } from "express";
+import fs from "fs";
 import slugify from "slugify";
-import categoryModel from "../models/categoryModel";
-import { createCategoryController } from "./categoryController";
+import productModel from "../models/productModel";
+import { createProductController } from "./productController";
 
-jest.mock("slugify", () => jest.fn((s) => `slug-${String(s)}`));
+jest.mock("braintree", () => ({
+  BraintreeGateway: jest.fn().mockImplementation(() => ({})),
+  Environment: { Sandbox: "Sandbox" },
+}));
 
-jest.mock("../models/categoryModel", () => {
-  const mockSave = jest.fn();
-  const MockCategoryModel = jest.fn().mockImplementation(function (
+const mockProductSave = jest.fn();
+
+jest.mock("../models/productModel", () => {
+  const MockProductModel = jest.fn().mockImplementation(function (
     this: any,
-    payload
+    payload: any
   ) {
     Object.assign(this, payload);
-    this.save = mockSave;
+    // ensure .photo exists like in mongoose schema shape
+    this.photo = this.photo || {};
+    this.save = mockProductSave;
     return this;
   });
-  (MockCategoryModel as any).findOne = jest.fn();
-  // To expose it for testing;
-  (MockCategoryModel as any).save = mockSave;
-  return MockCategoryModel;
+  return MockProductModel;
 });
 
-const mockResponse = () => {
-  const res: Partial<Response> = {};
-  res.status = jest.fn().mockReturnThis();
-  res.send = jest.fn().mockReturnThis();
-  return res as Response;
-};
+jest.mock("slugify", () => jest.fn((s: string) => `slug-${String(s)}`));
 
-const reqOf = (body: Record<string, unknown> = {}) => ({ body }) as Request;
-const mockFindOne = categoryModel.findOne as jest.Mock;
-const mockSave = (categoryModel as any).save as jest.Mock;
+jest.mock("fs", () => ({
+  ...jest.requireActual("fs"),
+  readFileSync: jest.fn(),
+}));
 
-describe("createCategoryController (thorough, focused)", () => {
-  const MockCategoryModel = categoryModel as unknown as jest.Mock;
+describe("createProductController", () => {
+  let res: Response & { status: jest.Mock; send: jest.Mock };
+  const reqOf = (fields: any = {}, files: any = {}) =>
+    ({ fields, files }) as unknown as Request;
+
+  const MockProductModel = productModel as unknown as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    res = { status: jest.fn().mockReturnThis(), send: jest.fn() } as any;
   });
 
-  test("401 when name is missing; no DB calls", async () => {
-    const res = mockResponse();
-    await createCategoryController(reqOf({}), res);
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.send).toHaveBeenCalledWith({ message: "Name is required" });
-    expect(mockFindOne).not.toHaveBeenCalled();
-    expect(mockSave).not.toHaveBeenCalled();
+  // ---- Validation cases (switch(true)) ----
+  test("500 when name missing", async () => {
+    await createProductController(
+      reqOf({ description: "d", price: 10, category: "c", quantity: 1 }),
+      res,
+      undefined as any
+    );
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith({ error: "Name is Required" });
   });
 
-  test("200 + success:true when duplicate exists (repo message preserved)", async () => {
-    mockFindOne.mockResolvedValueOnce({ _id: "dup", name: "Phones" });
-
-    const res = mockResponse();
-    await createCategoryController(reqOf({ name: "Phones" }), res);
-
-    expect(mockFindOne).toHaveBeenCalledWith({ name: "Phones" });
-    expect(res.status).toHaveBeenCalledWith(200);
+  test("500 when description missing", async () => {
+    await createProductController(
+      reqOf({ name: "N", price: 10, category: "c", quantity: 1 }),
+      res,
+      undefined as any
+    );
+    expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
-      success: true,
-      message: "Category Already Exists",
+      error: "Description is Required",
     });
-    expect(mockSave).not.toHaveBeenCalled();
   });
 
-  test("201 on success: slugify called, model created with slug, returns saved doc", async () => {
-    mockFindOne.mockResolvedValueOnce(null);
-    const saved = { _id: "n1", name: "Gadgets", slug: "slug-Gadgets" };
-    mockSave.mockResolvedValueOnce(saved);
+  test("500 when price missing", async () => {
+    await createProductController(
+      reqOf({ name: "N", description: "d", category: "c", quantity: 1 }),
+      res,
+      undefined as any
+    );
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith({ error: "Price is Required" });
+  });
 
-    const res = mockResponse();
-    await createCategoryController(reqOf({ name: "Gadgets" }), res);
-
-    expect(slugify).toHaveBeenCalledWith("Gadgets");
-    expect(MockCategoryModel).toHaveBeenCalledWith({
-      name: "Gadgets",
-      slug: "slug-Gadgets",
+  test("500 when category missing", async () => {
+    await createProductController(
+      reqOf({ name: "N", description: "d", price: 1, quantity: 1 }),
+      res,
+      undefined as any
+    );
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith({
+      error: "Category is Required",
     });
-    expect(mockSave).toHaveBeenCalled();
+  });
+
+  test("500 when quantity missing", async () => {
+    await createProductController(
+      reqOf({ name: "N", description: "d", price: 1, category: "c" }),
+      res,
+      undefined as any
+    );
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith({
+      error: "Quantity is Required",
+    });
+  });
+
+  test("500 when photo > 1MB", async () => {
+    const big = { size: 1000001, path: "p", type: "image/png" };
+    await createProductController(
+      reqOf(
+        { name: "N", description: "d", price: 1, category: "c", quantity: 1 },
+        { photo: big }
+      ),
+      res,
+      undefined as any
+    );
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith({
+      error: "photo is Required and should be less then 1mb",
+    });
+  });
+
+  // ---- Happy paths ----
+  test("201 success without photo", async () => {
+    mockProductSave.mockResolvedValueOnce(undefined);
+    await createProductController(
+      reqOf({
+        name: "Phone",
+        description: "nice",
+        price: 10,
+        category: "g",
+        quantity: 3,
+        shipping: true,
+      }),
+      res,
+      undefined as any
+    );
+
+    expect(MockProductModel).toHaveBeenCalledWith({
+      name: "Phone",
+      description: "nice",
+      price: 10,
+      category: "g",
+      quantity: 3,
+      shipping: true,
+      slug: "slug-Phone",
+    });
+    expect(slugify).toHaveBeenCalledWith("Phone");
+
+    const instance = MockProductModel.mock.instances[0];
+    expect(mockProductSave).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.send).toHaveBeenCalledWith({
       success: true,
-      message: "new category created",
-      category: saved,
+      message: "Product Created Successfully",
+      products: instance,
     });
   });
 
-  test("500 when lookup throws: returns repo-typo payload and logs", async () => {
-    jest.spyOn(console, "log");
-    mockFindOne.mockRejectedValueOnce(new Error("db down"));
+  test("201 success with photo: reads file and sets contentType", async () => {
+    fs.readFileSync.mockReturnValueOnce(Buffer.from("IMG"));
+    mockProductSave.mockResolvedValueOnce(undefined);
 
-    const res = mockResponse();
-    await createCategoryController(reqOf({ name: "X" }), res);
-    expect(console.log).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(500);
-    // Keep the controller’s current (typo’d) shape:
-    expect(res.send).toHaveBeenCalledWith({
-      success: false,
-      error: expect.any(Error), // controller should assign error here to avoid ReferenceError
-      message: "Error in Category",
-    });
+    const photo = { size: 999999, path: "C:\\img.png", type: "image/png" };
+    await createProductController(
+      reqOf(
+        {
+          name: "Phone",
+          description: "nice",
+          price: 10,
+          category: "g",
+          quantity: 3,
+        },
+        { photo }
+      ),
+      res,
+      undefined as any
+    );
+
+    const instance = MockProductModel.mock.instances[0];
+    expect(fs.readFileSync).toHaveBeenCalledWith("C:\\img.png");
+    expect(instance.photo.data).toBeInstanceOf(Buffer);
+    expect(instance.photo.contentType).toBe("image/png");
+    expect(res.status).toHaveBeenCalledWith(201);
   });
 
-  test("500 when save throws: returns repo-typo payload and logs", async () => {
-    jest.spyOn(console, "log");
-    mockFindOne.mockResolvedValueOnce(null);
-    mockSave.mockRejectedValueOnce(new Error("write failed"));
-
-    const res = mockResponse();
-    await createCategoryController(reqOf({ name: "Books" }), res);
-
-    expect(console.log).toHaveBeenCalled();
+  // ---- Error paths ----
+  test("500 when fs.readFileSync throws", async () => {
+    fs.readFileSync.mockImplementationOnce(() => {
+      throw new Error("fs fail");
+    });
+    await createProductController(
+      reqOf(
+        {
+          name: "Phone",
+          description: "nice",
+          price: 10,
+          category: "g",
+          quantity: 3,
+        },
+        { photo: { size: 10, path: "p", type: "t" } }
+      ),
+      res,
+      undefined as any
+    );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       error: expect.any(Error),
-      message: "Error in Category",
+      message: "Error in creating product",
     });
   });
 
-  test("does not construct/save when duplicate short-circuits", async () => {
-    mockFindOne.mockResolvedValueOnce({ _id: "dup", name: "Phones" });
+  test("500 when save throws", async () => {
+    fs.readFileSync.mockReturnValueOnce(Buffer.from("IMG"));
+    mockProductSave.mockRejectedValueOnce(new Error("write failed"));
 
-    const res = mockResponse();
-    await createCategoryController(reqOf({ name: "Phones" }), res);
-
-    expect(MockCategoryModel).not.toHaveBeenCalledWith(
-      expect.objectContaining({ slug: expect.any(String) })
+    await createProductController(
+      reqOf(
+        {
+          name: "Phone",
+          description: "nice",
+          price: 10,
+          category: "g",
+          quantity: 3,
+        },
+        { photo: { size: 10, path: "p", type: "t" } }
+      ),
+      res,
+      undefined as any
     );
-    expect(mockSave).not.toHaveBeenCalled();
-  });
-
-  test("happy-path call order: findOne → constructor → save → 201 (using built-in call order)", async () => {
-    mockFindOne.mockResolvedValueOnce(null);
-    const saved = { _id: "ok1", name: "Books", slug: "slug-Books" };
-    mockSave.mockResolvedValueOnce(saved);
-
-    const res = mockResponse();
-    await createCategoryController(reqOf({ name: "Books" }), res);
-
-    expect(mockFindOne).toHaveBeenCalledTimes(1);
-    expect(MockCategoryModel).toHaveBeenCalledTimes(1);
-    expect(mockSave).toHaveBeenCalledTimes(1);
-
-    const findOneOrder = mockFindOne.mock.invocationCallOrder[0];
-    const ctorOrder = MockCategoryModel.mock.invocationCallOrder[0];
-    const saveOrder = mockSave.mock.invocationCallOrder[0];
-
-    expect(findOneOrder).toBeLessThan(ctorOrder);
-    expect(ctorOrder).toBeLessThan(saveOrder);
-
-    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith({
+      success: false,
+      error: expect.any(Error),
+      message: "Error in creating product",
+    });
   });
 });

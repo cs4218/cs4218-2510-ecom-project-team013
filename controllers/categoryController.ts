@@ -2,36 +2,59 @@ import type { RequestHandler } from "express";
 import slugify from "slugify";
 import categoryModel from "../models/categoryModel";
 
+function escapeRegex(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 // Create category
 export const createCategoryController = (async (req, res) => {
   try {
-    const { name } = req.body;
+    let { name } = req.body as { name?: unknown };
+
+    if (name == null) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Name is required" });
+    }
+    if (typeof name !== "string") {
+      return res
+        .status(400)
+        .send({ success: false, message: "Name must be a string" });
+    }
+
+    name = name.trim();
     if (!name) {
-      return res.status(401).send({ message: "Name is required" });
+      return res
+        .status(400)
+        .send({ success: false, message: "Name is required" });
     }
-    const existingCategory = await categoryModel.findOne({ name });
+
+    const regex = new RegExp(`^${escapeRegex(name)}$`, "i");
+    const existingCategory = await categoryModel.findOne({
+      name: { $regex: regex },
+    });
     if (existingCategory) {
-      return res.status(200).send({
-        success: true,
-        message: "Category Already Exists",
-      });
+      return res
+        .status(409)
+        .send({ success: false, message: "Category already exists" });
     }
+
     const category = await new categoryModel({
-      name,
+      name, // trimmed
       slug: slugify(name),
     }).save();
+
     return res.status(201).send({
       success: true,
-      message: "new category created",
+      message: "Category created",
       category,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-
     return res.status(500).send({
       success: false,
-      error,
-      message: "Error in Category",
+      message: "Error creating category",
+      error: error?.message ?? String(error),
     });
   }
 }) satisfies RequestHandler;
