@@ -1,17 +1,8 @@
-import "@testing-library/jest-dom";
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
-import React from "react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
 import ProductDetails from "./ProductDetails";
 
-/** Inline axios mock (avoids loading ESM axios from node_modules) */
 jest.mock("axios", () => {
   const mock = {
     get: jest.fn(),
@@ -21,34 +12,25 @@ jest.mock("axios", () => {
     create: () => mock,
     defaults: { headers: { common: {} } },
   };
-  return { __esModule: true, default: mock };
+  return mock;
 });
 
-// Cast to a simple shape we control
-const mockedAxios = axios as unknown as {
-  get: jest.Mock<any, any>;
-  post: jest.Mock<any, any>;
-  put: jest.Mock<any, any>;
-  delete: jest.Mock<any, any>;
-};
+const mockedAxios = axios as unknown as jest.Mocked<typeof axios>;
 
 // Mock Layout to a simple passthrough so we don't test app shell
-jest.mock("../components/Layout", () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="layout">{children}</div>
-  ),
-}));
+jest.mock(
+  "../components/Layout",
+  () =>
+    ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="layout">{children}</div>
+    )
+);
 
-// Mock useNavigate while keeping the rest of react-router-dom real
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => {
-  const real = jest.requireActual("react-router-dom");
-  return {
-    ...real,
-    useNavigate: () => mockNavigate,
-  };
-});
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: jest.fn().mockImplementation(() => {}),
+}));
+const mockNavigate = useNavigate;
 
 function renderWithSlug(slugPath: string) {
   return render(
@@ -62,9 +44,7 @@ function renderWithSlug(slugPath: string) {
 
 describe("ProductDetails (unit)", () => {
   beforeEach(() => {
-    // IMPORTANT: reset also clears queued implementations from prior tests
     jest.resetAllMocks();
-    cleanup(); // ensure a clean DOM between tests (extra explicit)
   });
 
   test("fetches product & related by slug and renders details", async () => {
