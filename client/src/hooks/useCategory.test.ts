@@ -13,7 +13,7 @@ jest.mock("axios", () => {
     create: () => mock,
     defaults: { headers: { common: {} } },
   };
-  return { __esModule: true, default: mock };
+  return mock;
 });
 const mockedAxios = axios as unknown as { get: jest.Mock };
 
