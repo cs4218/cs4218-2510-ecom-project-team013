@@ -81,7 +81,7 @@ describe("createCategoryController — spec-driven", () => {
     const res = mockResponse();
     await createCategoryController(reqOf({ name: "phones" }), res);
     expect(mockFindOne).toHaveBeenCalledTimes(1);
-    expect(mockFindOne).toHaveBeenCalledWith({ name: "Phones" });
+    expect(mockFindOne).toHaveBeenCalledWith({ name: { $regex: /^phones$/i } });
     expect(res.status).toHaveBeenCalledWith(409);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
@@ -132,11 +132,10 @@ describe("createCategoryController — spec-driven", () => {
     await createCategoryController(reqOf({ name: "X" }), res);
     expect(console.log).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(500);
-    // Keep the controller’s current (typo’d) shape:
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      error: expect.any(Error), // controller should assign error here to avoid ReferenceError
-      message: "Error in Category",
+      error: "db down",
+      message: "Error creating category",
     });
   });
 
@@ -153,7 +152,7 @@ describe("createCategoryController — spec-driven", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error creating category",
-      error: expect.any(Error),
+      error: "write failed",
     });
   });
 
