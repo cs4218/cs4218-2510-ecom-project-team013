@@ -229,7 +229,7 @@ describe("createProductController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       error: expect.any(Error),
-      message: "Error in crearing product",
+      message: "Error in creating product",
     });
   });
 
@@ -255,7 +255,7 @@ describe("createProductController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       error: expect.any(Error),
-      message: "Error in crearing product",
+      message: "Error in creating product",
     });
   });
 });
