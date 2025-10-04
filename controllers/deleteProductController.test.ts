@@ -1,5 +1,5 @@
-import { deleteProductController } from "./productController";
 import productModel from "../models/productModel";
+import { deleteProductController } from "./productController";
 
 // mock the productModel
 jest.mock("../models/productModel");

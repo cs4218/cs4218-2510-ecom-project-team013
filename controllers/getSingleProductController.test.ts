@@ -1,5 +1,5 @@
-import { getSingleProductController } from "./productController";
 import productModel from "../models/productModel";
+import { getSingleProductController } from "./productController";
 
 // mock the productModel
 jest.mock("../models/productModel");

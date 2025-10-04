@@ -1,6 +1,6 @@
-import { updateProductController } from "./productController";
-import productModel from "../models/productModel";
 import fs from "fs";
+import productModel from "../models/productModel";
+import { updateProductController } from "./productController";
 
 // mock the productModel
 jest.mock("../models/productModel");
