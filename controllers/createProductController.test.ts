@@ -11,36 +11,26 @@ jest.mock("braintree", () => ({
 
 const mockProductSave = jest.fn();
 
-jest.mock(
-  "../models/productModel",
-  () => {
-    const MockProductModel = jest.fn().mockImplementation(function (
-      this: any,
-      payload: any
-    ) {
-      Object.assign(this, payload);
-      // ensure .photo exists like in mongoose schema shape
-      this.photo = this.photo || {};
-      this.save = mockProductSave;
-      return this;
-    });
-    return MockProductModel;
-  },
-  { virtual: true }
-);
-
-jest.mock("slugify", () => jest.fn((s: string) => `slug-${String(s)}`), {
-  virtual: true,
+jest.mock("../models/productModel", () => {
+  const MockProductModel = jest.fn().mockImplementation(function (
+    this: any,
+    payload: any
+  ) {
+    Object.assign(this, payload);
+    // ensure .photo exists like in mongoose schema shape
+    this.photo = this.photo || {};
+    this.save = mockProductSave;
+    return this;
+  });
+  return MockProductModel;
 });
 
-jest.mock(
-  "fs",
-  () => ({
-    ...jest.requireActual("fs"),
-    readFileSync: jest.fn(),
-  }),
-  { virtual: true }
-);
+jest.mock("slugify", () => jest.fn((s: string) => `slug-${String(s)}`));
+
+jest.mock("fs", () => ({
+  ...jest.requireActual("fs"),
+  readFileSync: jest.fn(),
+}));
 
 describe("createProductController", () => {
   let res: Response & { status: jest.Mock; send: jest.Mock };
