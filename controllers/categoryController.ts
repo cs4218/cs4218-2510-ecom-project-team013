@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express";
 import slugify from "slugify";
-import categoryModel from "../models/categoryModel.js";
+import categoryModel from "../models/categoryModel";
 
 export const createCategoryController: RequestHandler = async (req, res) => {
   try {

@@ -14,7 +14,7 @@ import CreateProduct from "./CreateProduct";
 
 /** ========== Mocks ========== */
 
-// Axios (inline mock to avoid ESM issues)
+// Axios
 jest.mock("axios", () => {
   const mock = {
     get: jest.fn(),
@@ -24,7 +24,7 @@ jest.mock("axios", () => {
     create: () => mock,
     defaults: { headers: { common: {} } },
   };
-  return { __esModule: true, default: mock };
+  return mock;
 });
 const mockedAxios = axios as unknown as { get: jest.Mock; post: jest.Mock };
 
@@ -32,21 +32,20 @@ const mockedAxios = axios as unknown as { get: jest.Mock; post: jest.Mock };
 jest.mock("react-hot-toast", () => {
   const success = jest.fn();
   const error = jest.fn();
-  const api = { success, error };
-  return { __esModule: true, default: api, success, error };
+  return { success, error };
 });
 
 // Layout/AdminMenu passthrough
-jest.mock("../../components/Layout", () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="layout">{children}</div>
-  ),
-}));
-jest.mock("../../components/AdminMenu", () => ({
-  __esModule: true,
-  default: () => <div data-testid="admin-menu">AdminMenu</div>,
-}));
+jest.mock(
+  "../../components/Layout",
+  () =>
+    ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="layout">{children}</div>
+    )
+);
+jest.mock("../../components/AdminMenu", () => () => (
+  <div data-testid="admin-menu">AdminMenu</div>
+));
 
 // useNavigate mock
 const mockNavigate = jest.fn();
@@ -95,7 +94,7 @@ jest.mock("antd", () => {
 
   (Select as any).Option = Option;
 
-  return { __esModule: true, Select };
+  return { Select };
 });
 
 /** Helper render */

@@ -1,41 +1,36 @@
-// controllers/createCategoryController.test.ts
-// CommonJS-style requires to avoid ESM/transform weirdness.
+import slugify from "slugify";
+import categoryModel from "../models/categoryModel";
+import { createCategoryController } from "./categoryController";
 
-const mockFindOne = jest.fn();
 const mockSave = jest.fn();
-const MockCategoryModel = jest.fn().mockImplementation(function (payload) {
-  Object.assign(this, payload);
-  this.save = mockSave;
-  return this;
+
+jest.mock("slugify", () => jest.fn((s) => `slug-${String(s)}`), {
+  virtual: true,
 });
-MockCategoryModel.findOne = mockFindOne;
 
 jest.mock(
-  "slugify",
-  () => ({
-    __esModule: true,
-    default: jest.fn((s) => `slug-${String(s)}`),
-  }),
-  { virtual: true }
+  "../models/categoryModel",
+  () => {
+    const MockCategoryModel = jest.fn().mockImplementation(function (payload) {
+      Object.assign(this, payload);
+      this.save = mockSave;
+      return this;
+    });
+    MockCategoryModel.findOne = jest.fn();
+    return MockCategoryModel;
+  },
+  {
+    virtual: true,
+  }
 );
-
-jest.mock(
-  "../models/categoryModel.js",
-  () => ({
-    __esModule: true,
-    default: MockCategoryModel,
-  }),
-  { virtual: true }
-);
-
-const { createCategoryController } = require("./categoryController");
-const slugify = require("slugify").default;
 
 describe("createCategoryController (thorough, focused)", () => {
   let res;
   let consoleSpy;
 
   const reqOf = (body = {}) => ({ body });
+  const MockCategoryModel = categoryModel as unknown as jest.Mock;
+  const mockFindOne = MockCategoryModel.findOne as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
