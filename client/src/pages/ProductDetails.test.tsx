@@ -1,16 +1,15 @@
-// client/src/pages/ProductDetails.test.tsx
-import React from "react";
+import "@testing-library/jest-dom";
 import {
+  cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
-  fireEvent,
-  cleanup,
 } from "@testing-library/react";
-import "@testing-library/jest-dom";
 import axios from "axios";
-import ProductDetails from "./ProductDetails";
+import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import ProductDetails from "./ProductDetails";
 
 /** Inline axios mock (avoids loading ESM axios from node_modules) */
 jest.mock("axios", () => {

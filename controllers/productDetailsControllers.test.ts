@@ -1,4 +1,3 @@
-// controllers/productDetails_specdriven.test.ts
 import type { Request, Response } from "express";
 
 /* --- Virtual mocks for controller imports (TS -> .js paths) --- */
