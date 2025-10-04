@@ -1,73 +1,47 @@
 import type { Request, Response } from "express";
+import productModel from "../models/productModel";
+import {
+  getSingleProductController,
+  productPhotoController,
+  realtedProductController,
+} from "./productController";
 
-/* --- Virtual mocks for controller imports (TS -> .js paths) --- */
-jest.doMock(
-  "../models/categoryModel.js",
-  () => ({ __esModule: true, default: {} }),
-  { virtual: true }
-);
+jest.mock("../models/categoryModel");
 
-const mockFindOne = jest.fn();
-const mockFind = jest.fn();
-const mockFindById = jest.fn();
-const ProductModelMock = {
-  findOne: mockFindOne,
-  find: mockFind,
-  findById: mockFindById,
-} as any;
+jest.mock("../models/productModel");
+const mockFindOne = productModel.findOne as jest.Mock;
+const mockFind = productModel.find as jest.Mock;
+const mockFindById = productModel.findById as jest.Mock;
 
-jest.doMock(
-  "../models/productModel.js",
-  () => ({ __esModule: true, default: ProductModelMock }),
-  { virtual: true }
-);
-
-jest.doMock("braintree", () => ({
-  __esModule: true,
-  default: {
-    BraintreeGateway: jest.fn().mockImplementation(() => ({
-      clientToken: { generate: jest.fn() },
-      transaction: { sale: jest.fn() },
-    })),
-    Environment: { Sandbox: {} },
-  },
+jest.mock("braintree", () => ({
+  BraintreeGateway: jest.fn().mockImplementation(() => ({
+    clientToken: { generate: jest.fn() },
+    transaction: { sale: jest.fn() },
+  })),
+  Environment: { Sandbox: {} },
 }));
 
-jest.doMock(
-  "../models/orderModel.js",
-  () => ({ __esModule: true, default: jest.fn() }),
-  { virtual: true }
-);
+jest.mock("../models/orderModel");
 
-const {
-  getSingleProductController,
-  realtedProductController, // keep name as in source, but our tests assert desired behavior
-  productPhotoController,
-} = require("./productController");
-
-const resOf = () =>
-  ({
-    status: jest.fn().mockReturnThis(),
-    send: jest.fn(),
-    set: jest.fn(),
-  }) as unknown as Response;
+const resOf = () => {
+  const res: Partial<Response> = {};
+  res.status = jest.fn().mockReturnThis();
+  res.send = jest.fn().mockReturnThis();
+  res.set = jest.fn().mockReturnThis();
+  return res as Response;
+};
 
 describe("Product details controllers — spec-driven (these should fail until controllers improved)", () => {
-  let res: ReturnType<typeof resOf>;
-  let consoleSpy: jest.SpyInstance;
-
   beforeEach(() => {
     jest.clearAllMocks();
-    res = resOf();
-    consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
   });
-  afterEach(() => consoleSpy.mockRestore());
 
   /* ---------------------- getSingleProductController ---------------------- */
 
   test("400 when slug is missing", async () => {
     const req = { params: {} } as unknown as Request;
-    await getSingleProductController(req, res, undefined as any);
+    const res = resOf();
+    await getSingleProductController(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.send).toHaveBeenCalledWith({
@@ -84,7 +58,8 @@ describe("Product details controllers — spec-driven (these should fail until c
     mockFindOne.mockReturnValueOnce(chain as any);
 
     const req = { params: { slug: "missing" } } as unknown as Request;
-    await getSingleProductController(req, res, undefined as any);
+    const res = resOf();
+    await getSingleProductController(req, res);
 
     expect(mockFindOne).toHaveBeenCalledWith({ slug: "missing" });
     expect(res.status).toHaveBeenCalledWith(404);
@@ -110,7 +85,8 @@ describe("Product details controllers — spec-driven (these should fail until c
     mockFindOne.mockReturnValueOnce(chain as any);
 
     const req = { params: { slug: "ok" } } as unknown as Request;
-    await getSingleProductController(req, res, undefined as any);
+    const res = resOf();
+    await getSingleProductController(req, res);
 
     expect(chain.select).toHaveBeenCalledWith("-photo");
     expect(chain.populate).toHaveBeenCalledWith("category");
@@ -123,6 +99,7 @@ describe("Product details controllers — spec-driven (these should fail until c
   });
 
   test("500 on DB error with clean message and error shape", async () => {
+    jest.spyOn(console, "log").mockImplementation(() => {});
     const chain = {
       select: jest.fn().mockReturnThis(),
       populate: jest.fn().mockRejectedValue(new Error("db")),
@@ -130,9 +107,10 @@ describe("Product details controllers — spec-driven (these should fail until c
     mockFindOne.mockReturnValueOnce(chain as any);
 
     const req = { params: { slug: "x" } } as unknown as Request;
-    await getSingleProductController(req, res, undefined as any);
+    const res = resOf();
+    await getSingleProductController(req, res);
 
-    expect(consoleSpy).toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
@@ -144,10 +122,10 @@ describe("Product details controllers — spec-driven (these should fail until c
   /* ---------------------- realtedProductController (similar) ---------------------- */
 
   test("400 when pid or cid missing", async () => {
+    const res = resOf();
     await realtedProductController(
       { params: { pid: "p", cid: undefined } } as any,
-      res,
-      undefined as any
+      res
     );
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.send).toHaveBeenCalledWith({
@@ -165,10 +143,10 @@ describe("Product details controllers — spec-driven (these should fail until c
     };
     mockFind.mockReturnValueOnce(chain as any);
 
+    const res = resOf();
     await realtedProductController(
       { params: { pid: "pX", cid: "cY" } } as any,
-      res,
-      undefined as any
+      res
     );
 
     expect(mockFind).toHaveBeenCalledWith({
@@ -183,6 +161,7 @@ describe("Product details controllers — spec-driven (these should fail until c
   });
 
   test("500 on DB error with clean message (no typos)", async () => {
+    jest.spyOn(console, "log").mockImplementation(() => {});
     const chain = {
       select: jest.fn().mockReturnThis(),
       limit: jest.fn().mockReturnThis(),
@@ -190,13 +169,13 @@ describe("Product details controllers — spec-driven (these should fail until c
     };
     mockFind.mockReturnValueOnce(chain as any);
 
+    const res = resOf();
     await realtedProductController(
       { params: { pid: "p", cid: "c" } } as any,
-      res,
-      undefined as any
+      res
     );
 
-    expect(consoleSpy).toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
@@ -211,11 +190,8 @@ describe("Product details controllers — spec-driven (these should fail until c
     const selectFn = jest.fn().mockResolvedValue(null);
     mockFindById.mockReturnValueOnce({ select: selectFn } as any);
 
-    await productPhotoController(
-      { params: { pid: "none" } } as any,
-      res,
-      undefined as any
-    );
+    const res = resOf();
+    await productPhotoController({ params: { pid: "none" } } as any, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.send).toHaveBeenCalledWith({
@@ -229,11 +205,8 @@ describe("Product details controllers — spec-driven (these should fail until c
     const selectFn = jest.fn().mockResolvedValue(doc);
     mockFindById.mockReturnValueOnce({ select: selectFn } as any);
 
-    await productPhotoController(
-      { params: { pid: "p" } } as any,
-      res,
-      undefined as any
-    );
+    const res = resOf();
+    await productPhotoController({ params: { pid: "p" } } as any, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.send).toHaveBeenCalledWith({
@@ -248,11 +221,8 @@ describe("Product details controllers — spec-driven (these should fail until c
     const selectFn = jest.fn().mockResolvedValue(doc);
     mockFindById.mockReturnValueOnce({ select: selectFn } as any);
 
-    await productPhotoController(
-      { params: { pid: "p" } } as any,
-      res,
-      undefined as any
-    );
+    const res = resOf();
+    await productPhotoController({ params: { pid: "p" } } as any, res);
 
     expect(res.set).toHaveBeenCalledWith(
       "Content-type",
@@ -263,16 +233,14 @@ describe("Product details controllers — spec-driven (these should fail until c
   });
 
   test("500 on DB error with clean message", async () => {
+    jest.spyOn(console, "log").mockImplementation(() => {});
     const selectFn = jest.fn().mockRejectedValue(new Error("db"));
     mockFindById.mockReturnValueOnce({ select: selectFn } as any);
 
-    await productPhotoController(
-      { params: { pid: "p" } } as any,
-      res,
-      undefined as any
-    );
+    const res = resOf();
+    await productPhotoController({ params: { pid: "p" } } as any, res);
 
-    expect(consoleSpy).toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
