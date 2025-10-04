@@ -5,30 +5,22 @@ import { createCategoryController } from "./categoryController";
 
 const mockSave = jest.fn();
 
-jest.mock(
-  "slugify",
-  () => jest.fn((s: string) => `slug-${String(s).trim().toLowerCase()}`),
-  { virtual: true }
+jest.mock("slugify", () =>
+  jest.fn((s: string) => `slug-${String(s).trim().toLowerCase()}`)
 );
 
-jest.mock(
-  "../models/categoryModel",
-  () => {
-    const mockCategoryModel = jest.fn().mockImplementation(function (
-      this: any,
-      payload: any
-    ) {
-      this.payload = payload;
-      this.save = mockSave;
-      return this;
-    });
-    (mockCategoryModel as any).findOne = jest.fn();
-    return mockCategoryModel;
-  },
-  {
-    virtual: true,
-  }
-);
+jest.mock("../models/categoryModel", () => {
+  const mockCategoryModel = jest.fn().mockImplementation(function (
+    this: any,
+    payload: any
+  ) {
+    this.payload = payload;
+    this.save = mockSave;
+    return this;
+  });
+  (mockCategoryModel as any).findOne = jest.fn();
+  return mockCategoryModel;
+});
 
 describe("createCategoryController — spec-driven", () => {
   let res: Response & { status: jest.Mock; send: jest.Mock };
