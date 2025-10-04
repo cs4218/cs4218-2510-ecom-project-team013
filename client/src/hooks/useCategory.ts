@@ -25,7 +25,7 @@ export default function useCategory() {
         setCategories(next);
       } catch (error) {
         if (!mounted) return;
-        console.log(error);
+        console.error("Failed to fetch categories", error);
       }
     })();
 
