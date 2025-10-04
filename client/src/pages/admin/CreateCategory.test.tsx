@@ -1,6 +1,4 @@
-import "@testing-library/jest-dom";
 import {
-  cleanup,
   fireEvent,
   render,
   screen,
@@ -118,7 +116,6 @@ let consoleLogSpy: jest.SpyInstance;
 
 beforeEach(() => {
   jest.resetAllMocks();
-  cleanup();
   // silence console.log noise from mocked rejections in these tests
   consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
 });
