@@ -1,7 +1,7 @@
 import { Select } from "antd";
-import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import api from "../../api";
 import AdminMenu from "../../components/AdminMenu";
 import Layout from "../../components/Layout";
 import { useAuth } from "../../context/auth";
@@ -21,7 +21,7 @@ const AdminOrders: React.FC = () => {
   const [auth, setAuth] = useAuth();
   const getOrders = async () => {
     try {
-      const { data } = await axios.get("/api/v1/auth/all-orders");
+      const { data } = await api.auth.getAllOrders();
       setOrders(data);
     } catch (error) {
       console.log(error);
@@ -34,9 +34,7 @@ const AdminOrders: React.FC = () => {
 
   const handleChange = async (orderId, value) => {
     try {
-      const { data } = await axios.put(`/api/v1/auth/order-status/${orderId}`, {
-        status: value,
-      });
+      const { data } = await api.auth.updateOrderStatus(orderId, value);
       getOrders();
     } catch (error) {
       console.log(error);

@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import api, { ProfileData } from "../../api";
+import Layout from "../../components/Layout";
 import UserMenu from "../../components/UserMenu";
 import { useAuth } from "../../context/auth";
-import Layout from "../../components/Layout";
 
 const Profile: React.FC = () => {
   //context
@@ -28,13 +28,14 @@ const Profile: React.FC = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.put("/api/v1/auth/profile", {
+      const updateData: ProfileData = {
         name,
         email,
         password,
         phone,
         address,
-      });
+      };
+      const { data } = await api.auth.updateProfile(updateData);
       if (data?.errro) {
         toast.error(data?.error);
       } else {

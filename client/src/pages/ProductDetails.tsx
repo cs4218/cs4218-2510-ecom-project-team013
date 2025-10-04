@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "../styles/ProductDetailsStyles.css";
+import api from "../api";
 import Layout from "../components/Layout";
+import "../styles/ProductDetailsStyles.css";
 
 const ProductDetails: React.FC = () => {
   const params = useParams();
@@ -17,9 +17,7 @@ const ProductDetails: React.FC = () => {
   //getProduct
   const getProduct = async () => {
     try {
-      const { data } = await axios.get(
-        `/api/v1/product/get-product/${params.slug}`
-      );
+      const { data } = await api.product.getSingleProduct(params.slug);
       setProduct(data?.product);
       getSimilarProduct(data?.product._id, data?.product.category._id);
     } catch (error) {
@@ -29,9 +27,7 @@ const ProductDetails: React.FC = () => {
   //get similar product
   const getSimilarProduct = async (pid, cid) => {
     try {
-      const { data } = await axios.get(
-        `/api/v1/product/related-product/${pid}/${cid}`
-      );
+      const { data } = await api.product.getRelatedProducts(pid, cid);
       setRelatedProducts(data?.products);
     } catch (error) {
       console.log(error);

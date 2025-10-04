@@ -1,10 +1,10 @@
-import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
+import api from "../../api";
+import Layout from "../../components/Layout";
 import { useAuth } from "../../context/auth";
 import "../../styles/AuthStyles.css";
-import Layout from "../../components/Layout";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -18,10 +18,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/v1/auth/login", {
-        email,
-        password,
-      });
+      const res = await api.auth.login(email, password);
       if (res && res.data.success) {
         toast.success(res.data && res.data.message, {
           duration: 5000,

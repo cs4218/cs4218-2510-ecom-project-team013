@@ -1,13 +1,13 @@
 import { Checkbox, Radio } from "antd";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AiOutlineReload } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
+import Layout from "../components/Layout";
 import { Prices } from "../components/Prices";
 import { useCart } from "../context/cart";
 import "../styles/Homepages.css";
-import Layout from "../components/Layout";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
   //get all cat
   const getAllCategory = async () => {
     try {
-      const { data } = await axios.get("/api/v1/category/get-category");
+      const { data } = await api.category.getAllCategories();
       if (data?.success) {
         setCategories(data?.category);
       }
@@ -40,7 +40,7 @@ const HomePage: React.FC = () => {
   const getAllProducts = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
+      const { data } = await api.product.getAllProductsList(page);
       setLoading(false);
       setProducts(data.products);
     } catch (error) {
@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
   //getTOtal COunt
   const getTotal = async () => {
     try {
-      const { data } = await axios.get("/api/v1/product/product-count");
+      const { data } = await api.product.getTotalProductCount();
       setTotal(data?.total);
     } catch (error) {
       console.log(error);
@@ -67,7 +67,7 @@ const HomePage: React.FC = () => {
   const loadMore = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
+      const { data } = await api.product.getAllProductsList(page);
       setLoading(false);
       setProducts([...products, ...data?.products]);
     } catch (error) {
@@ -97,7 +97,7 @@ const HomePage: React.FC = () => {
   //get filterd product
   const filterProduct = async () => {
     try {
-      const { data } = await axios.post("/api/v1/product/product-filters", {
+      const { data } = await api.product.getProductsWithFilters({
         checked,
         radio,
       });
