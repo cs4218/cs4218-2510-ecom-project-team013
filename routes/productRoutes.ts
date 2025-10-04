@@ -15,8 +15,8 @@ import {
   realtedProductController,
   searchProductController,
   updateProductController,
-} from "../controllers/productController.js";
-import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+} from "../controllers/productController";
+import { isAdmin, requireSignIn } from "../middlewares/authMiddleware";
 
 const router = Router()
   .post(

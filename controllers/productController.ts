@@ -1,12 +1,11 @@
-import categoryModel from "../models/categoryModel";
-import orderModel from "../models/orderModel";
-import productModel from "../models/productModel";
-
 import braintree from "braintree";
 import dotenv from "dotenv";
 import type { RequestHandler } from "express";
 import fs from "fs";
 import slugify from "slugify";
+import categoryModel from "../models/categoryModel";
+import orderModel from "../models/orderModel";
+import productModel from "../models/productModel";
 
 dotenv.config();
 
