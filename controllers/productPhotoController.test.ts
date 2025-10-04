@@ -1,6 +1,4 @@
-import {
-  productPhotoController,
-} from "./productController";
+import { productPhotoController } from "./productController";
 import productModel from "../models/productModel";
 
 // mock the productModel
@@ -13,7 +11,6 @@ jest.mock("braintree", () => {
     Environment: { Sandbox: "Sandbox", Production: "Production" },
   };
 });
-
 
 // =====================================================
 // ProductPhotoController

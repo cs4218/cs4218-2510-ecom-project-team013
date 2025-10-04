@@ -1,6 +1,4 @@
-import {
-  getProductController,
-} from "./productController";
+import { getProductController } from "./productController";
 import productModel from "../models/productModel";
 
 // mock the productModel

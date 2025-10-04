@@ -1,6 +1,4 @@
-import {
-  updateProductController,
-} from "./productController";
+import { updateProductController } from "./productController";
 import productModel from "../models/productModel";
 import fs from "fs";
 
