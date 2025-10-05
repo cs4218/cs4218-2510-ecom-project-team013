@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import Layout from "../components/Layout";
 import { Prices } from "../components/Prices";
-import { useCart } from "../context/cart";
+import { CartItem, useCart } from "../context/cart";
 import "../styles/Homepages.css";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useCart();
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<CartItem[]>([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
   const [radio, setRadio] = useState([]);
@@ -36,7 +36,8 @@ const HomePage: React.FC = () => {
     getAllCategory();
     getTotal();
   }, []);
-  //get products
+
+  // Get products
   const getAllProducts = async () => {
     try {
       setLoading(true);
@@ -76,7 +77,7 @@ const HomePage: React.FC = () => {
     }
   };
 
-  // filter by cat
+  // Filter by category
   const handleFilter = (value, id) => {
     let all = [...checked];
     if (value) {
@@ -86,6 +87,7 @@ const HomePage: React.FC = () => {
     }
     setChecked(all);
   };
+
   useEffect(() => {
     if (!checked.length || !radio.length) getAllProducts();
   }, [checked.length, radio.length]);
@@ -94,7 +96,7 @@ const HomePage: React.FC = () => {
     if (checked.length || radio.length) filterProduct();
   }, [checked, radio]);
 
-  //get filterd product
+  // Get filtered product
   const filterProduct = async () => {
     try {
       const { data } = await api.product.getProductsWithFilters({
@@ -152,8 +154,8 @@ const HomePage: React.FC = () => {
         <div className="col-md-9 ">
           <h1 className="text-center">All Products</h1>
           <div className="d-flex flex-wrap">
-            {products?.map((p) => (
-              <div className="card m-2" key={p._id}>
+            {products.map((p) => (
+              <div className="card m-2" key={`${p._id}`}>
                 <img
                   src={`/api/v1/product/product-photo/${p._id}`}
                   className="card-img-top"

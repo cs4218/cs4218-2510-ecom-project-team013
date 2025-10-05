@@ -50,7 +50,9 @@ describe("Register Component", () => {
   });
 
   it("should register the user successfully", async () => {
-    axios.post.mockResolvedValueOnce({ data: { success: true } });
+    (axios.post as jest.Mock).mockResolvedValueOnce({
+      data: { success: true },
+    });
 
     const { getByText, getByPlaceholderText } = render(
       <MemoryRouter initialEntries={["/register"]}>
