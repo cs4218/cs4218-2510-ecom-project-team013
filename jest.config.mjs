@@ -15,12 +15,23 @@ export default {
 
   testMatch: ["<rootDir>/**/*.test.(js|ts)"],
   // Ignore frontend folder from backend tests
-  testPathIgnorePatterns: ["/node_modules/", "<rootDir>/client/"],
+  testPathIgnorePatterns: ["coverage", "node_modules/", "<rootDir>/client/"],
 
   // Coverage configuration
-  // TODO: Reenable coverage once more tests are added
-  collectCoverage: false,
-  collectCoverageFrom: ["controllers/**"],
+  collectCoverage: true,
+  collectCoverageFrom: [
+    // "config/**",
+    "controllers/**",
+    "helpers/**",
+    "middlewares/**",
+    // "models/**",
+    "routes/**",
+  ],
+  coveragePathIgnorePatterns: [
+    "coverage",
+    "node_modules/",
+    "<rootDir>/client/",
+  ],
   coverageThreshold: {
     global: {
       lines: 0,

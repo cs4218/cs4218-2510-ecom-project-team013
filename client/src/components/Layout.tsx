@@ -3,7 +3,21 @@ import { Toaster } from "react-hot-toast";
 import Footer from "./Footer";
 import Header from "./Header";
 
-const Layout = ({ children, title, description, keywords, author }) => {
+type Props = {
+  children: React.ReactNode;
+  title?: string;
+  description?: string;
+  keywords?: string;
+  author?: string;
+};
+
+const Layout: React.FC<Props> = ({
+  children,
+  title,
+  description,
+  keywords,
+  author,
+}) => {
   return (
     <div>
       <Helmet>

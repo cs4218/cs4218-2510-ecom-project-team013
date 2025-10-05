@@ -16,9 +16,8 @@ const AdminOrders: React.FC = () => {
     "deliverd",
     "cancel",
   ]);
-  const [changeStatus, setCHangeStatus] = useState("");
   const [orders, setOrders] = useState([]);
-  const [auth, setAuth] = useAuth();
+  const [auth] = useAuth();
   const getOrders = async () => {
     try {
       const { data } = await api.auth.getAllOrders();
