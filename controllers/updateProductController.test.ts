@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import fs from "fs";
 import productModel from "../models/productModel";
 import { updateProductController } from "./productController";
@@ -20,29 +21,31 @@ jest.mock("braintree", () => {
 // UpdateProductController
 // =====================================================
 
+const mockRequest = () => {
+  const req: Partial<Request> = {
+    params: { pid: "123" },
+    fields: {
+      name: "Test Product",
+      description: "Desc",
+      price: "100",
+      category: "cat123",
+      quantity: "5",
+      shipping: "true",
+    } as any,
+    files: {},
+  };
+  return req as Request;
+};
+
+const mockResponse = () => {
+  const res: Partial<Response> = {};
+  res.status = jest.fn().mockReturnThis();
+  res.send = jest.fn().mockReturnThis();
+  return res as Response;
+};
+
 describe("updateProductController", () => {
-  let mockReq: any;
-  let mockRes: any;
-
   beforeEach(() => {
-    mockReq = {
-      params: { pid: "123" },
-      fields: {
-        name: "Test Product",
-        description: "Desc",
-        price: "100",
-        category: "cat123",
-        quantity: "5",
-        shipping: "true",
-      },
-      files: {},
-    };
-
-    mockRes = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis(),
-    };
-
     jest.clearAllMocks();
   });
 
@@ -55,6 +58,8 @@ describe("updateProductController", () => {
       mockProduct
     );
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(productModel.findByIdAndUpdate).toHaveBeenCalledWith(
@@ -82,6 +87,8 @@ describe("updateProductController", () => {
   it("should return 404 if product not found", async () => {
     (productModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(null);
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(404);
@@ -97,6 +104,8 @@ describe("updateProductController", () => {
       photo: {} as any,
     };
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     mockReq.fields = {
       name: "Test",
       description: "Desc",
@@ -104,11 +113,11 @@ describe("updateProductController", () => {
       category: "cat123",
       quantity: "5",
       shipping: "true",
-    };
+    } as any;
 
     mockReq.files = {
       photo: { path: "/tmp/photo.jpg", type: "image/jpeg", size: 500 },
-    };
+    } as any;
 
     (productModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(
       mockProduct
@@ -131,6 +140,8 @@ describe("updateProductController", () => {
       new Error("DB Error")
     );
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(500);
@@ -143,8 +154,9 @@ describe("updateProductController", () => {
   });
 
   it("should return validation error if name is missing", async () => {
-    mockReq.fields.name = "";
-
+    const mockReq = mockRequest();
+    (mockReq as any).fields.name = "";
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
@@ -157,8 +169,10 @@ describe("updateProductController", () => {
   });
 
   it("should return validation error if description is missing", async () => {
-    mockReq.fields.description = "";
+    const mockReq = mockRequest();
+    (mockReq as any).fields.description = "";
 
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
@@ -171,8 +185,10 @@ describe("updateProductController", () => {
   });
 
   it("should return validation error if price is missing", async () => {
-    mockReq.fields.price = "";
+    const mockReq = mockRequest();
+    (mockReq as any).fields.price = "";
 
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
@@ -185,8 +201,10 @@ describe("updateProductController", () => {
   });
 
   it("should return validation error if category is missing", async () => {
-    mockReq.fields.category = "";
+    const mockReq = mockRequest();
+    (mockReq as any).fields.category = "";
 
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
@@ -199,8 +217,10 @@ describe("updateProductController", () => {
   });
 
   it("should return validation error if quantity is missing", async () => {
-    mockReq.fields.quantity = "";
+    const mockReq = mockRequest();
+    (mockReq as any).fields.quantity = "";
 
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
@@ -213,8 +233,10 @@ describe("updateProductController", () => {
   });
 
   it("should return validation error if shipping is undefined", async () => {
-    mockReq.fields.shipping = undefined;
+    const mockReq = mockRequest();
+    (mockReq as any).fields.shipping = undefined;
 
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
@@ -227,8 +249,10 @@ describe("updateProductController", () => {
   });
 
   it("should return validation error if shipping is null", async () => {
-    mockReq.fields.shipping = null;
+    const mockReq = mockRequest();
+    (mockReq as any).fields.shipping = null;
 
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
@@ -241,12 +265,14 @@ describe("updateProductController", () => {
   });
 
   it("should return validation error if photo size exceeds 1MB", async () => {
-    mockReq.files.photo = {
+    const mockReq = mockRequest();
+    (mockReq as any).files.photo = {
       path: "/tmp/photo.jpg",
       type: "image/jpeg",
       size: 2000000,
     };
 
+    const mockRes = mockResponse();
     await updateProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
