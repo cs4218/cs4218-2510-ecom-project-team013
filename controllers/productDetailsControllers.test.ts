@@ -3,7 +3,7 @@ import productModel from "../models/productModel";
 import {
   getSingleProductController,
   productPhotoController,
-  realtedProductController,
+  relatedProductController,
 } from "./productController";
 
 jest.mock("../models/categoryModel");
@@ -119,11 +119,11 @@ describe("Product details controllers — spec-driven (these should fail until c
     });
   });
 
-  /* ---------------------- realtedProductController (similar) ---------------------- */
+  /* ---------------------- relatedProductController (similar) ---------------------- */
 
   test("400 when pid or cid missing", async () => {
     const res = resOf();
-    await realtedProductController(
+    await relatedProductController(
       { params: { pid: "p", cid: undefined } } as any,
       res
     );
@@ -144,7 +144,7 @@ describe("Product details controllers — spec-driven (these should fail until c
     mockFind.mockReturnValueOnce(chain as any);
 
     const res = resOf();
-    await realtedProductController(
+    await relatedProductController(
       { params: { pid: "pX", cid: "cY" } } as any,
       res
     );
@@ -170,7 +170,7 @@ describe("Product details controllers — spec-driven (these should fail until c
     mockFind.mockReturnValueOnce(chain as any);
 
     const res = resOf();
-    await realtedProductController(
+    await relatedProductController(
       { params: { pid: "p", cid: "c" } } as any,
       res
     );

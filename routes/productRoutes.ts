@@ -12,7 +12,7 @@ import {
   productFiltersController,
   productListController,
   productPhotoController,
-  realtedProductController,
+  relatedProductController,
   searchProductController,
   updateProductController,
 } from "../controllers/productController";
@@ -51,7 +51,7 @@ const router = Router()
   // Search product
   .get("/search/:keyword", searchProductController)
   // Similar product
-  .get("/related-product/:pid/:cid", realtedProductController)
+  .get("/related-product/:pid/:cid", relatedProductController)
   // Category wise product
   .get("/product-category/:slug", productCategoryController)
   // Payments routes

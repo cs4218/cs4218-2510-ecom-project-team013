@@ -84,7 +84,7 @@ export const getProductController = (async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Erorr in getting products",
+      message: "Error in getting products",
       error: (error as any).message,
     });
   }
@@ -362,7 +362,7 @@ export const searchProductController = (async (req, res) => {
 }) satisfies RequestHandler;
 
 // similar products
-export const realtedProductController = (async (req, res) => {
+export const relatedProductController = (async (req, res) => {
   try {
     const { pid, cid } = req.params || {};
     if (!pid || !cid) {
