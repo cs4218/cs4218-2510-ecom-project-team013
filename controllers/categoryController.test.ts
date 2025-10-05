@@ -102,12 +102,56 @@ describe("Category Controllers", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalledWith({
         success: true,
-        messsage: "Category Updated Successfully",
+        message: "Category Updated Successfully",
         category: { name: "Updated", slug: "updated-slug" },
       });
     });
 
-    it("should handle errors", async () => {
+    it("should return 400 if name is missing", async () => {
+      const req = {
+        body: {},
+        params: { id: "1" },
+      } as unknown as Request;
+      const res = mockResponse();
+      await updateCategoryController(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: "Name is required",
+      });
+    });
+
+    it("should return 400 if id is missing", async () => {
+      const req = {
+        body: { name: "Updated" },
+        params: {},
+      } as unknown as Request;
+      const res = mockResponse();
+      await updateCategoryController(req, res);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: "Category ID is required",
+      });
+    });
+
+    it("should return 404 if category not found", async () => {
+      (categoryModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(null);
+      const req = {
+        body: { name: "Updated" },
+        params: { id: "1" },
+      } as unknown as Request;
+      const res = mockResponse();
+      await updateCategoryController(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: "Category not found",
+      });
+    });
+
+    it("should handle errors without exposing error object", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       (categoryModel.findByIdAndUpdate as jest.Mock).mockRejectedValue(
         new Error("DB Error")
       );
@@ -118,12 +162,15 @@ describe("Category Controllers", () => {
       const res = mockResponse();
       await updateCategoryController(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          success: false,
-          message: "Error while updating category",
-        })
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: "Error while updating category",
+      });
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Error updating category:",
+        expect.any(Error)
       );
+      consoleErrorSpy.mockRestore();
     });
   });
 
