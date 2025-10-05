@@ -3,31 +3,41 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 import Layout from "../components/Layout";
 import "../styles/CategoryProductStyles.css";
+import ICategory from "../interfaces/ICategory";
+import IProduct from "../interfaces/IProduct";
+import { toast } from "react-hot-toast";
 
 const CategoryProduct = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
-  const [category, setCategory] = useState([]);
 
-  useEffect(() => {
-    if (params?.slug) getPrductsByCat();
-  }, [params?.slug]);
-  const getPrductsByCat = async () => {
+  const [category, setCategory] = useState<ICategory>();
+  const [products, setProducts] = useState<IProduct[]>([]);
+
+  const getProductsByCategory = async () => {
     try {
       const { data } = await api.product.getProductsByCategory(params.slug);
+
       setProducts(data?.products);
       setCategory(data?.category);
     } catch (error) {
       console.log(error);
+      toast.error("Something went wrong in getting the data");
     }
   };
+
+  useEffect(() => {
+    if (params?.slug) getProductsByCategory();
+  }, [params?.slug]);
 
   return (
     <Layout>
       <div className="container mt-3 category">
-        <h4 className="text-center">Category - {category?.name}</h4>
+        <h4 className="text-center">
+          Category - {category?.name ?? params?.slug}
+        </h4>
         <h6 className="text-center">{products?.length} result found </h6>
+
         <div className="row">
           <div className="col-md-9 offset-1">
             <div className="d-flex flex-wrap">
@@ -37,58 +47,49 @@ const CategoryProduct = () => {
                     src={`/api/v1/product/product-photo/${p._id}`}
                     className="card-img-top"
                     alt={p.name}
+                    data-testid={`product_img_${p._id}`}
                   />
+
                   <div className="card-body">
                     <div className="card-name-price">
-                      <h5 className="card-title">{p.name}</h5>
-                      <h5 className="card-title card-price">
+                      <h5
+                        className="card-title"
+                        data-testid={`product_name_${p._id}`}
+                      >
+                        {p.name}
+                      </h5>
+
+                      <h5
+                        className="card-title card-price"
+                        data-testid={`product_price_${p._id}`}
+                      >
                         {p.price.toLocaleString("en-US", {
                           style: "currency",
                           currency: "USD",
                         })}
                       </h5>
                     </div>
-                    <p className="card-text ">
+
+                    <p
+                      className="card-text "
+                      data-testid={`product_description_${p._id}`}
+                    >
                       {p.description.substring(0, 60)}...
                     </p>
+
                     <div className="card-name-price">
                       <button
                         className="btn btn-info ms-1"
                         onClick={() => navigate(`/product/${p.slug}`)}
+                        data-testid={`product_more_details_${p._id}`}
                       >
                         More Details
                       </button>
-                      {/* <button
-                    className="btn btn-dark ms-1"
-                    onClick={() => {
-                      setCart([...cart, p]);
-                      localStorage.setItem(
-                        "cart",
-                        JSON.stringify([...cart, p])
-                      );
-                      toast.success("Item Added to cart");
-                    }}
-                  >
-                    ADD TO CART
-                  </button> */}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-            {/* <div className="m-2 p-3">
-            {products && products.length < total && (
-              <button
-                className="btn btn-warning"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setPage(page + 1);
-                }}
-              >
-                {loading ? "Loading ..." : "Loadmore"}
-              </button>
-            )}
-          </div> */}
           </div>
         </div>
       </div>
