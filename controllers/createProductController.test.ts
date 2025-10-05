@@ -48,8 +48,7 @@ describe("createProductController", () => {
   test("500 when name missing", async () => {
     await createProductController(
       reqOf({ description: "d", price: 10, category: "c", quantity: 1 }),
-      res,
-      undefined as any
+      res
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({ error: "Name is Required" });
@@ -58,8 +57,7 @@ describe("createProductController", () => {
   test("500 when description missing", async () => {
     await createProductController(
       reqOf({ name: "N", price: 10, category: "c", quantity: 1 }),
-      res,
-      undefined as any
+      res
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
@@ -70,8 +68,7 @@ describe("createProductController", () => {
   test("500 when price missing", async () => {
     await createProductController(
       reqOf({ name: "N", description: "d", category: "c", quantity: 1 }),
-      res,
-      undefined as any
+      res
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({ error: "Price is Required" });
@@ -80,8 +77,7 @@ describe("createProductController", () => {
   test("500 when category missing", async () => {
     await createProductController(
       reqOf({ name: "N", description: "d", price: 1, quantity: 1 }),
-      res,
-      undefined as any
+      res
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
@@ -92,8 +88,7 @@ describe("createProductController", () => {
   test("500 when quantity missing", async () => {
     await createProductController(
       reqOf({ name: "N", description: "d", price: 1, category: "c" }),
-      res,
-      undefined as any
+      res
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
@@ -108,8 +103,7 @@ describe("createProductController", () => {
         { name: "N", description: "d", price: 1, category: "c", quantity: 1 },
         { photo: big }
       ),
-      res,
-      undefined as any
+      res
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
@@ -129,8 +123,7 @@ describe("createProductController", () => {
         quantity: 3,
         shipping: true,
       }),
-      res,
-      undefined as any
+      res
     );
 
     expect(MockProductModel).toHaveBeenCalledWith({
@@ -170,8 +163,7 @@ describe("createProductController", () => {
         },
         { photo }
       ),
-      res,
-      undefined as any
+      res
     );
 
     const instance = MockProductModel.mock.instances[0];
@@ -183,7 +175,7 @@ describe("createProductController", () => {
 
   // ---- Error paths ----
   test("500 when fs.readFileSync throws", async () => {
-    fs.readFileSync.mockImplementationOnce(() => {
+    (fs.readFileSync as jest.Mock).mockImplementationOnce(() => {
       throw new Error("fs fail");
     });
     await createProductController(
@@ -197,8 +189,7 @@ describe("createProductController", () => {
         },
         { photo: { size: 10, path: "p", type: "t" } }
       ),
-      res,
-      undefined as any
+      res
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
@@ -209,7 +200,7 @@ describe("createProductController", () => {
   });
 
   test("500 when save throws", async () => {
-    fs.readFileSync.mockReturnValueOnce(Buffer.from("IMG"));
+    (fs.readFileSync as jest.Mock).mockReturnValueOnce(Buffer.from("IMG"));
     mockProductSave.mockRejectedValueOnce(new Error("write failed"));
 
     await createProductController(
@@ -223,8 +214,7 @@ describe("createProductController", () => {
         },
         { photo: { size: 10, path: "p", type: "t" } }
       ),
-      res,
-      undefined as any
+      res
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({

@@ -19,7 +19,6 @@ jest.mock("braintree", () => {
 describe("getSingleProductController", () => {
   let mockReq: any;
   let mockRes: any;
-  let mockNext: any;
 
   beforeEach(() => {
     mockReq = { params: { slug: "test-product" } };
@@ -27,7 +26,6 @@ describe("getSingleProductController", () => {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
     };
-    mockNext = jest.fn();
 
     jest.clearAllMocks();
   });
@@ -40,7 +38,7 @@ describe("getSingleProductController", () => {
       populate: jest.fn().mockReturnThis().mockResolvedValue(mockProduct),
     });
 
-    await getSingleProductController(mockReq, mockRes, mockNext);
+    await getSingleProductController(mockReq, mockRes);
 
     expect(productModel.findOne).toHaveBeenCalledWith({ slug: "test-product" });
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -57,7 +55,7 @@ describe("getSingleProductController", () => {
       populate: jest.fn().mockReturnThis().mockResolvedValue(null),
     });
 
-    await getSingleProductController(mockReq, mockRes, mockNext);
+    await getSingleProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(404);
     expect(mockRes.send).toHaveBeenCalledWith({
@@ -75,7 +73,7 @@ describe("getSingleProductController", () => {
         .mockRejectedValue(new Error("DB error")),
     });
 
-    await getSingleProductController(mockReq, mockRes, mockNext);
+    await getSingleProductController(mockReq, mockRes);
 
     expect(productModel.findOne).toHaveBeenCalledWith({ slug: "test-product" });
     expect(mockRes.status).toHaveBeenCalledWith(500);

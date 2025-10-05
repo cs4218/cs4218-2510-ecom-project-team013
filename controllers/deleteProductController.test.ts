@@ -19,7 +19,6 @@ jest.mock("braintree", () => {
 describe("deleteProductController", () => {
   let mockReq: any;
   let mockRes: any;
-  let mockNext: any;
 
   beforeEach(() => {
     mockReq = { params: { pid: "123" } };
@@ -28,7 +27,6 @@ describe("deleteProductController", () => {
       send: jest.fn().mockReturnThis(),
       set: jest.fn().mockReturnThis(),
     };
-    mockNext = jest.fn();
 
     jest.clearAllMocks();
   });
@@ -38,7 +36,7 @@ describe("deleteProductController", () => {
       _id: "123",
     });
 
-    await deleteProductController(mockReq, mockRes, mockNext);
+    await deleteProductController(mockReq, mockRes);
 
     expect(productModel.findByIdAndDelete).toHaveBeenCalledWith("123");
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -51,7 +49,7 @@ describe("deleteProductController", () => {
   it("should return 404 if product not found", async () => {
     (productModel.findByIdAndDelete as jest.Mock).mockResolvedValue(null);
 
-    await deleteProductController(mockReq, mockRes, mockNext);
+    await deleteProductController(mockReq, mockRes);
 
     expect(productModel.findByIdAndDelete).toHaveBeenCalledWith("123");
     expect(mockRes.status).toHaveBeenCalledWith(404);
@@ -66,7 +64,7 @@ describe("deleteProductController", () => {
       new Error("DB error")
     );
 
-    await deleteProductController(mockReq, mockRes, mockNext);
+    await deleteProductController(mockReq, mockRes);
 
     expect(productModel.findByIdAndDelete).toHaveBeenCalledWith("123");
     expect(mockRes.status).toHaveBeenCalledWith(500);
