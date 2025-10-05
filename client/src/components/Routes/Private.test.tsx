@@ -1,12 +1,16 @@
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen, waitFor } from "@testing-library/react";
-import axios from "axios";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import api from "../../api";
 import { useAuth as useAuthOriginal } from "../../context/auth";
 import PrivateRoute from "./Private";
 
-jest.mock("axios");
-const mockApi = axios.get as jest.Mock;
+jest.mock("../../api", () => ({
+  auth: {
+    checkUserAuth: jest.fn(),
+  },
+}));
+const mockApi = api.auth.checkUserAuth as jest.Mock;
 
 // Mock Spinner component
 jest.mock("../Spinner", () => () => (
