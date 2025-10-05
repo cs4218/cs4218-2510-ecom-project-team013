@@ -134,7 +134,7 @@ To begin unit testing with Jest in your project, follow these steps:
      npm run test
      ```
 
-### Continuous Integration (CI)
+## 6. Continuous Integration (CI)
 
 This project uses GitHub Actions to automate code quality and testing workflows.
 
