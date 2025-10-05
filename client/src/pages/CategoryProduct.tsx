@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 import Layout from "../components/Layout";
-import "../styles/CategoryProductStyles.css";
 import ICategory from "../interfaces/ICategory";
 import IProduct from "../interfaces/IProduct";
-import { toast } from "react-hot-toast";
+import "../styles/CategoryProductStyles.css";
 
 const CategoryProduct = () => {
   const params = useParams();

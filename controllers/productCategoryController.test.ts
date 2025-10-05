@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import productModel from "../models/productModel";
 import categoryModel from "../models/categoryModel";
+import productModel from "../models/productModel";
 import { productCategoryController } from "./productController";
 
 // mock the models
