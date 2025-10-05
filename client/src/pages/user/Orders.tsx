@@ -5,9 +5,18 @@ import Layout from "../../components/Layout";
 import UserMenu from "../../components/UserMenu";
 import { useAuth } from "../../context/auth";
 
+export type OrderRowData = {
+  _id: string;
+  status: string;
+  buyer: { name: string };
+  createAt: string;
+  payment: { success: boolean };
+  products: { _id: string; name: string; description: string; price: number }[];
+};
+
 const Orders: React.FC = () => {
-  const [orders, setOrders] = useState([]);
-  const [auth, setAuth] = useAuth();
+  const [orders, setOrders] = useState<OrderRowData[]>([]);
+  const [auth] = useAuth();
   const getOrders = async () => {
     try {
       const { data } = await api.auth.getOrders();
@@ -46,16 +55,16 @@ const Orders: React.FC = () => {
                     <tbody>
                       <tr>
                         <td>{i + 1}</td>
-                        <td>{o?.status}</td>
-                        <td>{o?.buyer?.name}</td>
-                        <td>{moment(o?.createAt).fromNow()}</td>
-                        <td>{o?.payment.success ? "Success" : "Failed"}</td>
-                        <td>{o?.products?.length}</td>
+                        <td>{o.status}</td>
+                        <td>{o.buyer.name}</td>
+                        <td>{moment(o.createAt).fromNow()}</td>
+                        <td>{o.payment.success ? "Success" : "Failed"}</td>
+                        <td>{o.products.length}</td>
                       </tr>
                     </tbody>
                   </table>
                   <div className="container">
-                    {o?.products?.map((p, i) => (
+                    {o.products.map((p) => (
                       <div className="row mb-2 p-3 card flex-row" key={p._id}>
                         <div className="col-md-4">
                           <img

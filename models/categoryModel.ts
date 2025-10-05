@@ -1,6 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { type Document, Schema } from "mongoose";
 
-const categorySchema = new mongoose.Schema({
+export type Category = Document & {
+  name: string;
+  slug: string;
+};
+
+const categorySchema = new Schema<Category>({
   name: {
     type: String,
     // required: true,

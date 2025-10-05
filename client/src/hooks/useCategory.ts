@@ -1,7 +1,14 @@
+import type { Document } from "mongoose";
 import { useEffect, useState } from "react";
 import api from "../api";
 
-type Category = { _id: string; name: string };
+// Copied from models/categoryModel.ts
+export type Category = Document & {
+  name: string;
+  slug: string;
+};
+
+// type Category = { _id: string; name: string };
 
 export default function useCategory() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -11,6 +18,7 @@ export default function useCategory() {
 
     (async () => {
       try {
+        // Get all categories
         const { data } = await api.category.getAllCategories();
 
         if (!mounted) return;

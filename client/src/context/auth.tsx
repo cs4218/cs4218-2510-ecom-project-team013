@@ -1,10 +1,23 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 
-const AuthContext = createContext();
+type AuthState = {
+  // TODO: Populate with user type
+  user: null | unknown;
+  token: string;
+};
 
-const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState({
+type AuthContextType = [
+  AuthState,
+  React.Dispatch<React.SetStateAction<AuthState>>,
+];
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [auth, setAuth] = useState<AuthState>({
     user: null,
     token: "",
   });
@@ -31,7 +44,12 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-// custom hook
-const useAuth = () => useContext(AuthContext);
+const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
 
 export { AuthProvider, useAuth };
