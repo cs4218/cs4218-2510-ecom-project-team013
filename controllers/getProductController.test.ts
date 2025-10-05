@@ -19,7 +19,6 @@ jest.mock("braintree", () => {
 describe("getProductController", () => {
   let mockReq: any;
   let mockRes: any;
-  let mockNext: any;
 
   beforeEach(() => {
     mockReq = {};
@@ -27,8 +26,6 @@ describe("getProductController", () => {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
     };
-    mockNext = jest.fn();
-
     jest.clearAllMocks();
   });
 
@@ -43,7 +40,7 @@ describe("getProductController", () => {
       sort: jest.fn().mockReturnThis().mockResolvedValue(mockProducts),
     });
 
-    await getProductController(mockReq, mockRes, mockNext);
+    await getProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
@@ -65,7 +62,7 @@ describe("getProductController", () => {
       sort: jest.fn().mockReturnThis().mockResolvedValue(mockProducts),
     });
 
-    await getProductController(mockReq, mockRes, mockNext);
+    await getProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
@@ -85,12 +82,12 @@ describe("getProductController", () => {
       sort: jest.fn().mockReturnThis().mockRejectedValue(new Error("DB error")),
     });
 
-    await getProductController(mockReq, mockRes, mockNext);
+    await getProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Erorr in getting products",
+      message: "Error in getting products",
       error: "DB error",
     });
   });

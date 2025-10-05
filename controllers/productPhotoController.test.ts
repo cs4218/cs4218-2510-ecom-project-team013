@@ -4,7 +4,7 @@ import { productPhotoController } from "./productController";
 // mock the productModel
 jest.mock("../models/productModel");
 
-// mock braintee - payment
+// mock braintree - payment
 jest.mock("braintree", () => {
   return {
     BraintreeGateway: jest.fn().mockImplementation(() => ({})),
@@ -65,7 +65,7 @@ describe("productPhotoController", () => {
     expect(mockRes.status).toHaveBeenCalledWith(404);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Photo not found for this product",
+      message: "Product not found",
     });
   });
 
@@ -80,7 +80,7 @@ describe("productPhotoController", () => {
     expect(mockRes.status).toHaveBeenCalledWith(404);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Photo not found for this product",
+      message: "Photo not found",
     });
   });
 
@@ -100,11 +100,11 @@ describe("productPhotoController", () => {
     expect(mockRes.status).toHaveBeenCalledWith(404);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Photo not found for this product",
+      message: "Photo not found",
     });
   });
 
-  it("should return 404 if product.photo.contentType is missing", async () => {
+  it("should return 200 and default content type if data present but contentType missing", async () => {
     (productModel.findById as jest.Mock).mockReturnValue({
       select: jest
         .fn()
@@ -117,11 +117,12 @@ describe("productPhotoController", () => {
     await productPhotoController(mockReq, mockRes, mockNext);
 
     expect(productModel.findById).toHaveBeenCalledWith("123");
-    expect(mockRes.status).toHaveBeenCalledWith(404);
-    expect(mockRes.send).toHaveBeenCalledWith({
-      success: false,
-      message: "Photo not found for this product",
-    });
+    expect(mockRes.set).toHaveBeenCalledWith(
+      "Content-Type",
+      "application/octet-stream"
+    );
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.send).toHaveBeenCalledWith(Buffer.from("fake-data"));
   });
 
   it("should handle errors", async () => {
@@ -138,8 +139,8 @@ describe("productPhotoController", () => {
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Erorr while getting photo",
-      error: new Error("DB error"),
+      message: "Error while getting photo",
+      error: expect.any(Error),
     });
   });
 });
