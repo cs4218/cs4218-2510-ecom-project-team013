@@ -11,9 +11,9 @@ jest.mock("braintree", () => ({
 }));
 
 describe("relatedProductController", () => {
+  // TODO: Do not use global variables
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     mockRequest = {
@@ -23,12 +23,10 @@ describe("relatedProductController", () => {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
     };
-    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-    consoleErrorSpy.mockRestore();
   });
 
   describe("Parameter Validation", () => {
@@ -392,6 +390,7 @@ describe("relatedProductController", () => {
     });
 
     it("should log errors to console.error with descriptive message", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       mockRequest.params = { pid: "product123", cid: "category456" };
 
       const dbError = new Error("Database error");
@@ -412,6 +411,7 @@ describe("relatedProductController", () => {
         "Error getting related products:",
         dbError
       );
+      consoleErrorSpy.mockRestore();
     });
 
     it("should handle error during find operation", async () => {
@@ -435,6 +435,7 @@ describe("relatedProductController", () => {
     });
 
     it("should handle error during select operation", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       mockRequest.params = { pid: "product123", cid: "category456" };
 
       const error = new Error("Select operation failed");
@@ -452,6 +453,7 @@ describe("relatedProductController", () => {
 
       expect(mockResponse.status).toHaveBeenCalledWith(500);
       expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
   });
 
