@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import JWT from "jsonwebtoken";
-import { isAdmin, requireSignIn } from "./authMiddleware";
 import userModel from "../models/userModel";
+import { isAdmin, requireSignIn } from "./authMiddleware";
 
 jest.mock("jsonwebtoken");
 jest.mock("../models/userModel");
