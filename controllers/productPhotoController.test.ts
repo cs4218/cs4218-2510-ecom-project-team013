@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import productModel from "../models/productModel";
 import { productPhotoController } from "./productController";
 
@@ -12,22 +13,28 @@ jest.mock("braintree", () => {
   };
 });
 
+// Mock Request and Response
+const mockRequest = () => {
+  const req: Partial<Request> = {
+    params: { pid: "123" },
+  };
+  return req as Request;
+};
+
+const mockResponse = () => {
+  const res: Partial<Response> = {};
+  res.status = jest.fn().mockReturnThis();
+  res.send = jest.fn().mockReturnThis();
+  res.set = jest.fn().mockReturnThis();
+  return res as Response;
+};
+
 // =====================================================
 // ProductPhotoController
 // =====================================================
 
 describe("productPhotoController", () => {
-  let mockReq: any;
-  let mockRes: any;
-
   beforeEach(() => {
-    mockReq = { params: { pid: "123" } };
-    mockRes = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis(),
-      set: jest.fn().mockReturnThis(),
-    };
-
     jest.clearAllMocks();
   });
 
@@ -35,7 +42,7 @@ describe("productPhotoController", () => {
     const mockPhoto = {
       data: Buffer.from("fake-image-data"),
       contentType: "image/png",
-    };
+    } as any;
 
     (productModel.findById as jest.Mock).mockReturnValue({
       select: jest
@@ -44,6 +51,8 @@ describe("productPhotoController", () => {
         .mockResolvedValue({ photo: mockPhoto }),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await productPhotoController(mockReq, mockRes);
 
     expect(productModel.findById).toHaveBeenCalledWith("123");
@@ -57,6 +66,8 @@ describe("productPhotoController", () => {
       select: jest.fn().mockReturnThis().mockResolvedValue(null),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await productPhotoController(mockReq, mockRes);
 
     expect(productModel.findById).toHaveBeenCalledWith("123");
@@ -72,6 +83,8 @@ describe("productPhotoController", () => {
       select: jest.fn().mockReturnThis().mockResolvedValue({ photo: null }),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await productPhotoController(mockReq, mockRes);
 
     expect(productModel.findById).toHaveBeenCalledWith("123");
@@ -92,6 +105,8 @@ describe("productPhotoController", () => {
         }),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await productPhotoController(mockReq, mockRes);
 
     expect(productModel.findById).toHaveBeenCalledWith("123");
@@ -108,10 +123,12 @@ describe("productPhotoController", () => {
         .fn()
         .mockReturnThis()
         .mockResolvedValue({
-          photo: { data: Buffer.from("fake-data") },
+          photo: { data: Buffer.from("fake-data") } as any,
         }),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await productPhotoController(mockReq, mockRes);
 
     expect(productModel.findById).toHaveBeenCalledWith("123");
@@ -131,6 +148,8 @@ describe("productPhotoController", () => {
         .mockRejectedValue(new Error("DB error")),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await productPhotoController(mockReq, mockRes);
 
     expect(productModel.findById).toHaveBeenCalledWith("123");

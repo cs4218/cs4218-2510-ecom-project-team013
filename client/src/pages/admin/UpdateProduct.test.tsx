@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import axios from "axios";
+import api from "../../api";
 import { toast } from "react-hot-toast";
 import { MemoryRouter } from "react-router-dom";
 
@@ -32,8 +32,16 @@ jest.mock("react-hot-toast", () => ({
 }));
 
 // Setup Mock API
-jest.mock("axios");
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+jest.mock("../../api", () => ({
+  product: {
+    getSingleProduct: jest.fn(),
+    updateProduct: jest.fn(),
+    deleteProduct: jest.fn(),
+  },
+  category: {
+    getAllCategories: jest.fn(),
+  },
+}));
 
 // Setup Mock CreateObjectUrl
 global.URL.createObjectURL = jest.fn(() => "mocked-blob-url");
@@ -78,12 +86,11 @@ describe("Update Product", () => {
   it("fetches product and categories on mount", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
+    });
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
     });
 
     renderPage();
@@ -115,12 +122,11 @@ describe("Update Product", () => {
   it("Calls toast with error message when Product fails", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.reject(new Error("Error"));
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockRejectedValueOnce(
+      new Error("Error")
+    );
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
     });
 
     renderPage();
@@ -135,13 +141,12 @@ describe("Update Product", () => {
   it("Calls toast with error message when Cateroy fails", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.reject(new Error("Error"));
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
+    (api.category.getAllCategories as jest.Mock).mockRejectedValueOnce(
+      new Error("Error")
+    );
 
     renderPage();
 
@@ -159,12 +164,11 @@ describe("Update Product", () => {
 
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
+    });
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
     });
 
     renderPage();
@@ -183,15 +187,13 @@ describe("Update Product", () => {
   it("updates product with changed category", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockResolvedValue({
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockResolvedValue({
       data: { success: true, message: "Product Updated Successfully" },
     });
 
@@ -215,15 +217,14 @@ describe("Update Product", () => {
       userEvent.click(updateBtn);
     });
 
-    expect(mockedAxios.put).toHaveBeenCalledTimes(1);
+    expect(api.product.updateProduct as jest.Mock).toHaveBeenCalledTimes(1);
 
-    const [_, formData] = mockedAxios.put.mock.calls[0];
-    const entries: Record<string, any> = {};
-    (formData as FormData).forEach((value, key) => {
-      entries[key] = value;
-    });
+    const [_, formData] = (api.product.updateProduct as jest.Mock).mock
+      .calls[0];
+    expect(formData.category).toBe("2");
 
-    expect(entries.category).toBe("2");
+    expect(toast.success).toHaveBeenCalledWith("Product Updated Successfully");
+    expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
 
     expect(toast.success).toHaveBeenCalledWith("Product Updated Successfully");
     expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
@@ -232,15 +233,13 @@ describe("Update Product", () => {
   it("updates product with a new photo", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockResolvedValue({
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockResolvedValue({
       data: { success: true, message: "Product Updated Successfully" },
     });
 
@@ -269,16 +268,11 @@ describe("Update Product", () => {
       userEvent.click(updateBtn);
     });
 
-    expect(mockedAxios.put).toHaveBeenCalledTimes(1);
+    expect(api.product.updateProduct as jest.Mock).toHaveBeenCalledTimes(1);
 
-    const [_, formData] = mockedAxios.put.mock.calls[0];
-
-    const entries: Record<string, any> = {};
-    (formData as FormData).forEach((value, key) => {
-      entries[key] = value;
-    });
-
-    expect(entries.photo).toBe(file);
+    const [_, formData] = (api.product.updateProduct as jest.Mock).mock
+      .calls[0];
+    expect(formData.photo).toBe(file);
 
     expect(toast.success).toHaveBeenCalledWith("Product Updated Successfully");
     expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
@@ -287,15 +281,13 @@ describe("Update Product", () => {
   it("updates product with changed name", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockResolvedValue({
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockResolvedValue({
       data: { success: true, message: "Product Updated Successfully" },
     });
 
@@ -320,15 +312,11 @@ describe("Update Product", () => {
       userEvent.click(updateBtn);
     });
 
-    expect(mockedAxios.put).toHaveBeenCalledTimes(1);
+    expect(api.product.updateProduct as jest.Mock).toHaveBeenCalledTimes(1);
 
-    const [_, formData] = mockedAxios.put.mock.calls[0];
-    const entries: Record<string, any> = {};
-    (formData as FormData).forEach((value, key) => {
-      entries[key] = value;
-    });
-
-    expect(entries.name).toBe("Updated Product Name");
+    const [_, formData] = (api.product.updateProduct as jest.Mock).mock
+      .calls[0];
+    expect(formData.name).toBe("Updated Product Name");
 
     expect(toast.success).toHaveBeenCalledWith("Product Updated Successfully");
     expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
@@ -337,15 +325,13 @@ describe("Update Product", () => {
   it("updates description with changed description", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockResolvedValue({
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockResolvedValue({
       data: { success: true, message: "Product Updated Successfully" },
     });
 
@@ -370,15 +356,11 @@ describe("Update Product", () => {
       userEvent.click(updateBtn);
     });
 
-    expect(mockedAxios.put).toHaveBeenCalledTimes(1);
+    expect(api.product.updateProduct as jest.Mock).toHaveBeenCalledTimes(1);
 
-    const [_, formData] = mockedAxios.put.mock.calls[0];
-    const entries: Record<string, any> = {};
-    (formData as FormData).forEach((value, key) => {
-      entries[key] = value;
-    });
-
-    expect(entries.description).toBe("Updated Description");
+    const [_, formData] = (api.product.updateProduct as jest.Mock).mock
+      .calls[0];
+    expect(formData.description).toBe("Updated Description");
 
     expect(toast.success).toHaveBeenCalledWith("Product Updated Successfully");
     expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
@@ -387,15 +369,13 @@ describe("Update Product", () => {
   it("updates price with changed price", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockResolvedValue({
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockResolvedValue({
       data: { success: true, message: "Product Updated Successfully" },
     });
 
@@ -420,15 +400,11 @@ describe("Update Product", () => {
       userEvent.click(updateBtn);
     });
 
-    expect(mockedAxios.put).toHaveBeenCalledTimes(1);
+    expect(api.product.updateProduct as jest.Mock).toHaveBeenCalledTimes(1);
 
-    const [_, formData] = mockedAxios.put.mock.calls[0];
-    const entries: Record<string, any> = {};
-    (formData as FormData).forEach((value, key) => {
-      entries[key] = value;
-    });
-
-    expect(entries.price).toBe("10.50");
+    const [_, formData] = (api.product.updateProduct as jest.Mock).mock
+      .calls[0];
+    expect(formData.price).toBe("10.50");
 
     expect(toast.success).toHaveBeenCalledWith("Product Updated Successfully");
     expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
@@ -437,15 +413,13 @@ describe("Update Product", () => {
   it("updates quantity with changed quantity", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockResolvedValue({
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockResolvedValue({
       data: { success: true, message: "Product Updated Successfully" },
     });
 
@@ -470,15 +444,11 @@ describe("Update Product", () => {
       userEvent.click(updateBtn);
     });
 
-    expect(mockedAxios.put).toHaveBeenCalledTimes(1);
+    expect(api.product.updateProduct as jest.Mock).toHaveBeenCalledTimes(1);
 
-    const [_, formData] = mockedAxios.put.mock.calls[0];
-    const entries: Record<string, any> = {};
-    (formData as FormData).forEach((value, key) => {
-      entries[key] = value;
-    });
-
-    expect(entries.quantity).toBe("150");
+    const [_, formData] = (api.product.updateProduct as jest.Mock).mock
+      .calls[0];
+    expect(formData.quantity).toBe("150");
 
     expect(toast.success).toHaveBeenCalledWith("Product Updated Successfully");
     expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
@@ -487,15 +457,13 @@ describe("Update Product", () => {
   it("updates shipping with changed shipping", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockResolvedValue({
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockResolvedValue({
       data: { success: true, message: "Product Updated Successfully" },
     });
 
@@ -521,15 +489,11 @@ describe("Update Product", () => {
       userEvent.click(updateBtn);
     });
 
-    expect(mockedAxios.put).toHaveBeenCalledTimes(1);
+    expect(api.product.updateProduct as jest.Mock).toHaveBeenCalledTimes(1);
 
-    const [_, formData] = mockedAxios.put.mock.calls[0];
-    const entries: Record<string, any> = {};
-    (formData as FormData).forEach((value, key) => {
-      entries[key] = value;
-    });
-
-    expect(entries.shipping).toBe("true");
+    const [_, formData] = (api.product.updateProduct as jest.Mock).mock
+      .calls[0];
+    expect(formData.shipping).toBe("true");
 
     expect(toast.success).toHaveBeenCalledWith("Product Updated Successfully");
     expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
@@ -538,15 +502,13 @@ describe("Update Product", () => {
   it("shows toast error when update fails", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockResolvedValue({
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockResolvedValue({
       data: { success: false, message: "Update failed" },
     });
 
@@ -573,15 +535,15 @@ describe("Update Product", () => {
   it("shows toast error with exception msg when update throws an exception with msg", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockRejectedValue(new Error("Network Error"));
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockRejectedValueOnce(
+      new Error("Network Error")
+    );
 
     renderPage();
 
@@ -606,15 +568,13 @@ describe("Update Product", () => {
   it("shows toast error without exception msg when update throws an exception without msg", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
-
-    mockedAxios.put.mockRejectedValue(new Error());
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.updateProduct as jest.Mock).mockRejectedValueOnce(new Error());
 
     renderPage();
 
@@ -639,12 +599,11 @@ describe("Update Product", () => {
   it("does nothing when user cancels confirm", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
+    });
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
     });
 
     jest.spyOn(window, "confirm").mockReturnValue(false);
@@ -665,7 +624,7 @@ describe("Update Product", () => {
       userEvent.click(deleteBtn);
     });
 
-    expect(mockedAxios.delete).not.toHaveBeenCalled();
+    expect(api.product.updateProduct as jest.Mock).not.toHaveBeenCalled();
     expect(toast.success).not.toHaveBeenCalled();
     expect(toast.error).not.toHaveBeenCalled();
     expect(mockedNavigate).not.toHaveBeenCalled();
@@ -674,18 +633,17 @@ describe("Update Product", () => {
   it("calls API and shows success toast when deletion succeeds", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
+    });
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.deleteProduct as jest.Mock).mockResolvedValue({
+      data: { success: true },
     });
 
     jest.spyOn(window, "confirm").mockReturnValue(true);
-    mockedAxios.delete.mockResolvedValue({
-      data: { success: true },
-    });
 
     renderPage();
 
@@ -703,9 +661,9 @@ describe("Update Product", () => {
       userEvent.click(deleteBtn);
     });
 
-    expect(mockedAxios.delete).toHaveBeenCalledWith(
-      `/api/v1/product/delete-product/1`
-    );
+    expect(api.product.deleteProduct as jest.Mock).toHaveBeenCalledTimes(1);
+    expect(api.product.deleteProduct as jest.Mock).toHaveBeenCalledWith("1");
+
     expect(toast.success).toHaveBeenCalledWith("Product Deleted Successfully");
     expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/admin/products");
   });
@@ -713,18 +671,17 @@ describe("Update Product", () => {
   it("shows error toast when API returns success: false", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
+    });
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.deleteProduct as jest.Mock).mockResolvedValue({
+      data: { success: false, message: "Product Delete failed" },
     });
 
     jest.spyOn(window, "confirm").mockReturnValue(true);
-    mockedAxios.delete.mockResolvedValue({
-      data: { success: false, message: "Product Delete failed" },
-    });
 
     renderPage();
 
@@ -742,9 +699,9 @@ describe("Update Product", () => {
       userEvent.click(deleteBtn);
     });
 
-    expect(mockedAxios.delete).toHaveBeenCalledWith(
-      `/api/v1/product/delete-product/1`
-    );
+    expect(api.product.deleteProduct as jest.Mock).toHaveBeenCalledTimes(1);
+    expect(api.product.deleteProduct as jest.Mock).toHaveBeenCalledWith("1");
+
     expect(toast.error).toHaveBeenCalledWith("Product Delete failed");
     expect(mockedNavigate).not.toHaveBeenCalled();
   });
@@ -752,16 +709,17 @@ describe("Update Product", () => {
   it("shows error toast with custom msg when API call throws with msg", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.deleteProduct as jest.Mock).mockRejectedValue(
+      new Error("Network Error")
+    );
 
     jest.spyOn(window, "confirm").mockReturnValue(true);
-    mockedAxios.delete.mockRejectedValue(new Error("Network Error"));
 
     renderPage();
 
@@ -779,9 +737,9 @@ describe("Update Product", () => {
       userEvent.click(deleteBtn);
     });
 
-    expect(mockedAxios.delete).toHaveBeenCalledWith(
-      `/api/v1/product/delete-product/1`
-    );
+    expect(api.product.deleteProduct as jest.Mock).toHaveBeenCalledTimes(1);
+    expect(api.product.deleteProduct as jest.Mock).toHaveBeenCalledWith("1");
+
     expect(toast.error).toHaveBeenCalledWith("Network Error");
     expect(mockedNavigate).not.toHaveBeenCalled();
   });
@@ -789,16 +747,15 @@ describe("Update Product", () => {
   it("shows error toast with default msg when API call throws without msg", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes("/get-product/"))
-        return Promise.resolve({ data: productData });
-      if (url.includes("/get-category"))
-        return Promise.resolve({ data: categoriesData });
-      return Promise.reject(new Error("Error"));
+    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
+      data: productData,
     });
+    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
+      data: categoriesData,
+    });
+    (api.product.deleteProduct as jest.Mock).mockRejectedValue(new Error());
 
     jest.spyOn(window, "confirm").mockReturnValue(true);
-    mockedAxios.delete.mockRejectedValue(new Error());
 
     renderPage();
 
@@ -816,9 +773,9 @@ describe("Update Product", () => {
       userEvent.click(deleteBtn);
     });
 
-    expect(mockedAxios.delete).toHaveBeenCalledWith(
-      `/api/v1/product/delete-product/1`
-    );
+    expect(api.product.deleteProduct as jest.Mock).toHaveBeenCalledTimes(1);
+    expect(api.product.deleteProduct as jest.Mock).toHaveBeenCalledWith("1");
+
     expect(toast.error).toHaveBeenCalledWith("Something went wrong");
     expect(mockedNavigate).not.toHaveBeenCalled();
   });

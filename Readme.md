@@ -27,6 +27,7 @@ Virtual Vault is a full-stack MERN (MongoDB, Express.js, React.js, Node.js) e-co
 
 2. **Verify Installation**:
    - Open your terminal and check the installed versions of Node.js and npm:
+
      ```bash
      node -v
      npm -v
@@ -65,9 +66,11 @@ To download and use the MERN (MongoDB, Express.js, React.js, Node.js) app from G
    - Click on the "Code" button and copy the URL of the repository.
    - Open your terminal or command prompt.
    - Use the `git clone` command followed by the repository URL to clone the repository to your local machine:
+
      ```bash
      git clone <repository_url>
      ```
+
    - Navigate into the cloned directory.
 
 2. **Install Frontend and Backend Dependencies**
@@ -79,6 +82,7 @@ To download and use the MERN (MongoDB, Express.js, React.js, Node.js) app from G
 
 3. **Add database connection string to `.env`**
    - Copy the example environment variables from `.env.example` to `.env` in the project directory, then add the connection string copied from MongoDB Atlas, replacing the necessary placeholders:
+
      ```env
      MONGO_URL = <connection string>
      ```
@@ -130,6 +134,19 @@ To begin unit testing with Jest in your project, follow these steps:
      ```
 
    - **All the tests**
+
      ```bash
      npm run test
      ```
+
+## 6. Continuous Integration (CI)
+
+This project uses GitHub Actions to automate code quality and testing workflows.
+
+1. Branch Check: <https://github.com/cs4218/cs4218-2510-ecom-project-team013/actions/workflows/branch-check.yml>
+
+- Ensures all pull requests follow a linear branching strategy.
+
+2. Continuous Integration: <https://github.com/cs4218/cs4218-2510-ecom-project-team013/actions/workflows/ci.yml>
+
+- Runs full CI pipeline, installs dependencies, checks code format, builds the project, and executes frontend & backend tests.

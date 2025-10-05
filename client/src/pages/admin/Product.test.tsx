@@ -1,8 +1,8 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import axios from "axios";
 import { toast } from "react-hot-toast";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import api from "../../api";
 
 // Setup Mock Components
 jest.mock("../../components/Layout", () => ({ children }: any) => (
@@ -21,8 +21,11 @@ jest.mock("react-hot-toast", () => ({
 }));
 
 // Setup Mock API
-jest.mock("axios");
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+jest.mock("../../api", () => ({
+  product: {
+    getAllProducts: jest.fn(),
+  },
+}));
 
 // Component Under test
 import Products from "./Products";
@@ -101,7 +104,9 @@ const renderPage = () => {
 
 describe("Products Page", () => {
   it("Renders products from API", async () => {
-    mockedAxios.get.mockResolvedValueOnce({ data: { products: fakeProducts } });
+    (api.product.getAllProducts as jest.Mock).mockResolvedValueOnce({
+      data: { products: fakeProducts },
+    });
 
     renderPage();
 
@@ -110,7 +115,9 @@ describe("Products Page", () => {
   });
 
   it("Calls toast with error message when API fails", async () => {
-    mockedAxios.get.mockRejectedValueOnce(new Error("Network Error"));
+    (api.product.getAllProducts as jest.Mock).mockRejectedValueOnce(
+      new Error("Network Error")
+    );
 
     renderPage();
 
@@ -120,7 +127,9 @@ describe("Products Page", () => {
   });
 
   it("navigates to product detail page on click", async () => {
-    mockedAxios.get.mockResolvedValueOnce({ data: { products: fakeProducts } });
+    (api.product.getAllProducts as jest.Mock).mockResolvedValueOnce({
+      data: { products: fakeProducts },
+    });
 
     renderPage();
 
