@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import axios from "axios";
 import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
 import ProductDetails from "./ProductDetails";
@@ -26,11 +32,14 @@ jest.mock(
     )
 );
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: jest.fn().mockImplementation(() => {}),
-}));
-const mockNavigate = useNavigate;
+jest.mock("react-router-dom", () => {
+  const mockNavigate = jest.fn().mockImplementation(() => {});
+  return {
+    ...jest.requireActual("react-router-dom"),
+    useNavigate: () => mockNavigate,
+  };
+});
+const mockNavigate = useNavigate();
 
 function renderWithSlug(slugPath: string) {
   return render(
@@ -70,7 +79,9 @@ describe("ProductDetails (unit)", () => {
       .mockResolvedValueOnce({ data: { product } }) // get-product
       .mockResolvedValueOnce({ data: { products: related } }); // related-product
 
-    renderWithSlug("/product/test-product");
+    await act(async () => {
+      renderWithSlug("/product/test-product");
+    });
 
     await waitFor(() => {
       expect(mockedAxios.get).toHaveBeenCalledWith(
@@ -148,7 +159,9 @@ describe("ProductDetails (unit)", () => {
     renderWithSlug("/product/main");
 
     const btn = await screen.findByRole("button", { name: /More Details/i });
-    fireEvent.click(btn);
+    await act(async () => {
+      fireEvent.click(btn);
+    });
     expect(mockNavigate).toHaveBeenCalledWith("/product/rel-a");
   });
 
