@@ -1,14 +1,3 @@
-/**
- * Unit tests for relatedProductController
- *
- * Test Coverage:
- * - Parameter validation (pid and cid required)
- * - Database query correctness (filters, limit, select, populate)
- * - Successful response handling
- * - Error handling (no information leakage)
- * - Edge cases
- */
-
 import type { Request, Response } from "express";
 import { relatedProductController } from "./productController";
 import productModel from "../models/productModel";
