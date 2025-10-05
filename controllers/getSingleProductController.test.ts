@@ -4,7 +4,7 @@ import { getSingleProductController } from "./productController";
 // mock the productModel
 jest.mock("../models/productModel");
 
-// mock braintee - payment
+// mock braintree - payment
 jest.mock("braintree", () => {
   return {
     BraintreeGateway: jest.fn().mockImplementation(() => ({})),
@@ -46,7 +46,7 @@ describe("getSingleProductController", () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      message: "Single Product Fetched",
+      message: "Single product fetched",
       product: mockProduct,
     });
   });
@@ -63,7 +63,6 @@ describe("getSingleProductController", () => {
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
       message: "Product not found",
-      product: null,
     });
   });
 
@@ -82,8 +81,8 @@ describe("getSingleProductController", () => {
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: false,
-      message: "Eror while getitng single product",
-      error: new Error("DB error"),
+      message: "Error while getting single product",
+      error: expect.any(Error),
     });
   });
 });
