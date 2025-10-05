@@ -195,7 +195,10 @@ describe("authMiddleware", () => {
           mockNext
         );
 
-        expect(JWT.verify).toHaveBeenCalledWith("bearer token123", "test-secret");
+        expect(JWT.verify).toHaveBeenCalledWith(
+          "bearer token123",
+          "test-secret"
+        );
         expect(mockNext).toHaveBeenCalled();
       });
     });
@@ -585,11 +588,7 @@ describe("authMiddleware", () => {
 
       mockNext.mockClear();
 
-      await isAdmin(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      await isAdmin(mockRequest as Request, mockResponse as Response, mockNext);
 
       expect(mockNext).toHaveBeenCalledTimes(1);
       expect(mockResponse.status).not.toHaveBeenCalled();
@@ -614,11 +613,7 @@ describe("authMiddleware", () => {
 
       mockNext.mockClear();
 
-      await isAdmin(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+      await isAdmin(mockRequest as Request, mockResponse as Response, mockNext);
 
       expect(mockResponse.status).toHaveBeenCalledWith(403);
       expect(mockNext).not.toHaveBeenCalled();
