@@ -16,7 +16,7 @@ jest.mock("braintree", () => {
 // Mock Request and Response
 const mockRequest = () => {
   const req: Partial<Request> = {
-    params: { slug: "test-product" }
+    params: { slug: "test-product" },
   };
   return req as Request;
 };

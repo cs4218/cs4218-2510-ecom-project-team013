@@ -17,7 +17,6 @@ jest.mock("braintree", () => {
 const mockRequest = () => {
   const req: Partial<Request> = {
     params: { pid: "123" },
-    
   };
   return req as Request;
 };
@@ -34,7 +33,6 @@ const mockResponse = () => {
 // =====================================================
 
 describe("deleteProductController", () => {
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
