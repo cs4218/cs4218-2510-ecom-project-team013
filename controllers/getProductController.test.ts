@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import productModel from "../models/productModel";
 import { getProductController } from "./productController";
 
@@ -12,20 +13,29 @@ jest.mock("braintree", () => {
   };
 });
 
+// Mock Request and Response
+const mockRequest = () => {
+  const req: Partial<Request> = {
+    params: { pid: "123" },
+    
+  };
+  return req as Request;
+};
+
+const mockResponse = () => {
+  const res: Partial<Response> = {};
+  res.status = jest.fn().mockReturnThis();
+  res.send = jest.fn().mockReturnThis();
+  return res as Response;
+};
+
 // =====================================================
 // GetProductController
 // =====================================================
 
 describe("getProductController", () => {
-  let mockReq: any;
-  let mockRes: any;
 
   beforeEach(() => {
-    mockReq = {};
-    mockRes = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis(),
-    };
     jest.clearAllMocks();
   });
 
@@ -40,6 +50,8 @@ describe("getProductController", () => {
       sort: jest.fn().mockReturnThis().mockResolvedValue(mockProducts),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await getProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -52,7 +64,7 @@ describe("getProductController", () => {
   });
 
   it("should return products successfully", async () => {
-    const mockProducts = [{ name: "Product 1" }, { name: "Product 2" }];
+    const mockProducts = [{ name: "Product 1" }, { name: "Product 2" }] as any;
 
     // Mock the chain of mongoose calls
     (productModel.find as jest.Mock).mockReturnValue({
@@ -62,6 +74,8 @@ describe("getProductController", () => {
       sort: jest.fn().mockReturnThis().mockResolvedValue(mockProducts),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await getProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -82,6 +96,8 @@ describe("getProductController", () => {
       sort: jest.fn().mockReturnThis().mockRejectedValue(new Error("DB error")),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await getProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(500);

@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import productModel from "../models/productModel";
 import { deleteProductController } from "./productController";
 
@@ -12,22 +13,29 @@ jest.mock("braintree", () => {
   };
 });
 
+// Mock Request and Response
+const mockRequest = () => {
+  const req: Partial<Request> = {
+    params: { pid: "123" },
+    
+  };
+  return req as Request;
+};
+
+const mockResponse = () => {
+  const res: Partial<Response> = {};
+  res.status = jest.fn().mockReturnThis();
+  res.send = jest.fn().mockReturnThis();
+  return res as Response;
+};
+
 // =====================================================
 // DeleteProductController
 // =====================================================
 
 describe("deleteProductController", () => {
-  let mockReq: any;
-  let mockRes: any;
 
   beforeEach(() => {
-    mockReq = { params: { pid: "123" } };
-    mockRes = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis(),
-      set: jest.fn().mockReturnThis(),
-    };
-
     jest.clearAllMocks();
   });
 
@@ -36,6 +44,8 @@ describe("deleteProductController", () => {
       _id: "123",
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await deleteProductController(mockReq, mockRes);
 
     expect(productModel.findByIdAndDelete).toHaveBeenCalledWith("123");
@@ -49,6 +59,8 @@ describe("deleteProductController", () => {
   it("should return 404 if product not found", async () => {
     (productModel.findByIdAndDelete as jest.Mock).mockResolvedValue(null);
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await deleteProductController(mockReq, mockRes);
 
     expect(productModel.findByIdAndDelete).toHaveBeenCalledWith("123");
@@ -64,6 +76,8 @@ describe("deleteProductController", () => {
       new Error("DB error")
     );
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await deleteProductController(mockReq, mockRes);
 
     expect(productModel.findByIdAndDelete).toHaveBeenCalledWith("123");

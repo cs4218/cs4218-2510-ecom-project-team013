@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import productModel from "../models/productModel";
 import { getSingleProductController } from "./productController";
 
@@ -12,32 +13,40 @@ jest.mock("braintree", () => {
   };
 });
 
+// Mock Request and Response
+const mockRequest = () => {
+  const req: Partial<Request> = {
+    params: { slug: "test-product" }
+  };
+  return req as Request;
+};
+
+const mockResponse = () => {
+  const res: Partial<Response> = {};
+  res.status = jest.fn().mockReturnThis();
+  res.send = jest.fn().mockReturnThis();
+  return res as Response;
+};
+
 // =====================================================
 // GetSingleProductController
 // =====================================================
 
 describe("getSingleProductController", () => {
-  let mockReq: any;
-  let mockRes: any;
-
   beforeEach(() => {
-    mockReq = { params: { slug: "test-product" } };
-    mockRes = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis(),
-    };
-
     jest.clearAllMocks();
   });
 
   it("should return a single product successfully", async () => {
-    const mockProduct = { name: "Test Product", slug: "test-product" };
+    const mockProduct = { name: "Test Product", slug: "test-product" } as any;
 
     (productModel.findOne as jest.Mock).mockReturnValue({
       select: jest.fn().mockReturnThis(),
       populate: jest.fn().mockReturnThis().mockResolvedValue(mockProduct),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await getSingleProductController(mockReq, mockRes);
 
     expect(productModel.findOne).toHaveBeenCalledWith({ slug: "test-product" });
@@ -55,6 +64,8 @@ describe("getSingleProductController", () => {
       populate: jest.fn().mockReturnThis().mockResolvedValue(null),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await getSingleProductController(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(404);
@@ -73,6 +84,8 @@ describe("getSingleProductController", () => {
         .mockRejectedValue(new Error("DB error")),
     });
 
+    const mockReq = mockRequest();
+    const mockRes = mockResponse();
     await getSingleProductController(mockReq, mockRes);
 
     expect(productModel.findOne).toHaveBeenCalledWith({ slug: "test-product" });
