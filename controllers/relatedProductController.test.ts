@@ -4,6 +4,12 @@ import productModel from "../models/productModel";
 
 jest.mock("../models/productModel");
 
+// Mock braintree
+jest.mock("braintree", () => ({
+  BraintreeGateway: jest.fn().mockImplementation(() => ({})),
+  Environment: { Sandbox: "Sandbox", Production: "Production" },
+}));
+
 describe("relatedProductController", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;

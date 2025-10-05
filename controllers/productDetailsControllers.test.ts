@@ -175,12 +175,14 @@ describe("Product details controllers — spec-driven (these should fail until c
       res
     );
 
-    expect(console.log).toHaveBeenCalled();
+    expect(console.error).toHaveBeenCalledWith(
+      "Error getting related products:",
+      expect.any(Error)
+    );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error while getting related products",
-      error: expect.any(Error),
     });
   });
 
