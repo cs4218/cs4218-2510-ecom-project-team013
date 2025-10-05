@@ -27,23 +27,26 @@ describe("Category Controllers", () => {
   });
 
   describe("createCategoryController", () => {
-    it("should return 401 if name is missing", async () => {
+    it("should return 400 if name is missing", async () => {
       const req = { body: {} } as Request;
       const res = mockResponse();
       await createCategoryController(req, res);
-      expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.send).toHaveBeenCalledWith({ message: "Name is required" });
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.send).toHaveBeenCalledWith({
+        message: "Name is required",
+        success: false,
+      });
     });
 
-    it("should return 200 if category already exists", async () => {
+    it("should return 409 if category already exists", async () => {
       (categoryModel.findOne as jest.Mock).mockResolvedValue({ name: "Test" });
       const req = { body: { name: "Test" } } as Request;
       const res = mockResponse();
       await createCategoryController(req, res);
-      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.status).toHaveBeenCalledWith(409);
       expect(res.send).toHaveBeenCalledWith({
-        success: true,
-        message: "Category Already Exists",
+        success: false,
+        message: "Category already exists",
       });
     });
 
@@ -60,7 +63,7 @@ describe("Category Controllers", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalledWith({
         success: true,
-        message: "new category created",
+        message: "Category created",
         category: { name: "Test", slug: "test-slug" },
       });
     });
@@ -76,7 +79,8 @@ describe("Category Controllers", () => {
       expect(res.send).toHaveBeenCalledWith(
         expect.objectContaining({
           success: false,
-          message: "Error in Category",
+          error: "DB Error",
+          message: "Error creating category",
         })
       );
     });

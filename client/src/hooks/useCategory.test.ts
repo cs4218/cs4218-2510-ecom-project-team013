@@ -7,28 +7,13 @@ import useCategory from "./useCategory";
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-// jest.mock("axios", () => {
-//   const mock = {
-//     get: jest.fn(),
-//     post: jest.fn(),
-//     put: jest.fn(),
-//     delete: jest.fn(),
-//     create: () => mock,
-//     defaults: { headers: { common: {} } },
-//   };
-//   return mock;
-// });
-// const mockedAxios = axios as unknown as { get: jest.Mock };
-
-/* ===================== Setup ===================== */
-
-beforeEach(() => {
-  jest.resetAllMocks();
-});
-
 /* ===================== Tests ===================== */
 
 describe("hooks/useCategory (unit) — bug-hunting tests", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   test("calls API on mount, then updates categories state", async () => {
     const fake = [
       { _id: "c1", name: "Phones" },
@@ -191,13 +176,16 @@ describe("useCategory", () => {
   it("should handle errors and log them", async () => {
     const error = new Error("Network error");
     mockedAxios.get.mockRejectedValueOnce(error);
-    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation();
     const { result } = renderHook(() => useCategory());
 
     // Wait for useEffect to run and state to update
     await act(async () => {});
 
-    expect(consoleSpy).toHaveBeenCalledWith(error);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Failed to fetch categories",
+      error
+    );
     expect(result.current).toEqual([]);
     consoleSpy.mockRestore();
   });
