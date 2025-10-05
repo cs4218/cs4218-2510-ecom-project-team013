@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { relatedProductController } from "./productController";
 import productModel from "../models/productModel";
+import { relatedProductController } from "./productController";
 
 jest.mock("../models/productModel");
 
