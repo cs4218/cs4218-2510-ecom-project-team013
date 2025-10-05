@@ -1,4 +1,14 @@
-const CategoryForm = ({ handleSubmit, value, setValue }) => {
+interface ICategoryFormProps {
+  handleSubmit: (e: React.FormEvent<Element>) => void;
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const CategoryForm = ({
+  handleSubmit,
+  value,
+  setValue,
+}: ICategoryFormProps) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -8,11 +18,16 @@ const CategoryForm = ({ handleSubmit, value, setValue }) => {
             className="form-control"
             placeholder="Enter new category"
             value={value}
+            data-testid="category-input"
             onChange={(e) => setValue(e.target.value)}
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          data-testid="submit-button"
+        >
           Submit
         </button>
       </form>
