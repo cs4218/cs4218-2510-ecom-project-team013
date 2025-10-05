@@ -17,8 +17,7 @@ const config: Config = {
   testMatch: ["<rootDir>/src/**/*.test.(js|jsx|ts|tsx)"],
 
   // Coverage configuration
-  // TODO: Reenable coverage once more tests are added
-  collectCoverage: false,
+  collectCoverage: true,
   collectCoverageFrom: ["src/**"],
   coverageThreshold: {
     global: {
