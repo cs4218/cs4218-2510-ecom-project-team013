@@ -386,11 +386,10 @@ export const relatedProductController = (async (req, res) => {
       products,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error getting related products:", error);
     return res.status(500).send({
       success: false,
       message: "Error while getting related products",
-      error,
     });
   }
 }) satisfies RequestHandler;
