@@ -139,7 +139,9 @@ To begin unit testing with Jest in your project, follow these steps:
 This project uses GitHub Actions to automate code quality and testing workflows.
 
 1. Branch Check: https://github.com/cs4218/cs4218-2510-ecom-project-team013/actions/workflows/branch-check.yml
+
 - Ensures all pull requests follow a linear branching strategy.
 
 2. Continuous Integration: https://github.com/cs4218/cs4218-2510-ecom-project-team013/actions/workflows/ci.yml
+
 - Runs full CI pipeline, installs dependencies, checks code format, builds the project, and executes frontend & backend tests.
