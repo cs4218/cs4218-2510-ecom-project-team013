@@ -1,6 +1,19 @@
-import mongoose from "mongoose";
+import { Schema, model, type Document } from "mongoose";
 
-const userSchema = new mongoose.Schema(
+export type User = Document & {
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  // TODO: Figure out the proper typing for address
+  address: Record<string, any>;
+  answer: string;
+  role: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+const userSchema = new Schema<User>(
   {
     name: {
       type: String,
@@ -36,4 +49,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("users", userSchema);
+export default model("users", userSchema);

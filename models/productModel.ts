@@ -1,6 +1,22 @@
-import mongoose from "mongoose";
+import { model, Schema, type Document, type Types } from "mongoose";
 
-const productSchema = new mongoose.Schema(
+export type Product = Document & {
+  name: string;
+  slug: string;
+  description: string;
+  price: number;
+  category: Types.ObjectId;
+  quantity: number;
+  photo: {
+    data: Buffer;
+    contentType: string;
+  };
+  shipping: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+const productSchema = new Schema<Product>(
   {
     name: {
       type: String,
@@ -19,7 +35,7 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      type: mongoose.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
@@ -38,4 +54,4 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Products", productSchema);
+export default model("Products", productSchema);
