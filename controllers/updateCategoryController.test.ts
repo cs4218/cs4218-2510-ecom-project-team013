@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import slugify from "slugify";
-import { updateCategoryController } from "./categoryController";
 import categoryModel from "../models/categoryModel";
+import { updateCategoryController } from "./categoryController";
 
 jest.mock("../models/categoryModel");
 jest.mock("slugify");
