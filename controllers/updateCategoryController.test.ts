@@ -9,9 +9,9 @@ jest.mock("slugify");
 const mockedSlugify = slugify as jest.MockedFunction<typeof slugify>;
 
 describe("updateCategoryController", () => {
+  // TODO: Do not use global variables
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     mockRequest = {
@@ -22,12 +22,10 @@ describe("updateCategoryController", () => {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
     };
-    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-    consoleErrorSpy.mockRestore();
   });
 
   describe("Input Validation", () => {
@@ -312,6 +310,7 @@ describe("updateCategoryController", () => {
     });
 
     it("should log errors to console.error with descriptive message", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       mockRequest.body = { name: "Electronics" };
       mockRequest.params = { id: "category123" };
       mockedSlugify.mockReturnValue("electronics");
@@ -329,9 +328,11 @@ describe("updateCategoryController", () => {
         "Error updating category:",
         dbError
       );
+      consoleErrorSpy.mockRestore();
     });
 
     it("should handle error during slugify operation", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
       mockRequest.body = { name: "Electronics" };
       mockRequest.params = { id: "category123" };
 
@@ -350,6 +351,7 @@ describe("updateCategoryController", () => {
         "Error updating category:",
         slugError
       );
+      consoleErrorSpy.mockRestore();
     });
   });
 
