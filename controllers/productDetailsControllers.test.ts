@@ -161,7 +161,7 @@ describe("Product details controllers — spec-driven (these should fail until c
   });
 
   test("500 on DB error with clean message (no typos)", async () => {
-    jest.spyOn(console, "log").mockImplementation(() => {});
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
     const chain = {
       select: jest.fn().mockReturnThis(),
       limit: jest.fn().mockReturnThis(),
@@ -175,7 +175,7 @@ describe("Product details controllers — spec-driven (these should fail until c
       res
     );
 
-    expect(console.error).toHaveBeenCalledWith(
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
       "Error getting related products:",
       expect.any(Error)
     );
@@ -184,6 +184,8 @@ describe("Product details controllers — spec-driven (these should fail until c
       success: false,
       message: "Error while getting related products",
     });
+
+    consoleErrorSpy.mockRestore();
   });
 
   /* ---------------------- productPhotoController ---------------------- */
