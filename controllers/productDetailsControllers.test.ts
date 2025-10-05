@@ -225,7 +225,7 @@ describe("Product details controllers — spec-driven (these should fail until c
     await productPhotoController({ params: { pid: "p" } } as any, res);
 
     expect(res.set).toHaveBeenCalledWith(
-      "Content-type",
+      "Content-Type",
       "application/octet-stream"
     );
     expect(res.status).toHaveBeenCalledWith(200);
