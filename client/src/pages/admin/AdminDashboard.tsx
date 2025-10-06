@@ -1,6 +1,6 @@
 import AdminMenu from "../../components/AdminMenu";
-import { useAuth } from "../../context/auth";
 import Layout from "../../components/Layout";
+import { useAuth } from "../../context/auth";
 
 const AdminDashboard: React.FC = () => {
   const [auth] = useAuth();
