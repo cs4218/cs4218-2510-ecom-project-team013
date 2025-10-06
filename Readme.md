@@ -155,17 +155,39 @@ This project uses GitHub Actions to automate code quality and testing workflows.
    - Builds the project (as a sanity check)
    - Executes frontend & backend tests in parallel ([sample Jest run with coverage report](https://github.com/cs4218/cs4218-2510-ecom-project-team013/actions/runs/18266955286/job/52002765593))
 
-# 7. Project Team
+## 7. Project Team
 
 1. Dhiraputta Pathama Tengara ([@DhiraPT](https://github.com/DhiraPT))
 
    Overall contributions:
-   - &hellip; (To be filled in later)
+   - Designed and implemented unit testing strategy based on mock-driven isolation and security-focused validation principles.
+   - Authored and maintained white-box tests for backend controllers and middleware, ensuring isolation from external dependencies like JWT and MongoDB.
+   - Implemented security validation tests within middleware (e.g., authMiddleware) to verify adherence to authentication and authorization rules.
+   - Ensured all tests conform to CI/CD integration standards and maintaining coverage thresholds.
+
+   Key Areas of Ownership:
+   - AdminMenu - frontend
+   - authMiddleware - backend
+   - authHelper - backend
+   - relatedProductController - backend
+   - updateCategoryController - backend
 
 2. Ma Yuan ([@mamayuan](https://github.com/mamayuan))
 
    Overall contributions:
-   - &hellip; (To be filled in later)
+   - Developed spec-driven, black-box unit tests focusing on observable outcomes and user/API contract integrity.
+   - Implemented deterministic mocks for axios, react-hot-toast, react-router, Ant Design (AntD) components, and database models.
+   - Established negative-path guardrails
+   - Improved test resilience to refactoring by decoupling from implementation details while maintaining full behavioral validation.
+
+   Key Areas of Ownership:
+   - useCategory Hook – frontend
+   - ProductDetails - frontend
+   - CreateProduct - frontend
+   - getSingleProductController
+   - relatedProductController
+   - productPhotoController
+   - createProductController
 
 3. Richard Dominick ([@RichDom2185](https://github.com/RichDom2185))
 
@@ -175,4 +197,30 @@ This project uses GitHub Actions to automate code quality and testing workflows.
 4. Tan Jun Heng ([@Austintjh19](https://github.com/Austintjh19))
 
    Overall contributions:
-   - &hellip; (To be filled in later)
+   - Designed and executed comprehensive frontend and backend unit tests, ensuring high branch and statement coverage across product and category modules.
+   - Implemented both white-box and black-box testing strategies.
+   - Mocked all child/parent components and external dependencies (e.g., APIs, database services) to achieve complete test isolation.
+   - Identified and resolved multiple UI and API inconsistencies, contributing to cleaner, more maintainable code and standardized error handling.
+
+   Key Areas of Ownership:
+   - Product.tsx – frontend
+   - CategoryProduct.tsx – frontend
+   - UpdateProduct.tsx – frontend
+   - CategoryForm.tsx – frontend
+   - getProductController – backend
+   - productCategoryController – backend
+   - productPhotoController – backend
+   - getSingleProductController – backend
+   - deleteProductController – backend
+   - updateProductController – backend
+
+## 8. AI Tool Declataion
+
+Use of Artificial Intelligence Tool were used throughout the development and documentation process to enhance productivity, accuracy, and clarity.
+
+Notable use of AI Tool include:
+
+- Assisted in generating repetitive or pattern-based unit test cases
+- Used to clarify complex library behavior and framework internals (e.g., Mongoose query chaining, React hooks behavior) to accelerate understanding.
+- Assisted in drafting, refining, and improving readability of README and Milestone Report
+- Occasionally used for generating scaffolding or template code segments (e.g., Jest mock setups, API stubs) which were subsequently reviewed and customized.
