@@ -192,7 +192,23 @@ This project uses GitHub Actions to automate code quality and testing workflows.
 3. Richard Dominick ([@RichDom2185](https://github.com/RichDom2185))
 
    Overall contributions:
-   - &hellip; (To be filled in later)
+   - Routing configurations
+   - Route guards (private routes, admin routes)
+   - Context-related custom hooks (auth, cart, search)
+   - Categories page
+   - Orders page
+   - Category controller tests
+   - Order controller tests
+
+   Key Areas of Ownership:
+   - routes.ts – frontend
+   - PrivateRoute.tsx – frontend
+   - AdminRoute.tsx – frontend
+   - context/auth.tsx – frontend
+   - context/cart.tsx – frontend
+   - context/search.tsx – frontend
+   - categoryController – backend
+   - authController#getOrdersController – backend
 
 4. Tan Jun Heng ([@Austintjh19](https://github.com/Austintjh19))
 
