@@ -1,5 +1,5 @@
-import { useSearch } from "../context/search";
 import Layout from "../components/Layout";
+import { useSearch } from "../context/search";
 
 const Search: React.FC = () => {
   const [values, setValues] = useSearch();
