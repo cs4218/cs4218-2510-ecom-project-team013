@@ -145,8 +145,34 @@ This project uses GitHub Actions to automate code quality and testing workflows.
 
 1. Branch Check: <https://github.com/cs4218/cs4218-2510-ecom-project-team013/actions/workflows/branch-check.yml>
 
-   - Ensures all pull requests follow a linear branching strategy.
+   This ensures all pull requests follow a linear branching strategy.
 
 2. Continuous Integration: <https://github.com/cs4218/cs4218-2510-ecom-project-team013/actions/workflows/ci.yml>
 
-   - Runs full CI pipeline, installs dependencies, checks code format, builds the project, and executes frontend & backend tests.
+   This encompasses the bulk of the CI pipeline, running the following tasks in parallel:
+   - Installs dependencies
+   - Checks code format
+   - Builds the project (as a sanity check)
+   - Executes frontend & backend tests in parallel ([sample Jest run with coverage report](https://github.com/cs4218/cs4218-2510-ecom-project-team013/actions/runs/18266955286/job/52002765593))
+
+# 7. Project Team
+
+1. Dhiraputta Pathama Tengara ([@DhiraPT](https://github.com/DhiraPT))
+
+   Overall contributions:
+   - &hellip; (To be filled in later)
+
+2. Ma Yuan ([@mamayuan](https://github.com/mamayuan))
+
+   Overall contributions:
+   - &hellip; (To be filled in later)
+
+3. Richard Dominick ([@RichDom2185](https://github.com/RichDom2185))
+
+   Overall contributions:
+   - &hellip; (To be filled in later)
+
+4. Tan Jun Heng ([@Austintjh19](https://github.com/Austintjh19))
+
+   Overall contributions:
+   - &hellip; (To be filled in later)
