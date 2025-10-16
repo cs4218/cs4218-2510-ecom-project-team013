@@ -53,7 +53,13 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
       category: { _id: "c-audio", name: "Audio" },
     };
     const rel = [
-      { _id: "rel-1", name: "Rel 1", description: "Rel", price: 20, slug: "rel-1" },
+      {
+        _id: "rel-1",
+        name: "Rel 1",
+        description: "Rel",
+        price: 20,
+        slug: "rel-1",
+      },
     ];
 
     mockedAxios.get
@@ -72,7 +78,9 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
       await screen.findByRole("heading", { name: /Product Details/i })
     ).toBeInTheDocument();
 
-    expect(await screen.findByText(/Name :\s*Main Product/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Name :\s*Main Product/i)
+    ).toBeInTheDocument();
     expect(
       await screen.findByText(/Description :\s*Main product description/i)
     ).toBeInTheDocument();
@@ -80,10 +88,15 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
     expect(await screen.findByText(/Category :\s*Audio/i)).toBeInTheDocument();
 
     expect(await screen.findByText("Rel 1")).toBeInTheDocument();
-    expect(screen.queryByText(/No Similar Products found/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/No Similar Products found/i)
+    ).not.toBeInTheDocument();
 
     const mainImg = screen.getByRole("img", { name: /Main Product/i });
-    expect(mainImg).toHaveAttribute("src", "/api/v1/product/product-photo/p-main");
+    expect(mainImg).toHaveAttribute(
+      "src",
+      "/api/v1/product/product-photo/p-main"
+    );
   });
 
   test("empty related: shows proper empty-state message", async () => {
@@ -105,7 +118,9 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
     expect(
       await screen.findByRole("heading", { name: /Product Details/i })
     ).toBeInTheDocument();
-    expect(await screen.findByText(/No Similar Products found/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/No Similar Products found/i)
+    ).toBeInTheDocument();
   });
 
   test("defensive: if product lacks _id or category._id → no related request; UI remains stable", async () => {
@@ -117,7 +132,9 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
       category: { name: "Unknown" },
     };
 
-    mockedAxios.get.mockImplementationOnce(() => asyncOk({ data: { product: noIds } }));
+    mockedAxios.get.mockImplementationOnce(() =>
+      asyncOk({ data: { product: noIds } })
+    );
 
     renderAt("/product/no-ids");
 
@@ -156,7 +173,13 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
       category: { _id: "c-audio", name: "Audio" },
     };
     const rels = [
-      { _id: "rel-1", name: "Rel 1", description: "rel", price: 20, slug: "rel-1" },
+      {
+        _id: "rel-1",
+        name: "Rel 1",
+        description: "rel",
+        price: 20,
+        slug: "rel-1",
+      },
     ];
     const relProduct = {
       _id: "rel-1",
@@ -266,14 +289,18 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
 
     mockedAxios.get
       .mockImplementationOnce(() => asyncOk({ data: { product: main } }))
-      .mockImplementationOnce(() => asyncOk({ data: { products: { bad: "shape" } } }));
+      .mockImplementationOnce(() =>
+        asyncOk({ data: { products: { bad: "shape" } } })
+      );
 
     renderAt("/product/main");
 
     expect(
       await screen.findByRole("heading", { name: /Product Details/i })
     ).toBeInTheDocument();
-    expect(await screen.findByText(/No Similar Products found/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/No Similar Products found/i)
+    ).toBeInTheDocument();
   });
 
   test("navigation guard: 'More Details' on related item with missing slug should not navigate", async () => {
@@ -286,7 +313,12 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
       category: { _id: "c-audio", name: "Audio" },
     };
     const rels = [
-      { _id: "rel-wo-slug", name: "Rel no slug", description: "rel", price: 20 } as any,
+      {
+        _id: "rel-wo-slug",
+        name: "Rel no slug",
+        description: "rel",
+        price: 20,
+      } as any,
     ];
 
     mockedAxios.get
@@ -322,7 +354,9 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
       .mockImplementationOnce(() => asyncOk({ data: { products: [] } }));
 
     const first = render(
-      <MemoryRouter initialEntries={[{ pathname: "/product/main", key: "k1" } as any]}>
+      <MemoryRouter
+        initialEntries={[{ pathname: "/product/main", key: "k1" } as any]}
+      >
         <Routes>
           <Route path="/product/:slug" element={<ProductDetails />} />
         </Routes>
@@ -338,7 +372,9 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
     first.unmount();
 
     render(
-      <MemoryRouter initialEntries={[{ pathname: "/product/main", key: "k2" } as any]}>
+      <MemoryRouter
+        initialEntries={[{ pathname: "/product/main", key: "k2" } as any]}
+      >
         <Routes>
           <Route path="/product/:slug" element={<ProductDetails />} />
         </Routes>
@@ -447,7 +483,17 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
       }
       if (url === "/api/v1/product/related-product/p-b/c-b") {
         return Promise.resolve({
-          data: { products: [{ _id: "rel-b", name: "Rel B", description: "B", price: 1, slug: "rel-b" }] },
+          data: {
+            products: [
+              {
+                _id: "rel-b",
+                name: "Rel B",
+                description: "B",
+                price: 1,
+                slug: "rel-b",
+              },
+            ],
+          },
         });
       }
       throw new Error("Unexpected URL: " + url);
@@ -471,7 +517,19 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
     );
 
     await act(async () => {
-      await resolveRelA({ data: { products: [{ _id: "rel-a", name: "Rel A (stale)", description: "A", price: 1, slug: "rel-a" }] } });
+      await resolveRelA({
+        data: {
+          products: [
+            {
+              _id: "rel-a",
+              name: "Rel A (stale)",
+              description: "A",
+              price: 1,
+              slug: "rel-a",
+            },
+          ],
+        },
+      });
     });
 
     expect(await screen.findByText(/Name :\s*B/i)).toBeInTheDocument();
