@@ -1,0 +1,13 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always"
+  },
+  "[typescript]": {
+    "files.insertFinalNewline": true
+  },
+  "[typescriptreact]": {
+    "files.insertFinalNewline": true
+  }
+}
