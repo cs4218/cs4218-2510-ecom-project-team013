@@ -1,0 +1,43 @@
+name: Run Playwright Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - main
+
+jobs:
+  playwright-tests:
+    # Only run for non-draft PRs
+    if: "${{ github.event.pull_request.draft == false }}"
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          # Only check for frontend dependencies
+          cache-dependency-path: |
+            client/package-lock.json
+      - name: Install dependencies
+        working-directory: client
+        run: npm ci
+      - name: Install Playwright Browsers
+        working-directory: client
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        working-directory: client
+        run: npx playwright test
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
