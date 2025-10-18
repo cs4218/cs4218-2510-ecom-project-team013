@@ -1,12 +1,12 @@
 import type { Request, Response } from "express";
-import mongoose from "mongoose";
-import { MongoMemoryServer } from "mongodb-memory-server";
 import fs from "fs";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import mongoose from "mongoose";
 import path from "path";
 import slugify from "slugify";
 
-import { createProductController } from "./productController";
 import productModel from "../models/productModel";
+import { createProductController } from "./productController";
 
 jest.mock("braintree", () => ({
   BraintreeGateway: jest.fn().mockImplementation(() => ({})),
