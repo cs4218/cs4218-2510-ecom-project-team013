@@ -76,15 +76,23 @@ To download and use the MERN (MongoDB, Express.js, React.js, Node.js) app from G
 2. **Install Frontend and Backend Dependencies**
    - Run the following command in your project's root directory:
 
-     ```
+     ```bash
      npm install && cd client && npm install && cd ..
      ```
 
-3. **Add database connection string to `.env`**
+3. **Configure environment variables**
    - Copy the example environment variables from `.env.example` to `.env` in the project directory, then add the connection string copied from MongoDB Atlas, replacing the necessary placeholders:
 
      ```env
      MONGO_URL = <connection string>
+     ```
+
+   - Likewise, for the frontend, navigate to the `client` directory and copy `.env.example` to `.env` and set any necessary environment variables there.
+
+     ```bash
+     cd client
+     cp .env.example .env
+     cd ..
      ```
 
 4. **Adding sample data to database**
