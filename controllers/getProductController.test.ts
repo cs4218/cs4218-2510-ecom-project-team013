@@ -55,7 +55,7 @@ describe("getProductController", () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      counTotal: mockProducts.length,
+      countTotal: mockProducts.length,
       message: "All Products",
       products: mockProducts,
     });
@@ -79,7 +79,7 @@ describe("getProductController", () => {
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.send).toHaveBeenCalledWith({
       success: true,
-      counTotal: mockProducts.length,
+      countTotal: mockProducts.length,
       message: "All Products",
       products: mockProducts,
     });

@@ -98,7 +98,7 @@ describe("Integration Test for GetProductController", () => {
       expect.objectContaining({
         success: true,
         message: "All Products",
-        counTotal: 2,
+        countTotal: 2,
       })
     );
     const responsePayload = (res.send as jest.Mock).mock.calls[0][0];
@@ -157,7 +157,7 @@ describe("Integration Test for GetProductController", () => {
     expect(res.send).toHaveBeenCalledWith(
       expect.objectContaining({
         success: true,
-        counTotal: 0,
+        countTotal: 0,
         products: [],
       })
     );
