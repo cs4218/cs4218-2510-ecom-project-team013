@@ -214,7 +214,7 @@ describe("ProductDetails (integration-lite, behaviour-first)", () => {
     expect(await screen.findByText(/Name :\s*Rel 1/i)).toBeInTheDocument();
   });
 
-  test("race safety: slow A response must not overwrite faster B (URL-keyed mocks + act on manual resolve)", async () => {
+  test("race safety: slow response from first navigation must not overwrite faster response from second navigation (URL-keyed mocks + act on manual resolve)", async () => {
     let resolveA!: (v: any) => void;
     const slowA = new Promise((res) => (resolveA = res));
 
