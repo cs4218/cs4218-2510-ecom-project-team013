@@ -4,6 +4,13 @@ import mongoose from "mongoose";
 import { productPhotoController } from "../controllers/productController";
 import productModel from "../models/productModel";
 
+jest.mock("braintree", () => {
+  return {
+    BraintreeGateway: jest.fn().mockImplementation(() => ({})),
+    Environment: { Sandbox: "Sandbox", Production: "Production" },
+  };
+});
+
 const mockRequest = (params = {}, body = {}) => {
   return {
     params,

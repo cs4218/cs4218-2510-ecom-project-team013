@@ -1,8 +1,15 @@
-import mongoose from "mongoose";
-import { MongoMemoryServer } from "mongodb-memory-server";
-import productModel from "../models/productModel";
-import { deleteProductController } from "../controllers/productController";
 import { Request, Response } from "express";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import mongoose from "mongoose";
+import { deleteProductController } from "../controllers/productController";
+import productModel from "../models/productModel";
+
+jest.mock("braintree", () => {
+  return {
+    BraintreeGateway: jest.fn().mockImplementation(() => ({})),
+    Environment: { Sandbox: "Sandbox", Production: "Production" },
+  };
+});
 
 const mockRequest = (params = {}, body = {}) => {
   return {
