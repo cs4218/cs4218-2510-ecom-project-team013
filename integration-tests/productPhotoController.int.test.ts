@@ -88,7 +88,7 @@ describe("Integration Test for ProductPhotoController", () => {
   });
 
   it("should return photo binary data successfully", async () => {
-    const req = mockRequest({ pid: seededProducts[0].id.toString() });
+    const req = mockRequest({ pid: seededProducts[0].id });
     const res = mockResponse();
 
     await productPhotoController(req, res);
@@ -125,7 +125,7 @@ describe("Integration Test for ProductPhotoController", () => {
       shipping: true,
     });
 
-    const req = mockRequest({ pid: product.id.toString() });
+    const req = mockRequest({ pid: product.id });
     const res = mockResponse();
 
     await productPhotoController(req, res);

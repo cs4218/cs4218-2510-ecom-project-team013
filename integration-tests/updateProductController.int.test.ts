@@ -109,12 +109,12 @@ describe("Integration Test for UpdateProductController", () => {
 
   it("should update product successfully without photo", async () => {
     const req = mockRequest(
-      { pid: seededProducts[0].id.toString() },
+      { pid: seededProducts[0].id },
       {
         name: "Updated Product",
         description: "New Description",
         price: 150,
-        category: seededCategories[1].id.toString(),
+        category: seededCategories[1].id,
         quantity: 20,
         shipping: false,
       }
@@ -136,7 +136,7 @@ describe("Integration Test for UpdateProductController", () => {
         name: "Nonexistent",
         description: "New Description",
         price: 150,
-        category: seededCategories[1].id.toString(),
+        category: seededCategories[1].id,
         quantity: 20,
         shipping: false,
       }
@@ -152,12 +152,12 @@ describe("Integration Test for UpdateProductController", () => {
 
   it("should reject if photo size exceeds 1MB", async () => {
     const req = mockRequest(
-      { pid: seededProducts[0].id.toString() },
+      { pid: seededProducts[0].id },
       {
         name: "Big Photo Product",
         description: "New Description",
         price: 150,
-        category: seededCategories[1].id.toString(),
+        category: seededCategories[1].id,
         quantity: 20,
         shipping: false,
       },
@@ -173,7 +173,7 @@ describe("Integration Test for UpdateProductController", () => {
   });
 
   it("should handle missing required fields", async () => {
-    const req = mockRequest({ pid: seededProducts[0].id.toString() }, {});
+    const req = mockRequest({ pid: seededProducts[0].id }, {});
     const res = mockResponse();
 
     await updateProductController(req, res);
@@ -189,12 +189,12 @@ describe("Integration Test for UpdateProductController", () => {
     jest.spyOn(fs, "readFileSync").mockReturnValueOnce(mockBuffer);
 
     const req = mockRequest(
-      { pid: seededProducts[0].id.toString() },
+      { pid: seededProducts[0].id },
       {
         name: "Updated Product",
         description: "New Description",
         price: 150,
-        category: seededCategories[1].id.toString(),
+        category: seededCategories[1].id,
         quantity: 20,
         shipping: false,
       },
@@ -219,12 +219,12 @@ describe("Integration Test for UpdateProductController", () => {
       });
 
     const req = mockRequest(
-      { pid: seededProducts[0].id.toString() },
+      { pid: seededProducts[0].id },
       {
         name: "Updated Product",
         description: "New Description",
         price: 150,
-        category: seededCategories[1].id.toString(),
+        category: seededCategories[1].id,
         quantity: 20,
         shipping: false,
       }
