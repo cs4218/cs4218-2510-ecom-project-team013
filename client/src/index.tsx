@@ -1,5 +1,5 @@
 import "antd/dist/reset.css";
-import ReactDOM from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import App from "./App";
 import { AuthProvider } from "./context/auth";
 import { CartProvider } from "./context/cart";
@@ -7,8 +7,8 @@ import { SearchProvider } from "./context/search";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
+const root = document.getElementById("root")!;
+createRoot(root).render(
   <AuthProvider>
     <SearchProvider>
       <CartProvider>
