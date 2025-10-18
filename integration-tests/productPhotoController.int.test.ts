@@ -116,7 +116,7 @@ describe("Integration Test for ProductPhotoController", () => {
   it("should return 404 if photo data is missing or empty", async () => {
     const product = await productModel.create({
       name: "Empty-photo",
-      slug: "empty-phone",
+      slug: "empty-photo",
       description: "empty photo",
       price: 300,
       category: new mongoose.Types.ObjectId(),
