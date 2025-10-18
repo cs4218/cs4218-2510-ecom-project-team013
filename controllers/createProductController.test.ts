@@ -107,7 +107,7 @@ describe("createProductController", () => {
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
-      error: "photo is Required and should be less then 1mb",
+      error: "photo is Required and should be less than 1mb",
     });
   });
 
