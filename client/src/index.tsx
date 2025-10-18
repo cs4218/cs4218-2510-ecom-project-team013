@@ -1,4 +1,5 @@
 import "antd/dist/reset.css";
+import axios from "axios";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { AuthProvider } from "./context/auth";
@@ -6,6 +7,8 @@ import { CartProvider } from "./context/cart";
 import { SearchProvider } from "./context/search";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
+
+axios.defaults.baseURL = process.env.REACT_APP_API || undefined;
 
 const root = document.getElementById("root")!;
 createRoot(root).render(
