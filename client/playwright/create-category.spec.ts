@@ -1,0 +1,232 @@
+import { test, expect, Page } from '@playwright/test';
+
+test.describe.configure({ mode: 'parallel' });
+
+function uniqueName(prefix = 'Cat') {
+  return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+}
+function escapeRegex(input: string) {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+function rowByName(page: Page, name: string) {
+  return page.locator('table').getByRole('row', { name: new RegExp(name, 'i') });
+}
+
+async function login(page: Page) {
+  await page.goto('/');
+  await page.getByRole('link', { name: /login/i }).click();
+  await page.getByRole('textbox', { name: /enter your email/i }).fill(
+    process.env.ADMIN_EMAIL || 'e0772448@u.nus.edu'
+  );
+  await page.getByRole('textbox', { name: /enter your password/i }).fill(
+    process.env.ADMIN_PASSWORD || '123123'
+  );
+  await page.getByRole('button', { name: /^login$/i }).click();
+}
+
+async function gotoManageCategoryViaUI(page: Page) {
+  const maybeCategories = page.getByRole('link', { name: /^categories$/i });
+  if (await maybeCategories.isVisible().catch(() => false)) await maybeCategories.click();
+  const userMenuButton =
+    (await page.getByRole('button', { name: /ma/i }).isVisible().catch(() => false))
+      ? page.getByRole('button', { name: /ma/i })
+      : page.getByRole('button').filter({ hasText: /ma/i });
+  await userMenuButton.click();
+  await page.getByRole('link', { name: /dashboard/i }).click();
+  await page.getByRole('link', { name: /create category/i }).click();
+  await expect(page.locator('h1')).toHaveText(/manage category/i);
+  await expect(page.getByRole('table')).toBeVisible();
+}
+
+async function getCategoryInput(page: Page) {
+  const byPlaceholder = page.getByPlaceholder(/enter new category/i);
+  if (await byPlaceholder.isVisible().catch(() => false)) return byPlaceholder;
+  return page.getByTestId('category-input');
+}
+async function getSubmitButton(page: Page) {
+  const byRole = page.getByRole('button', { name: /^submit$/i });
+  if (await byRole.isVisible().catch(() => false)) return byRole;
+  return page.getByTestId('submit-button');
+}
+async function expectToast(page: Page, re: RegExp) {
+  const alert = page.getByRole('alert');
+  if (await alert.isVisible().catch(() => false)) {
+    await expect(alert).toContainText(re);
+  } else {
+    await expect(page.getByText(re)).toBeVisible();
+  }
+}
+
+/* ---------- navbar dropdown ---------- */
+async function openCategoriesDropdown(page: Page) {
+  const trigger = page.getByRole('link', { name: /^categories$/i });
+
+  // Try hover first (common for CSS/Bootstrap hover menus)
+  await trigger.hover();
+  let menu = page.locator('.dropdown-menu:visible');
+
+  // If not visible after hover, try click to toggle
+  if (!(await menu.isVisible().catch(() => false))) {
+    await trigger.click({ trial: false });
+    menu = page.locator('.dropdown-menu:visible');
+  }
+
+  // As a final guard, ensure at least one dropdown item is visible
+  // (e.g., "ALL CATEGORIES" or any item)
+  await expect(
+    menu.locator(':scope *, :scope a, :scope [role="menuitem"]').first()
+  ).toBeVisible();
+
+  return menu;
+}
+
+async function assertNavDropdownHas(page: Page, name: string) {
+  const menu = await openCategoriesDropdown(page);
+  const re = new RegExp(`^${escapeRegex(name)}$`, 'i');
+  // Search ONLY inside the visible dropdown menu
+  await expect(menu.getByText(re)).toBeVisible();
+}
+
+async function assertNavDropdownNotHas(page: Page, name: string) {
+  const menu = await openCategoriesDropdown(page);
+  const re = new RegExp(`^${escapeRegex(name)}$`, 'i');
+  await expect(menu.getByText(re)).toHaveCount(0);
+}
+async function assertNavDropdownHasFresh(page: Page, name: string) {
+  await page.reload({ waitUntil: 'networkidle' });
+  await assertNavDropdownHas(page, name);
+}
+async function assertNavDropdownNotHasFresh(page: Page, name: string) {
+  await page.reload({ waitUntil: 'networkidle' });
+  await assertNavDropdownNotHas(page, name);
+}
+
+/* ---------- home filter ---------- */
+async function assertHomeFilterHas(page: Page, name: string) {
+  await page.goto('/');
+  await expect(page.getByText(/filter by category/i)).toBeVisible();
+  await expect(page.getByLabel(new RegExp(`^${escapeRegex(name)}$`, 'i'))).toBeVisible();
+}
+async function assertHomeFilterNotHas(page: Page, name: string) {
+  await page.goto('/');
+  await expect(page.getByText(/filter by category/i)).toBeVisible();
+  await expect(page.getByLabel(new RegExp(`^${escapeRegex(name)}$`, 'i'))).toHaveCount(0);
+}
+
+/* ---------- setup ---------- */
+test.beforeEach(async ({ page }) => {
+  await login(page);
+  await gotoManageCategoryViaUI(page);
+});
+
+/* ---------- tests ---------- */
+test('Categories • READ shows defaults and nav/home lists reflect them', async ({ page }) => {
+  await expect(rowByName(page, 'Clothing')).toBeVisible();
+  await expect(rowByName(page, 'Book')).toBeVisible();
+  await expect(rowByName(page, 'Electronics')).toBeVisible();
+  await assertNavDropdownHas(page, 'Clothing');
+  await assertNavDropdownHas(page, 'Book');
+  await assertNavDropdownHas(page, 'Electronics');
+  await assertHomeFilterHas(page, 'Clothing');
+  await assertHomeFilterHas(page, 'Book');
+  await assertHomeFilterHas(page, 'Electronics');
+});
+
+test('Categories • CREATE updates table, navbar dropdown (after reload) and home filter (cleanup)', async ({ page }) => {
+  const name = uniqueName('Cat');
+  const input = await getCategoryInput(page);
+  const submit = await getSubmitButton(page);
+  await input.fill(name);
+  await Promise.all([page.waitForLoadState('networkidle'), submit.click()]);
+  await expectToast(page, new RegExp(`${escapeRegex(name)} is created`));
+  await expect(rowByName(page, name)).toBeVisible();
+
+  await assertNavDropdownHasFresh(page, name);
+  await assertHomeFilterHas(page, name);
+
+  await gotoManageCategoryViaUI(page);
+  await rowByName(page, name).getByRole('button', { name: /^delete$/i }).click();
+  await expectToast(page, /category is deleted/i);
+  await expect(rowByName(page, name)).toHaveCount(0);
+
+  await assertNavDropdownNotHasFresh(page, name);
+  await assertHomeFilterNotHas(page, name);
+});
+
+test('Categories • EDIT updates table, navbar dropdown (after reload) and home filter (cleanup)', async ({ page }) => {
+  const original = uniqueName('Cat');
+  const input = await getCategoryInput(page);
+  const submit = await getSubmitButton(page);
+  await input.fill(original);
+  await Promise.all([page.waitForLoadState('networkidle'), submit.click()]);
+  await expectToast(page, new RegExp(`${escapeRegex(original)} is created`));
+  await expect(rowByName(page, original)).toBeVisible();
+
+  const edited = uniqueName('CatEdited');
+  await rowByName(page, original).getByRole('button', { name: /^edit$/i }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  const dlgInput =
+    (await dialog.getByPlaceholder(/enter new category/i).isVisible().catch(() => false))
+      ? dialog.getByPlaceholder(/enter new category/i)
+      : dialog.getByTestId('category-input');
+  const dlgSubmit =
+    (await dialog.getByRole('button', { name: /^submit$/i }).isVisible().catch(() => false))
+      ? dialog.getByRole('button', { name: /^submit$/i })
+      : dialog.getByTestId('submit-button');
+  await dlgInput.fill(edited);
+  await Promise.all([page.waitForLoadState('networkidle'), dlgSubmit.click()]);
+  await expectToast(page, new RegExp(`${escapeRegex(edited)} is updated`));
+  await expect(rowByName(page, edited)).toBeVisible();
+  await expect(rowByName(page, original)).toHaveCount(0);
+
+  await assertNavDropdownHasFresh(page, edited);
+  await assertNavDropdownNotHasFresh(page, original);
+  await assertHomeFilterHas(page, edited);
+  await assertHomeFilterNotHas(page, original);
+
+  await gotoManageCategoryViaUI(page);
+  await rowByName(page, edited).getByRole('button', { name: /^delete$/i }).click();
+  await expectToast(page, /category is deleted/i);
+  await expect(rowByName(page, edited)).toHaveCount(0);
+
+  await assertNavDropdownNotHasFresh(page, edited);
+  await assertHomeFilterNotHas(page, edited);
+});
+
+test('Categories • DELETE removes row and updates navbar dropdown (after reload) and home filter', async ({ page }) => {
+  const toDelete = uniqueName('CatDel');
+  const input = await getCategoryInput(page);
+  const submit = await getSubmitButton(page);
+  await input.fill(toDelete);
+  await Promise.all([page.waitForLoadState('networkidle'), submit.click()]);
+  await expectToast(page, new RegExp(`${escapeRegex(toDelete)} is created`));
+  await expect(rowByName(page, toDelete)).toBeVisible();
+
+  await rowByName(page, toDelete).getByRole('button', { name: /^delete$/i }).click();
+  await expectToast(page, /category is deleted/i);
+  await expect(rowByName(page, toDelete)).toHaveCount(0);
+
+  await assertNavDropdownNotHasFresh(page, toDelete);
+  await assertHomeFilterNotHas(page, toDelete);
+});
+
+test('Categories • DUPLICATE shows "Something went wrong in input form" and keeps single row (cleanup)', async ({ page }) => {
+  const name = uniqueName('CatDup');
+  const input = await getCategoryInput(page);
+  const submit = await getSubmitButton(page);
+
+  await input.fill(name);
+  await Promise.all([page.waitForLoadState('networkidle'), submit.click()]);
+  await expectToast(page, new RegExp(`${escapeRegex(name)} is created`));
+  await expect(rowByName(page, name)).toBeVisible();
+
+  await (await getCategoryInput(page)).fill(name);
+  await Promise.all([page.waitForLoadState('networkidle'), (await getSubmitButton(page)).click()]);
+  await expectToast(page, /Something went wrong in input form/i);
+  await expect(rowByName(page, name)).toHaveCount(1);
+
+  await rowByName(page, name).getByRole('button', { name: /^delete$/i }).click();
+  await expectToast(page, /category is deleted/i);
+  await expect(rowByName(page, name)).toHaveCount(0);
+});
