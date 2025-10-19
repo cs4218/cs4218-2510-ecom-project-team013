@@ -74,7 +74,6 @@ async function openCategoriesDropdown(page: Page) {
     menu = page.locator(".dropdown-menu:visible");
   }
 
-
   await expect(
     menu.locator(':scope *, :scope a, :scope [role="menuitem"]').first()
   ).toBeVisible();
