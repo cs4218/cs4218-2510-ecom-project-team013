@@ -15,7 +15,7 @@ const serverUrl = process.env.SERVER_URL || "http://localhost:3000";
  */
 export default defineConfig({
   testDir: "./playwright",
-  globalSetup: require.resolve("./playwright/playwright.global-setup"),
+  globalSetup: require.resolve("./playwright/setup/playwright.global-setup"),
   /* Run tests in files in parallel */
   fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -37,11 +37,42 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    /* Only use Chromium for now. */
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
     },
+    // {
+    //   name: "chromium",
+    //   use: {
+    //     ...devices["Desktop Chrome"],
+    //     // Use prepared auth state.
+    //     storageState: "playwright/.auth/user.json",
+    //   },
+    //   dependencies: ["setup"],
+    // },
+    {
+      name: "auth",
+      testMatch: /.*\.auth\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/user.json",
+      },
+      dependencies: ["setup"],
+    },
+    {
+      name: "public",
+      testMatch: /.*\.public\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+      },
+    },
+    // {
+    //   name: "chromium",
+    //   use: {
+    //     ...devices["Desktop Chrome"],
+    //     storageState: undefined,
+    //   },
+    // },
     // {
     //   name: "firefox",
     //   use: { ...devices["Desktop Firefox"] },

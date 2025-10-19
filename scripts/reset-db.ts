@@ -10,6 +10,8 @@ import User from "../models/userModel";
 import fs from "fs";
 import path from "path";
 
+import bcrypt from "bcrypt";
+
 const photoPath = path.join(__dirname, "assets", "product.png");
 const photoData = fs.readFileSync(photoPath);
 
@@ -30,21 +32,24 @@ async function resetDatabase() {
 
     console.log("Cleared collections");
 
+    // Generate Password
+    const hashedPassword = await bcrypt.hash("Password", 10);
+
     // Reseed Data
     const users = await User.insertMany([
       {
         name: "Alice Tan",
         email: "alice@example.com",
-        password: "Password",
+        password: hashedPassword,
         phone: "0123456789",
         address: { city: "Kuala Lumpur", country: "Malaysia" },
         answer: "blue",
-        role: 0,
+        role: 1,
       },
       {
         name: "Bob Lim",
         email: "bob@example.com",
-        password: "hashed_password_2",
+        password: hashedPassword,
         phone: "0192233445",
         address: { city: "Penang", country: "Malaysia" },
         answer: "green",
@@ -53,7 +58,7 @@ async function resetDatabase() {
       {
         name: "Charlie Lee",
         email: "charlie@example.com",
-        password: "hashed_password_3",
+        password: hashedPassword,
         phone: "0179988776",
         address: { city: "Johor Bahru", country: "Malaysia" },
         answer: "red",
