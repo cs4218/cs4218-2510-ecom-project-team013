@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:6060",
   "dependencies": {
     "antd": "^5.15.0",
     "axios": "^1.6.7",
@@ -22,7 +23,8 @@
     "start": "cross-env DISABLE_ESLINT_PLUGIN=true craco start",
     "build": "cross-env DISABLE_ESLINT_PLUGIN=true craco build",
     "test": "jest --passWithNoTests",
-    "eject": "cross-env DISABLE_ESLINT_PLUGIN=true craco eject"
+    "eject": "cross-env DISABLE_ESLINT_PLUGIN=true craco eject",
+    "seed": "cd ../ && npm run seed"
   },
   "browserslist": {
     "production": [
