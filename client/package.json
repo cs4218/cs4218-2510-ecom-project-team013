@@ -2,7 +2,6 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:6060",
   "dependencies": {
     "antd": "^5.15.0",
     "axios": "^1.6.7",
