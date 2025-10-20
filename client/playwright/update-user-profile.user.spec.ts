@@ -1,4 +1,4 @@
-import { test, expect, Page } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 
 test.describe.configure({ mode: "parallel" });
 
@@ -182,7 +182,7 @@ test("Profile • VALIDATION: password < 6 chars shows error and dashboard uncha
 
   await expectToast(
     page,
-    /(passsword is required and 6 character long|something went wrong|failed)/i
+    /(password is required and 6 character long|something went wrong|failed)/i
   );
 
   await gotoUserDashboard(page);
