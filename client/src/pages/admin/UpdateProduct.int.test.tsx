@@ -161,7 +161,7 @@ describe("Update Product", () => {
     });
   });
 
-  it("Calls toast with error message when Cateroy fails", async () => {
+  it("Calls toast with error message when Category fails", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
     (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
