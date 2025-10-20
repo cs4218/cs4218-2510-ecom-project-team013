@@ -38,17 +38,30 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: "setup",
-      testMatch: /.*\.setup\.ts/,
+      name: "setup user",
+      testMatch: /.*user\.setup\.ts/,
     },
     {
-      name: "auth",
-      testMatch: /.*\.auth\.spec\.ts/,
+      name: "setup admin",
+      testMatch: /.*admin\.setup\.ts/,
+    },
+    {
+      name: "admin tests",
+      testMatch: /.*\.admin\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/admin.json",
+      },
+      dependencies: ["setup admin"],
+    },
+    {
+      name: "user tests",
+      testMatch: /.*\.user\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/user.json",
       },
-      dependencies: ["setup"],
+      dependencies: ["setup user"],
     },
     {
       name: "public",
