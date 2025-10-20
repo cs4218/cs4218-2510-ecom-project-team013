@@ -18,18 +18,17 @@ function rowByName(page: Page, name: string) {
 async function gotoManageCategoryViaUI(page: Page) {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  // open ALICE TAN dropdown
   const userMenuButton = (await page
     .getByRole("button", {
-      name: /alice|profile|account|dashboard|admin|menu/i,
+      name: /alice/i,
     })
     .isVisible()
     .catch(() => false))
     ? page.getByRole("button", {
-        name: /alice|profile|account|dashboard|admin|menu/i,
+        name: /alice/i,
       })
     : page.getByRole("button").filter({
-        hasText: /alice|profile|account|dashboard|admin|menu/i,
+        hasText: /alice/i,
       });
 
   await userMenuButton.click();

@@ -14,15 +14,15 @@ async function gotoCreateProduct(page: Page) {
 
   const userMenuButton = (await page
     .getByRole("button", {
-      name: /alice|profile|account|dashboard|admin|user|menu/i,
+      name: /alice/i,
     })
     .isVisible()
     .catch(() => false))
     ? page.getByRole("button", {
-        name: /alice|profile|account|dashboard|admin|user|menu/i,
+        name: /alice/i,
       })
     : page.getByRole("button").filter({
-        hasText: /alice|profile|account|dashboard|admin|user|menu/i,
+        hasText: /alice/i,
       });
 
   await userMenuButton.click();
@@ -67,7 +67,6 @@ async function submit(page: Page) {
 }
 
 async function waitForProductsListing(page: Page) {
-  // accept either "All Products" or "Products" headings, or a URL that includes "/products"
   await expect
     .poll(
       async () => {
@@ -89,7 +88,6 @@ async function waitForProductsListing(page: Page) {
 }
 
 async function expectProductVisibleSomewhere(page: Page, name: string) {
-  // First try the current page (Products list)
   const onList = await page
     .getByText(name, { exact: false })
     .isVisible()
@@ -98,7 +96,7 @@ async function expectProductVisibleSomewhere(page: Page, name: string) {
     await expect(page.getByText(name, { exact: false })).toBeVisible();
     return;
   }
-  // Fallback: check Home in case your app redirects differently
+
   await page.goto("/");
   await expect(page.getByText(name, { exact: false })).toBeVisible();
 }
