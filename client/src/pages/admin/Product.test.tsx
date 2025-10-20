@@ -110,7 +110,7 @@ describe("Products Page", () => {
 
     renderPage();
 
-    const renderedProducts = await screen.findAllByTestId(/div-product-/i);
+    const renderedProducts = await screen.findAllByTestId(/div-product-link-/i);
     expect(renderedProducts).toHaveLength(fakeProducts.length);
   });
 
@@ -133,7 +133,7 @@ describe("Products Page", () => {
 
     renderPage();
 
-    const renderedProducts = await screen.findAllByTestId(/div-product-/i);
+    const renderedProducts = await screen.findAllByTestId(/div-product-link-/i);
 
     await act(async () => {
       userEvent.click(renderedProducts[0]);

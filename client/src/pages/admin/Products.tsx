@@ -41,7 +41,7 @@ const Products: React.FC = () => {
                 key={p._id}
                 to={`/dashboard/admin/product/${p.slug}`}
                 className="product-link"
-                data-testid={`div-product-${p.slug}`}
+                data-testid={`div-product-link-${p.slug}`}
               >
                 <div
                   className="card m-2"
