@@ -1,5 +1,12 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { Toaster } from "react-hot-toast";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import toast, { Toaster } from "react-hot-toast";
 import api from "../../api";
 import CreateCategory from "../../pages/admin/CreateCategory";
 
@@ -41,6 +48,19 @@ describe("CreateCategory integration test ", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterEach(async () => {
+    await act(async () => {
+      toast.dismiss();
+    });
+    await waitFor(
+      () => {
+        expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
+    cleanup();
   });
 
   test("shows success toast when category is created", async () => {
