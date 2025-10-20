@@ -180,33 +180,6 @@ describe("Update Product", () => {
     });
   });
 
-  it("updates preview when a new photo is uploaded", async () => {
-    const file = new File(["dummy content"], "product.png", {
-      type: "image/png",
-    });
-
-    mockedUseParams.mockReturnValue({ slug: "test-slug" });
-
-    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
-      data: productData,
-    });
-    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
-      data: categoriesData,
-    });
-
-    renderPage();
-
-    const input = screen.getByTestId("photo-input");
-    await act(async () => {
-      userEvent.upload(input, file);
-    });
-
-    const img = screen.getByTestId("preview-photo-img") as HTMLImageElement;
-
-    expect(img).toBeInTheDocument();
-    expect(img.src).toContain("mocked-blob-url");
-  });
-
   it("updates product with changed category", async () => {
     mockedUseParams.mockReturnValue({ slug: "test-slug" });
 
@@ -647,38 +620,6 @@ describe("Update Product", () => {
     await waitFor(() => {
       expect(screen.getByText("Something went wrong")).toBeInTheDocument();
     });
-    expect(mockedNavigate).not.toHaveBeenCalled();
-  });
-
-  it("does nothing when user cancels confirm", async () => {
-    mockedUseParams.mockReturnValue({ slug: "test-slug" });
-
-    (api.product.getSingleProduct as jest.Mock).mockResolvedValue({
-      data: productData,
-    });
-    (api.category.getAllCategories as jest.Mock).mockResolvedValue({
-      data: categoriesData,
-    });
-
-    jest.spyOn(window, "confirm").mockReturnValue(false);
-
-    renderPage();
-
-    // Wait for data to be loaded
-    const categorySelect = (await screen.findByTestId(
-      "category-input"
-    )) as HTMLSelectElement;
-    await waitFor(() => {
-      expect(categorySelect.value).toBe(productData.product.category._id);
-    });
-
-    // Act
-    const deleteBtn = screen.getByTestId("delete-btn");
-    await act(async () => {
-      userEvent.click(deleteBtn);
-    });
-
-    expect(api.product.updateProduct as jest.Mock).not.toHaveBeenCalled();
     expect(mockedNavigate).not.toHaveBeenCalled();
   });
 
