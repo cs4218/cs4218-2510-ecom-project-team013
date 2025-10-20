@@ -7,20 +7,8 @@ function uniqueSuffix() {
   return `${Date.now()}-${Math.floor(Math.random() * 1e4)}`;
 }
 
-async function login(page: Page) {
-  await page.goto("/");
-  await page.getByRole("link", { name: /login/i }).click();
-  await page
-    .getByRole("textbox", { name: /enter your email/i })
-    .fill(process.env.ADMIN_EMAIL || "charlie@example.com");
-  await page
-    .getByRole("textbox", { name: /enter your password/i })
-    .fill(process.env.ADMIN_PASSWORD || "Password");
-  await page.getByRole("button", { name: /^login$/i }).click();
-}
-
 async function openUserMenu(page: Page) {
-  // Primary: the top-right account control shows "CHARLIE LEE"
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   const nameRe = /charlie\s*lee/i;
 
   const btn = (await page
@@ -86,7 +74,7 @@ async function submitProfile(page: Page) {
 
 /* ---------- setup ---------- */
 test.beforeEach(async ({ page }) => {
-  await login(page);
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 });
 
 /* ---------- tests ---------- */

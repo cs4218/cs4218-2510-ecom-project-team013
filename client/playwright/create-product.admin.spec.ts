@@ -9,11 +9,9 @@ function uniqueName(prefix = "Prod") {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
 }
 
-/* ---------- nav to Create Product (no login here) ---------- */
 async function gotoCreateProduct(page: Page) {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  // tolerate different account button labels (Alice/Profile/Account/Dashboard/Admin/User/Menu)
   const userMenuButton = (await page
     .getByRole("button", {
       name: /alice|profile|account|dashboard|admin|user|menu/i,
@@ -217,7 +215,7 @@ test("Product • MISSING photo → error", async ({ page }) => {
 
 test("Product • MISSING name → error", async ({ page }) => {
   await fillProduct(page, {
-    category: "Fashion", // seed-aligned
+    category: "Fashion",
     withPhoto: true,
     name: "",
     description: "desc",
@@ -232,7 +230,7 @@ test("Product • MISSING name → error", async ({ page }) => {
 test("Product • MISSING description → error", async ({ page }) => {
   const name = uniqueName("ProdMissDesc");
   await fillProduct(page, {
-    category: "Books", // seed-aligned
+    category: "Books",
     withPhoto: true,
     name,
     description: "",
@@ -247,7 +245,7 @@ test("Product • MISSING description → error", async ({ page }) => {
 test("Product • MISSING price → error", async ({ page }) => {
   const name = uniqueName("ProdMissPrice");
   await fillProduct(page, {
-    category: "Books", // seed-aligned
+    category: "Books",
     withPhoto: true,
     name,
     description: "desc",
@@ -262,7 +260,7 @@ test("Product • MISSING price → error", async ({ page }) => {
 test("Product • MISSING quantity → error", async ({ page }) => {
   const name = uniqueName("ProdMissQty");
   await fillProduct(page, {
-    category: "Fashion", // seed-aligned
+    category: "Fashion",
     withPhoto: true,
     name,
     description: "desc",
@@ -293,7 +291,7 @@ test("Product • MISSING shipping → error", async ({ page }) => {
 test("Product • NEGATIVE price → error", async ({ page }) => {
   const name = uniqueName("ProdNegPrice");
   await fillProduct(page, {
-    category: "Books", // seed-aligned
+    category: "Books",
     withPhoto: true,
     name,
     description: "desc",

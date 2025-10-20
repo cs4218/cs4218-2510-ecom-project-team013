@@ -2,6 +2,7 @@ import { test, expect, Page } from "@playwright/test";
 
 test.describe.configure({ mode: "parallel" });
 
+/* ---------- helpers ---------- */
 function uniqueName(prefix = "Cat") {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
 }
@@ -14,56 +15,44 @@ function rowByName(page: Page, name: string) {
     .getByRole("row", { name: new RegExp(name, "i") });
 }
 
-/* ---------- nav to Manage Category (no login here) ---------- */
 async function gotoManageCategoryViaUI(page: Page) {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  const maybeCategories = page.getByRole("link", { name: /^categories$/i });
-  if (await maybeCategories.isVisible().catch(() => false)) {
-    await maybeCategories.click();
-  }
-
+  // open ALICE TAN dropdown
   const userMenuButton = (await page
     .getByRole("button", {
-      name: /alice|profile|account|dashboard|admin|user|menu/i,
+      name: /alice|profile|account|dashboard|admin|menu/i,
     })
     .isVisible()
     .catch(() => false))
     ? page.getByRole("button", {
-        name: /alice|profile|account|dashboard|admin|user|menu/i,
+        name: /alice|profile|account|dashboard|admin|menu/i,
       })
-    : page
-        .getByRole("button")
-        .filter({
-          hasText: /alice|profile|account|dashboard|admin|user|menu/i,
-        });
+    : page.getByRole("button").filter({
+        hasText: /alice|profile|account|dashboard|admin|menu/i,
+      });
 
   await userMenuButton.click();
   await page.getByRole("link", { name: /dashboard/i }).click();
   await page.getByRole("link", { name: /create category/i }).click();
 
-  // accept minor heading variants across apps
-  const h1 = page.locator("h1");
-  await expect(
-    h1
-      .filter({ hasText: /manage category|create category|all categories/i })
-      .first()
-  ).toBeVisible();
-
+  await expect(page.locator("h1")).toHaveText(/manage category/i);
   await expect(page.getByRole("table")).toBeVisible();
 }
 
-/* ---------- form helpers ---------- */
+/* ---------- UI helpers ---------- */
 async function getCategoryInput(page: Page) {
   const byPlaceholder = page.getByPlaceholder(/enter new category/i);
   if (await byPlaceholder.isVisible().catch(() => false)) return byPlaceholder;
   return page.getByTestId("category-input");
 }
+
 async function getSubmitButton(page: Page) {
   const byRole = page.getByRole("button", { name: /^submit$/i });
   if (await byRole.isVisible().catch(() => false)) return byRole;
   return page.getByTestId("submit-button");
 }
+
 async function expectToast(page: Page, re: RegExp) {
   const alert = page.getByRole("alert");
   if (await alert.isVisible().catch(() => false)) {
@@ -88,7 +77,6 @@ async function openCategoriesDropdown(page: Page) {
   await expect(
     menu.locator(':scope *, :scope a, :scope [role="menuitem"]').first()
   ).toBeVisible();
-
   return menu;
 }
 
@@ -126,15 +114,16 @@ async function assertHomeFilterNotHas(page: Page, name: string) {
     page.getByLabel(new RegExp(`^${escapeRegex(name)}$`, "i"))
   ).toHaveCount(0);
 }
+
+/* ---------- setup ---------- */
 test.beforeEach(async ({ page }) => {
   await gotoManageCategoryViaUI(page);
 });
 
-/* ---------- tests (seeded data) ---------- */
+/* ---------- tests ---------- */
 test("Categories • READ shows defaults and nav/home lists reflect them", async ({
   page,
 }) => {
-  // seeded defaults per team: Electronics, Books, Fashion
   await expect(rowByName(page, "Electronics")).toBeVisible();
   await expect(rowByName(page, "Books")).toBeVisible();
   await expect(rowByName(page, "Fashion")).toBeVisible();
@@ -163,7 +152,6 @@ test("Categories • CREATE updates table, navbar dropdown (after reload) and ho
   await assertNavDropdownHasFresh(page, name);
   await assertHomeFilterHas(page, name);
 
-  // cleanup
   await gotoManageCategoryViaUI(page);
   await rowByName(page, name)
     .getByRole("button", { name: /^delete$/i })
@@ -219,7 +207,6 @@ test("Categories • EDIT updates table, navbar dropdown (after reload) and home
   await assertHomeFilterHas(page, edited);
   await assertHomeFilterNotHas(page, original);
 
-  // cleanup
   await gotoManageCategoryViaUI(page);
   await rowByName(page, edited)
     .getByRole("button", { name: /^delete$/i })
@@ -273,7 +260,6 @@ test('Categories • DUPLICATE shows "Something went wrong in input form" and ke
   await expectToast(page, /Something went wrong in input form/i);
   await expect(rowByName(page, name)).toHaveCount(1);
 
-  // cleanup
   await rowByName(page, name)
     .getByRole("button", { name: /^delete$/i })
     .click();
