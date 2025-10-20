@@ -15,8 +15,9 @@ const serverUrl = process.env.SERVER_URL || "http://localhost:3000";
  */
 export default defineConfig({
   testDir: "./playwright",
+  globalSetup: require.resolve("./playwright/setup/playwright.global-setup"),
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -36,10 +37,25 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    /* Only use Chromium for now. */
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
+    },
+    {
+      name: "auth",
+      testMatch: /.*\.auth\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/user.json",
+      },
+      dependencies: ["setup"],
+    },
+    {
+      name: "public",
+      testMatch: /.*\.public\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+      },
     },
     // {
     //   name: "firefox",

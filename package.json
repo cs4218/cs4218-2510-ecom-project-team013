@@ -16,7 +16,12 @@
     "test:frontend": "npm run test --prefix ./client",
     "test:frontend:coverage": "npm run test --prefix ./client -- --coverage",
     "test:frontend:watch": "npm run test --prefix ./client -- --watch",
-    "test:backend": "jest --passWithNoTests"
+    "test:backend": "jest --passWithNoTests",
+    "seed": "ts-node scripts/reset-db.ts",
+    "test:e2e": "cd client && npx playwright test",
+    "test:e2e:ui": "cd client && npx playwright test --ui",
+    "test:e2e:headed": "cd client && npx playwright test --headed",
+    "test:e2e:codegen": "cd client && npx playwright codegen http://localhost:3000"
   },
   "keywords": [],
   "author": "RP",
