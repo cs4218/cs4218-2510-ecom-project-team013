@@ -41,9 +41,13 @@ const Products: React.FC = () => {
                 key={p._id}
                 to={`/dashboard/admin/product/${p.slug}`}
                 className="product-link"
-                data-testid={`div-product-${index}`}
+                data-testid={`div-product-${p.slug}`}
               >
-                <div className="card m-2" style={{ width: "18rem" }}>
+                <div
+                  className="card m-2"
+                  style={{ width: "18rem" }}
+                  data-testid={`div-product-${index}`}
+                >
                   <img
                     src={`/api/v1/product/product-photo/${p._id}`}
                     className="card-img-top"

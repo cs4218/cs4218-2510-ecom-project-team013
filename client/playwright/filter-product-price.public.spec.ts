@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("Filter Product", () => {
+test.describe("Search Product", () => {
   test("Able to filter by price greater than 100", async ({ page }) => {
     await page.goto("/");
 
