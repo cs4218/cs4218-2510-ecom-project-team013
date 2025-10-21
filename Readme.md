@@ -257,22 +257,35 @@ This project uses GitHub Actions to automate code quality and testing workflows.
 4. Tan Jun Heng ([@Austintjh19](https://github.com/Austintjh19))
 
    Overall contributions:
-   - Designed and executed comprehensive frontend and backend unit tests, ensuring high branch and statement coverage across product and category modules.
-   - Implemented both white-box and black-box testing strategies.
-   - Mocked all child/parent components and external dependencies (e.g., APIs, database services) to achieve complete test isolation.
-   - Identified and resolved multiple UI and API inconsistencies, contributing to cleaner, more maintainable code and standardized error handling.
+   - Developed and maintained comprehensive integration and end-to-end (E2E) test suites across both frontend and backend modules.
+   - Designed automated test cases for product and category management flows, incorporating both API-level integration tests and Playwright-based E2E tests.
+   - Implemented black-box testing methodologies with repeatable test data using MongoDB reseeding scripts and preconfigured local storage states for different user roles.
+   - Investigated and integrated `mongodb-memory-server` for isolated, in-memory integration testing to improve test performance and independence from external services.
 
-   Key Areas of Ownership:
-   - Product.tsx – frontend
-   - CategoryProduct.tsx – frontend
-   - UpdateProduct.tsx – frontend
-   - CategoryForm.tsx – frontend
-   - getProductController – backend
-   - productCategoryController – backend
-   - productPhotoController – backend
-   - getSingleProductController – backend
-   - deleteProductController – backend
-   - updateProductController – backend
+   #### **Key Areas of Ownership**
+
+   **Supporting Infrastructure:**
+   - Seed DB Script for test data automation
+   - Local storage state management for user roles
+   - Research and implementation of `mongodb-memory-server` for use by team
+
+   **Backend Integration Tests:**
+   - getProductController
+   - getSingleProductController
+   - deleteProductController
+   - updateProductController
+   - productPhotoController
+
+   **Frontend Integration Tests:**
+   - Create Category Frontend
+   - Update Product Frontend
+   - Delete Product Frontend
+
+   **E2E Tests (Playwright):**
+   - Update Product
+   - Delete Product
+   - Filter Product by Price
+   - Search Product
 
 ## 8. AI Tool Declataion
 
