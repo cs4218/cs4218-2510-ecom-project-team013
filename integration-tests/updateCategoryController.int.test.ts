@@ -85,12 +85,12 @@ describe("Integration Tests for updateCategoryController", () => {
       expect(payload.message).toBe("Category Updated Successfully");
       expect(payload.category).toBeDefined();
       expect(payload.category.name).toBe(newName);
-      expect(payload.category.slug).toBe(slugify(newName));
+      expect(payload.category.slug).toBe(slugify(newName, { lower: true }));
 
       // Verify database was actually updated
       const dbCategory = await categoryModel.findById(categoryId);
       expect(dbCategory?.name).toBe(newName);
-      expect(dbCategory?.slug).toBe(slugify(newName));
+      expect(dbCategory?.slug).toBe(slugify(newName, { lower: true }));
     });
 
     it("should update category with special characters in name", async () => {
@@ -106,7 +106,7 @@ describe("Integration Tests for updateCategoryController", () => {
       const payload = (res.send as jest.Mock).mock.calls[0][0];
       expect(payload.success).toBe(true);
       expect(payload.category.name).toBe(newName);
-      expect(payload.category.slug).toBe(slugify(newName));
+      expect(payload.category.slug).toBe(slugify(newName, { lower: true }));
     });
 
     it("should update category with unicode characters in name", async () => {
@@ -122,7 +122,7 @@ describe("Integration Tests for updateCategoryController", () => {
       const payload = (res.send as jest.Mock).mock.calls[0][0];
       expect(payload.success).toBe(true);
       expect(payload.category.name).toBe(newName);
-      expect(payload.category.slug).toBe(slugify(newName));
+      expect(payload.category.slug).toBe(slugify(newName, { lower: true }));
     });
 
     it("should update category with numbers in name", async () => {
@@ -140,9 +140,10 @@ describe("Integration Tests for updateCategoryController", () => {
       expect(payload.category.name).toBe(newName);
     });
 
-    it("should handle category name with leading/trailing spaces", async () => {
+    it("should trim leading/trailing spaces from category name", async () => {
       const categoryId = seededCategories[0]._id.toString();
       const newName = "  Trimmed Category  ";
+      const trimmedName = "Trimmed Category";
 
       const req = mockRequest({ id: categoryId }, { name: newName });
       const res = mockResponse();
@@ -152,8 +153,8 @@ describe("Integration Tests for updateCategoryController", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const payload = (res.send as jest.Mock).mock.calls[0][0];
       expect(payload.success).toBe(true);
-      // Note: The controller doesn't trim, so it accepts the spaces
-      expect(payload.category.name).toBe(newName);
+      // Controller now trims the name
+      expect(payload.category.name).toBe(trimmedName);
     });
 
     it("should return the updated category object with new option", async () => {
@@ -170,7 +171,7 @@ describe("Integration Tests for updateCategoryController", () => {
       // Verify the returned category is the updated version
       expect(payload.category._id.toString()).toBe(categoryId);
       expect(payload.category.name).toBe(newName);
-      expect(payload.category.slug).toBe(slugify(newName));
+      expect(payload.category.slug).toBe(slugify(newName, { lower: true }));
     });
   });
 
@@ -224,6 +225,20 @@ describe("Integration Tests for updateCategoryController", () => {
     it("should return 400 when name is empty string", async () => {
       const categoryId = seededCategories[0]._id.toString();
       const req = mockRequest({ id: categoryId }, { name: "" });
+      const res = mockResponse();
+
+      await updateCategoryController(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: "Name is required",
+      });
+    });
+
+    it("should return 400 when name is only whitespace", async () => {
+      const categoryId = seededCategories[0]._id.toString();
+      const req = mockRequest({ id: categoryId }, { name: "   " });
       const res = mockResponse();
 
       await updateCategoryController(req, res);
@@ -352,30 +367,32 @@ describe("Integration Tests for updateCategoryController", () => {
       expect(payload.category.name).toBe(specialName);
     });
 
-    it("should handle name as a number (type coercion)", async () => {
+    it("should reject name as a number with type validation", async () => {
       const categoryId = seededCategories[0]._id.toString();
       const req = mockRequest({ id: categoryId }, { name: 12345 as any });
       const res = mockResponse();
 
       await updateCategoryController(req, res);
 
-      // Should succeed - Mongoose will coerce to string
-      expect(res.status).toHaveBeenCalledWith(200);
+      // Should fail - type validation rejects non-strings
+      expect(res.status).toHaveBeenCalledWith(400);
       const payload = (res.send as jest.Mock).mock.calls[0][0];
-      expect(payload.success).toBe(true);
+      expect(payload.success).toBe(false);
+      expect(payload.message).toBe("Name must be a string");
     });
 
-    it("should handle name as boolean (type coercion)", async () => {
+    it("should reject name as boolean with type validation", async () => {
       const categoryId = seededCategories[0]._id.toString();
       const req = mockRequest({ id: categoryId }, { name: true as any });
       const res = mockResponse();
 
       await updateCategoryController(req, res);
 
-      // Should succeed - Mongoose will coerce to string
-      expect(res.status).toHaveBeenCalledWith(200);
+      // Should fail - type validation rejects non-strings
+      expect(res.status).toHaveBeenCalledWith(400);
       const payload = (res.send as jest.Mock).mock.calls[0][0];
-      expect(payload.success).toBe(true);
+      expect(payload.success).toBe(false);
+      expect(payload.message).toBe("Name must be a string");
     });
   });
 
@@ -442,7 +459,7 @@ describe("Integration Tests for updateCategoryController", () => {
       await updateCategoryController(req, res);
 
       const payload = (res.send as jest.Mock).mock.calls[0][0];
-      expect(payload.category.slug).toBe(slugify(newName));
+      expect(payload.category.slug).toBe(slugify(newName, { lower: true }));
       expect(payload.category.slug).toBe(payload.category.slug.toLowerCase());
     });
 
@@ -470,7 +487,7 @@ describe("Integration Tests for updateCategoryController", () => {
       await updateCategoryController(req, res);
 
       const payload = (res.send as jest.Mock).mock.calls[0][0];
-      expect(payload.category.slug).toBe(slugify(newName));
+      expect(payload.category.slug).toBe(slugify(newName, { lower: true }));
     });
   });
 

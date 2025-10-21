@@ -558,7 +558,8 @@ describe("Integration Tests for authMiddleware", () => {
 
       expect(res.status).toHaveBeenCalledWith(401);
       expect(mockNext).not.toHaveBeenCalled();
-      expect(req.user).toBeUndefined();
+      // User is initialized as null, not set by middleware on failure
+      expect(req.user).toBeNull();
 
       // isAdmin would never be called in real scenario
     });

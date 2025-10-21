@@ -124,7 +124,7 @@ describe("Integration Tests for authHelper", () => {
     });
 
     describe("Error handling", () => {
-      it("should handle errors gracefully and return undefined", async () => {
+      it("should throw error when hashing fails", async () => {
         const consoleErrorSpy = jest
           .spyOn(console, "error")
           .mockImplementation();
@@ -132,11 +132,11 @@ describe("Integration Tests for authHelper", () => {
         // Force bcrypt.hash to throw an error
         const bcryptSpy = jest
           .spyOn(bcrypt, "hash")
-          .mockRejectedValueOnce(new Error("Hashing failed"));
+          .mockRejectedValueOnce(new Error("Hashing failed") as never);
 
-        const result = await hashPassword("testPassword");
-
-        expect(result).toBeUndefined();
+        await expect(hashPassword("testPassword")).rejects.toThrow(
+          "Password hashing failed"
+        );
         expect(consoleErrorSpy).toHaveBeenCalled();
 
         bcryptSpy.mockRestore();
@@ -151,9 +151,11 @@ describe("Integration Tests for authHelper", () => {
 
         const bcryptSpy = jest
           .spyOn(bcrypt, "hash")
-          .mockRejectedValueOnce(testError);
+          .mockRejectedValueOnce(testError as never);
 
-        await hashPassword("testPassword");
+        await expect(hashPassword("testPassword")).rejects.toThrow(
+          "Password hashing failed"
+        );
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(testError);
 

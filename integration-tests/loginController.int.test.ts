@@ -564,7 +564,7 @@ describe("Integration Tests: loginController", () => {
       await userModel.create({
         name: "Test User",
         email: "test@example.com",
-        password: "not-a-bcrypt-hash", // Invalid hash format
+        password: await hashPassword("validpassword"),
         phone: "1234567890",
         address: "123 Main St",
         answer: "Answer",
@@ -576,10 +576,25 @@ describe("Integration Tests: loginController", () => {
       });
       const res = mockResponse();
 
+      // Mock comparePassword to throw error
+      const comparePasswordSpy = jest
+        .spyOn(require("../helpers/authHelper"), "comparePassword")
+        .mockRejectedValueOnce(new Error("Comparison failed"));
+
+      const consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
+
       await loginController(req, res);
 
       // Should catch error and return 500
       expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: "Error in login",
+        error: expect.any(Error),
+      });
+
+      comparePasswordSpy.mockRestore();
+      consoleLogSpy.mockRestore();
     });
 
     it("should handle JWT signing errors", async () => {

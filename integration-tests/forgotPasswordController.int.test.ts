@@ -617,14 +617,29 @@ describe("Integration Tests: forgotPasswordController", () => {
       const req = mockRequest({
         email: "test@example.com",
         answer: "Answer",
-        newPassword: null, // This might cause hashPassword to fail
+        newPassword: "validnewpassword",
       });
       const res = mockResponse();
+
+      // Mock hashPassword to throw error
+      const hashPasswordSpy = jest
+        .spyOn(require("../helpers/authHelper"), "hashPassword")
+        .mockRejectedValueOnce(new Error("Hashing failed"));
+
+      const consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
 
       await forgotPasswordController(req, res);
 
       // Should catch error and return 500
       expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: "Something went wrong",
+        error: expect.any(Error),
+      });
+
+      hashPasswordSpy.mockRestore();
+      consoleLogSpy.mockRestore();
     });
   });
 

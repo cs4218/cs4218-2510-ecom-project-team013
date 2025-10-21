@@ -383,17 +383,32 @@ describe("Integration Tests: registerController", () => {
       const req = mockRequest({
         name: "Test User",
         email: "test@example.com",
-        password: null, // This might cause hashPassword to fail
+        password: "validpassword",
         phone: "1234567890",
         address: "123 Main St",
         answer: "Answer",
       });
       const res = mockResponse();
 
+      // Mock hashPassword to throw error
+      const hashPasswordSpy = jest
+        .spyOn(require("../helpers/authHelper"), "hashPassword")
+        .mockRejectedValueOnce(new Error("Hashing failed"));
+
+      const consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
+
       await registerController(req, res);
 
       // Should catch error and return 500
       expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: "Errro in Registeration",
+        error: expect.any(Error),
+      });
+
+      hashPasswordSpy.mockRestore();
+      consoleLogSpy.mockRestore();
     });
   });
 
