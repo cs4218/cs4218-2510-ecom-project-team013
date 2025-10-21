@@ -421,7 +421,7 @@ describe("updateCategoryController", () => {
       expect(mockResponse.status).toHaveBeenCalledWith(200);
     });
 
-    it("should handle whitespace in category name", async () => {
+    it("should strip whitespace in category name", async () => {
       mockRequest.body = { name: "  Electronics  " };
       mockRequest.params = { id: "category123" };
       mockedSlugify.mockReturnValue("electronics");
@@ -436,7 +436,7 @@ describe("updateCategoryController", () => {
         mockResponse as Response
       );
 
-      expect(mockedSlugify).toHaveBeenCalledWith("  Electronics  ");
+      expect(mockedSlugify).toHaveBeenCalledWith("Electronics");
       expect(mockResponse.status).toHaveBeenCalledWith(200);
     });
 
