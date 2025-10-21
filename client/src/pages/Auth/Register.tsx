@@ -120,7 +120,7 @@ const Register: React.FC = () => {
               onChange={(e) => setAnswer(e.target.value)}
               className="form-control"
               id="exampleInputanswer1"
-              placeholder="What is Your Favorite sports"
+              placeholder="What is Your Favorite Sport"
               required
             />
           </div>

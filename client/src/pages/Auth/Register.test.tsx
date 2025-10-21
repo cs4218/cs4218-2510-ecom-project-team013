@@ -80,7 +80,7 @@ describe("Register Component", () => {
     fireEvent.change(getByPlaceholderText("Enter Your DOB"), {
       target: { value: "2000-01-01" },
     });
-    fireEvent.change(getByPlaceholderText("What is Your Favorite sports"), {
+    fireEvent.change(getByPlaceholderText("What is Your Favorite Sport"), {
       target: { value: "Football" },
     });
 
@@ -121,7 +121,7 @@ describe("Register Component", () => {
     fireEvent.change(getByPlaceholderText("Enter Your DOB"), {
       target: { value: "2000-01-01" },
     });
-    fireEvent.change(getByPlaceholderText("What is Your Favorite sports"), {
+    fireEvent.change(getByPlaceholderText("What is Your Favorite Sport"), {
       target: { value: "Football" },
     });
 
