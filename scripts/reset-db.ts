@@ -18,7 +18,7 @@ const photoData = fs.readFileSync(photoPath);
 async function resetDatabase() {
   try {
     dotenv.config();
-    connectDB();
+    await connectDB();
 
     console.log("Connected to MongoDB");
 
