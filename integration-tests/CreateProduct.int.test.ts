@@ -5,8 +5,8 @@ import mongoose from "mongoose";
 import path from "path";
 import slugify from "slugify";
 
+import { createProductController } from "../controllers/productController";
 import productModel from "../models/productModel";
-import { createProductController } from "./productController";
 
 jest.mock("braintree", () => ({
   BraintreeGateway: jest.fn().mockImplementation(() => ({})),
