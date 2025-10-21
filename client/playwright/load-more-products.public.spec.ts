@@ -20,11 +20,14 @@ test.describe("Load More Products", () => {
       .catch(() => false);
 
     if (isLoadMoreVisible) {
-      // Click "Load more" button
-      await loadMoreButton.click();
-
-      // Wait for new products to load
-      await page.waitForTimeout(1000);
+      // Click "Load more" button and wait for API response
+      await Promise.all([
+        page.waitForResponse(
+          (res) =>
+            res.url().includes("/api/v1/product/product-list/") && res.ok()
+        ),
+        loadMoreButton.click(),
+      ]);
 
       // Verify additional products are loaded
       const updatedProductCount = await page
