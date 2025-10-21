@@ -220,7 +220,7 @@ describe("Category Controllers", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalledWith({
         success: true,
-        message: "Get SIngle Category SUccessfully",
+        message: "Get Single Category Successfully",
         category: { name: "Cat1", slug: "cat1" },
       });
     });
@@ -251,7 +251,7 @@ describe("Category Controllers", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalledWith({
         success: true,
-        message: "Categry Deleted Successfully",
+        message: "Category Deleted Successfully",
       });
     });
 
