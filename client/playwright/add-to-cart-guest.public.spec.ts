@@ -31,7 +31,7 @@ test.describe("Add to Cart as Guest", () => {
 
     // Verify cart message for guest users
     await expect(
-      page.getByText(/you have.*items in your cart please login to checkout/i)
+      page.getByText(/you have 1 items in your cart please login to checkout/i)
     ).toBeVisible();
 
     // Verify product appears in cart (uses .row.card.flex-row structure)
@@ -43,7 +43,7 @@ test.describe("Add to Cart as Guest", () => {
     await expect(cartItem.getByText(/price/i)).toBeVisible();
 
     // Verify cart summary shows total
-    await expect(page.getByText(/total/i)).toBeVisible();
+    await expect(page.getByText(/total : /i)).toBeVisible();
 
     // Verify "Please Login to checkout" button
     await expect(

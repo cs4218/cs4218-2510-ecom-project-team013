@@ -6,7 +6,7 @@ const SearchInput: React.FC = () => {
   const [values, setValues] = useSearch();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     try {
       const { data } = await api.search.searchKeyword(values.keyword);
