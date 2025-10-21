@@ -212,7 +212,7 @@ describe("Integration Tests: forgotPasswordController", () => {
       await forgotPasswordController(req, res);
 
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.send).toHaveBeenCalledWith({ message: "Emai is required" });
+      expect(res.send).toHaveBeenCalledWith({ message: "Email is required" });
 
       // Verify no user was affected
       const count = await userModel.countDocuments();
