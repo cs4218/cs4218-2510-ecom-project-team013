@@ -52,17 +52,18 @@ export const requireSignIn: RequestHandler = async (req, res, next) => {
   } catch (error) {
     console.error("Authentication error:", error);
 
-    if (error instanceof JWT.JsonWebTokenError) {
-      return res.status(401).send({
-        success: false,
-        message: "Invalid token",
-      });
-    }
-
+    // Check TokenExpiredError first (it extends JsonWebTokenError)
     if (error instanceof JWT.TokenExpiredError) {
       return res.status(401).send({
         success: false,
         message: "Token expired",
+      });
+    }
+
+    if (error instanceof JWT.JsonWebTokenError) {
+      return res.status(401).send({
+        success: false,
+        message: "Invalid token",
       });
     }
 

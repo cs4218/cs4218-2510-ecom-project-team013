@@ -75,36 +75,39 @@ describe("authHelper", () => {
     });
 
     describe("error handling", () => {
-      it("should return undefined and log error when bcrypt.hash rejects", async () => {
+      it("should throw error and log when bcrypt.hash rejects", async () => {
         const mockError = new Error("Bcrypt hashing failed");
         mockedHash.mockRejectedValue(mockError);
 
-        const result = await hashPassword(mockPassword);
+        await expect(hashPassword(mockPassword)).rejects.toThrow(
+          "Password hashing failed"
+        );
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(mockError);
-        expect(result).toBeUndefined();
       });
 
-      it("should return undefined and log error for synchronous bcrypt failures", async () => {
+      it("should throw error and log for synchronous bcrypt failures", async () => {
         const mockError = new Error("Synchronous error");
         mockedHash.mockImplementation(() => {
           throw mockError;
         });
 
-        const result = await hashPassword(mockPassword);
+        await expect(hashPassword(mockPassword)).rejects.toThrow(
+          "Password hashing failed"
+        );
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(mockError);
-        expect(result).toBeUndefined();
       });
 
-      it("should return undefined and log non-Error exceptions", async () => {
+      it("should throw error and log non-Error exceptions", async () => {
         const mockError = "String error";
         mockedHash.mockRejectedValue(mockError);
 
-        const result = await hashPassword(mockPassword);
+        await expect(hashPassword(mockPassword)).rejects.toThrow(
+          "Password hashing failed"
+        );
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(mockError);
-        expect(result).toBeUndefined();
       });
     });
   });

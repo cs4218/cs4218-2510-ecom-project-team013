@@ -62,9 +62,24 @@ export const createCategoryController = (async (req, res) => {
 // Update category
 export const updateCategoryController = (async (req, res) => {
   try {
-    const { name } = req.body;
+    let { name } = req.body as { name?: unknown };
     const { id } = req.params;
 
+    if (name == null) {
+      return res.status(400).send({
+        success: false,
+        message: "Name is required",
+      });
+    }
+
+    if (typeof name !== "string") {
+      return res.status(400).send({
+        success: false,
+        message: "Name must be a string",
+      });
+    }
+
+    name = name.trim();
     if (!name) {
       return res.status(400).send({
         success: false,

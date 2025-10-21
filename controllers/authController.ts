@@ -90,6 +90,12 @@ export const loginController = (async (req, res) => {
       });
     }
     //token
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).send({
+        success: false,
+        message: "Server configuration error",
+      });
+    }
     const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
@@ -121,13 +127,13 @@ export const forgotPasswordController = (async (req, res) => {
   try {
     const { email, answer, newPassword } = req.body;
     if (!email) {
-      res.status(400).send({ message: "Emai is required" });
+      return res.status(400).send({ message: "Email is required" });
     }
     if (!answer) {
-      res.status(400).send({ message: "answer is required" });
+      return res.status(400).send({ message: "answer is required" });
     }
     if (!newPassword) {
-      res.status(400).send({ message: "New Password is required" });
+      return res.status(400).send({ message: "New Password is required" });
     }
     //check
     const user = await userModel.findOne({ email, answer });
