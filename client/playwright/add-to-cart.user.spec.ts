@@ -16,7 +16,7 @@ test.describe("Add to Cart as Logged-in User", () => {
     await expect(page.getByText(/item added to cart/i)).toBeVisible();
 
     // Click cart icon in header and verify badge
-    const cartBadge = page.locator(".badge");
+    const cartBadge = page.locator(".ant-badge-count");
     await expect(cartBadge).toHaveText("1");
 
     // Navigate to /cart
@@ -28,7 +28,7 @@ test.describe("Add to Cart as Logged-in User", () => {
 
     // Verify cart shows product details
     await expect(cartItem.locator("img")).toBeVisible();
-    await expect(page.getByText(/total/i)).toBeVisible();
+    await expect(page.getByText(/total : /i)).toBeVisible();
   });
 
   test("Complete Shopping Cart Flow", async ({ page }) => {
