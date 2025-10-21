@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
-import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import mongoose from "mongoose";
 import slugify from "slugify";
-import { createCategoryController } from "./categoryController";
+import { createCategoryController } from "../controllers/categoryController";
 import categoryModel from "../models/categoryModel";
 
 let mongo: MongoMemoryServer;

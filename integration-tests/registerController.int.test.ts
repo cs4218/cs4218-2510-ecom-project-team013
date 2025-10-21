@@ -371,7 +371,7 @@ describe("Integration Tests: registerController", () => {
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send).toHaveBeenCalledWith({
         success: false,
-        message: "Errro in Registeration",
+        message: "Error in Registration",
         error: expect.any(Error),
       });
 
@@ -403,7 +403,7 @@ describe("Integration Tests: registerController", () => {
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send).toHaveBeenCalledWith({
         success: false,
-        message: "Errro in Registeration",
+        message: "Error in Registration",
         error: expect.any(Error),
       });
 

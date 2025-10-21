@@ -237,7 +237,7 @@ describe("Integration Tests: loginController", () => {
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalledWith({
         success: false,
-        message: "Email is not registerd",
+        message: "Email is not registered",
       });
     });
 
@@ -259,7 +259,7 @@ describe("Integration Tests: loginController", () => {
 
       await loginController(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.status).toHaveBeenCalledWith(401);
       expect(res.send).toHaveBeenCalledWith({
         success: false,
         message: "Invalid Password",
@@ -289,7 +289,7 @@ describe("Integration Tests: loginController", () => {
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalledWith({
         success: false,
-        message: "Email is not registerd",
+        message: "Email is not registered",
       });
     });
   });
@@ -353,7 +353,7 @@ describe("Integration Tests: loginController", () => {
 
         await loginController(req, res);
 
-        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.status).toHaveBeenCalledWith(401);
         expect(res.send).toHaveBeenCalledWith({
           success: false,
           message: "Invalid Password",
