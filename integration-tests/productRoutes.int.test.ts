@@ -9,6 +9,12 @@ jest.mock("../middlewares/authMiddleware");
 jest.mock("express-formidable", () =>
   jest.fn(() => (req: any, res: any, next: any) => next())
 );
+jest.mock("braintree", () => {
+  return {
+    BraintreeGateway: jest.fn().mockImplementation(() => ({})),
+    Environment: { Sandbox: "Sandbox", Production: "Production" },
+  };
+});
 
 const mockRequireSignIn = authMiddleware.requireSignIn as jest.Mock;
 const mockIsAdmin = authMiddleware.isAdmin as jest.Mock;
