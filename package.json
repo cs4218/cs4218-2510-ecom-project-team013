@@ -11,7 +11,7 @@
     "format": "prettier --ignore-path .gitignore --ignore-path client/.gitignore --ignore-path client/src/.gitignore . --write",
     "format:check": "prettier --ignore-path .gitignore --ignore-path client/.gitignore --ignore-path client/src/.gitignore . --list-different",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "sonarqube": "sonarqube-scanner",
+    "sonarqube": "sonar-scanner",
     "test": "concurrently \"npm run test:backend\" \"npm run test:frontend\"",
     "test:frontend": "npm run test --prefix ./client",
     "test:frontend:coverage": "npm run test --prefix ./client -- --coverage",
