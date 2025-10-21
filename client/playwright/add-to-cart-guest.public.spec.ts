@@ -6,6 +6,9 @@ test.describe("Add to Cart as Guest", () => {
   }) => {
     await page.goto("/");
 
+    // Wait for products to load
+    await page.waitForSelector(".card");
+
     // Click "ADD TO CART" on first product
     const firstProduct = page
       .locator(".card")
@@ -16,25 +19,33 @@ test.describe("Add to Cart as Guest", () => {
     // Verify toast notification appears
     await expect(page.getByText(/item added to cart/i)).toBeVisible();
 
-    // Click cart icon in header and verify badge
-    const cartBadge = page.locator(".badge");
+    // Verify cart badge updates to show "1"
+    const cartBadge = page.locator(".ant-badge-count");
     await expect(cartBadge).toHaveText("1");
 
     // Navigate to /cart
     await page.goto("/cart");
 
-    // Verify product appears in cart (cart uses row card flex-row structure)
+    // Verify greeting shows "Hello Guest"
+    await expect(page.getByText(/hello guest/i)).toBeVisible();
+
+    // Verify cart message for guest users
+    await expect(
+      page.getByText(/you have.*items in your cart please login to checkout/i)
+    ).toBeVisible();
+
+    // Verify product appears in cart (uses .row.card.flex-row structure)
     const cartItem = page.locator(".row.card.flex-row").first();
     await expect(cartItem).toBeVisible();
 
-    // Verify cart shows product details
+    // Verify cart shows product image and price
     await expect(cartItem.locator("img")).toBeVisible();
+    await expect(cartItem.getByText(/price/i)).toBeVisible();
+
+    // Verify cart summary shows total
     await expect(page.getByText(/total/i)).toBeVisible();
 
-    // Verify message for guest user
-    await expect(page.getByText(/please login to checkout/i)).toBeVisible();
-
-    // Verify "Please Login to checkout" button is displayed
+    // Verify "Please Login to checkout" button
     await expect(
       page.getByRole("button", { name: /please login to checkout/i })
     ).toBeVisible();
