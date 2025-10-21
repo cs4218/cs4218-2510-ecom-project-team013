@@ -19,9 +19,9 @@ test.describe("Add to Cart as Guest", () => {
     // Verify toast notification appears
     await expect(page.getByText(/item added to cart/i)).toBeVisible();
 
-    // Verify cart badge updates to show item count
-    const cartBadge = page.locator(".badge").first();
-    await expect(cartBadge).toBeVisible();
+    // Verify cart badge updates to show "1"
+    const cartBadge = page.locator(".ant-badge-count");
+    await expect(cartBadge).toHaveText("1");
 
     // Navigate to /cart
     await page.goto("/cart");
