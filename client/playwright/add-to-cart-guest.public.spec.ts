@@ -45,7 +45,7 @@ test.describe("Add to Cart as Guest", () => {
     // Verify cart summary shows total
     await expect(page.getByText(/total/i)).toBeVisible();
 
-    // Verify "Please Login to checkout" button (note: typo in source code)
+    // Verify "Please Login to checkout" button
     await expect(
       page.getByRole("button", { name: /please login to checkout/i })
     ).toBeVisible();
