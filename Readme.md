@@ -182,20 +182,34 @@ This project uses GitHub Actions to automate code quality and testing workflows.
 
 2. Ma Yuan ([@mamayuan](https://github.com/mamayuan))
 
-   Overall contributions:
-   - Developed spec-driven, black-box unit tests focusing on observable outcomes and user/API contract integrity.
+   **Overall Contributions:**
+   - Developed spec-driven, black-box unit tests focusing on observable outcomes and API/UI contract integrity.
    - Implemented deterministic mocks for axios, react-hot-toast, react-router, Ant Design (AntD) components, and database models.
-   - Established negative-path guardrails
-   - Improved test resilience to refactoring by decoupling from implementation details while maintaining full behavioral validation.
+   - Added defensive-path coverage for malformed payloads, missing parameters, and concurrency edge cases.
+   - Conducted white-box integration testing (Jest + React Testing Library) and black-box UI testing (Playwright) for key user workflows.
+   - Verified full data-fetch → render → navigation flows with real router contexts and deterministic async behavior.
+   - Ensured test resilience to refactoring by decoupling from implementation details while maintaining complete behavioral validation.
+   - Summarized overall test results and produced graphical test statistics for MS2 (71 total tests, 68 passed, 95.8 % pass rate).
 
-   Key Areas of Ownership:
-   - useCategory Hook – frontend
-   - ProductDetails - frontend
-   - CreateProduct - frontend
-   - getSingleProductController
-   - relatedProductController
-   - productPhotoController
-   - createProductController
+   **Key Areas of Ownership:**
+   - **Frontend**
+     - `useCategory` Hook – verified category data loading and state updates.
+     - Product Details page – validated API chaining, navigation, and stale-response protection (`ProductDetails.int.test.tsx`).
+     - Create Product page – tested form interactions, file uploads, and submission logic (`CreateProduct.int.test.tsx`).
+     - Create Category page – verified CRUD logic, modal UX, and toast feedback (`CreateCategory.int.test.tsx`).
+   - **Backend**
+     - `getSingleProductController`, `relatedProductController`, `productPhotoController`, `createProductController`
+       – tested validation, slug generation, and DB persistence with `mongodb-memory-server`.
+   - **UI Tests (Playwright)**
+     - Admin Manage Category – validated CRUD consistency across table, navbar, and home filter.
+     - Create Product – covered both success and negative input scenarios.
+     - User Profile Update – verified editable fields and password validation behavior.
+   - **Testing Methodology**
+     - Deterministic async mocking for stable React state updates.
+     - Accessibility-oriented selectors (`getByRole`, `getByLabelText`) for robust UI assertions.
+     - Network-idle synchronization and test cleanup for repeatable Playwright runs.
+     - Combined white-box integration and black-box UI validation to ensure end-to-end correctness.
+
 
 3. Richard Dominick ([@RichDom2185](https://github.com/RichDom2185))
 
