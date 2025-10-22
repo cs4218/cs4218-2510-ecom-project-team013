@@ -168,17 +168,40 @@ This project uses GitHub Actions to automate code quality and testing workflows.
 1. Dhiraputta Pathama Tengara ([@DhiraPT](https://github.com/DhiraPT))
 
    Overall contributions:
-   - Designed and implemented unit testing strategy based on mock-driven isolation and security-focused validation principles.
-   - Authored and maintained white-box tests for backend controllers and middleware, ensuring isolation from external dependencies like JWT and MongoDB.
+   - Designed and implemented comprehensive testing strategy spanning unit, integration, and E2E tests based on mock-driven isolation and security-focused validation principles.
+   - Authored and maintained white-box unit tests for backend controllers and middleware, ensuring isolation from external dependencies like JWT and MongoDB.
+   - Developed full-stack integration tests for authentication flows (Login, Register) testing React component + axios API interactions with real dependency integration (bcrypt, JWT, MongoDB Memory Server).
+   - Created 7 black-box E2E tests for guest user scenarios and authentication flows using Playwright with accessibility-first selectors.
    - Implemented security validation tests within middleware (e.g., authMiddleware) to verify adherence to authentication and authorization rules.
-   - Ensured all tests conform to CI/CD integration standards and maintaining coverage thresholds.
+   - Fixed 8 integration test bugs, 6 E2E test bugs, and 2 source code typos discovered during test implementation.
+   - Ensured all tests conform to CI/CD integration standards with deterministic waits (no arbitrary timeouts) and maintaining coverage thresholds.
 
-   Key Areas of Ownership:
-   - AdminMenu - frontend
-   - authMiddleware - backend
-   - authHelper - backend
-   - relatedProductController - backend
-   - updateCategoryController - backend
+   Unit Tests:
+   - client/src/components/AdminMenu.test.tsx - frontend
+   - middlewares/authMiddleware.test.ts - backend
+   - helpers/authHelper.test.ts - backend
+   - controllers/relatedProductController.test.ts - backend
+   - controllers/updateCategoryController.test.ts - backend
+
+   Integration Tests:
+   - client/src/pages/Auth/Login.int.test.tsx - frontend
+   - client/src/pages/Auth/Register.int.test.tsx - frontend
+   - integration-tests/authHelper.int.test.ts - backend
+   - integration-tests/authMiddleware.int.test.ts - backend
+   - integration-tests/relatedProductController.int.test.ts - backend
+   - integration-tests/updateCategoryController.int.test.ts - backend
+   - integration-tests/loginController.int.test.ts - backend
+   - integration-tests/registerController.int.test.ts - backend
+   - integration-tests/forgotPasswordController.int.test.ts - backend
+
+   UI Tests (E2E):
+   - client/playwright/browse-products.public.spec.ts - frontend
+   - client/playwright/filter-category.public.spec.ts - frontend
+   - client/playwright/view-product-details.public.spec.ts - frontend
+   - client/playwright/add-to-cart-guest.public.spec.ts - frontend
+   - client/playwright/load-more-products.public.spec.ts - frontend
+   - client/playwright/user-registration.public.spec.ts - frontend
+   - client/playwright/user-login.public.spec.ts - frontend
 
 2. Ma Yuan ([@mamayuan](https://github.com/mamayuan))
 
