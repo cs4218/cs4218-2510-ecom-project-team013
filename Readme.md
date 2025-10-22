@@ -210,7 +210,6 @@ This project uses GitHub Actions to automate code quality and testing workflows.
      - Network-idle synchronization and test cleanup for repeatable Playwright runs.
      - Combined white-box integration and black-box UI validation to ensure end-to-end correctness.
 
-
 3. Richard Dominick ([@RichDom2185](https://github.com/RichDom2185))
 
    Overall contributions:
