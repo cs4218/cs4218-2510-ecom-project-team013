@@ -208,16 +208,14 @@ describe("Register Integration Tests", () => {
   describe("Failed Registration Flow", () => {
     it("should show error toast when email already exists", async () => {
       const user = getUser();
-      const mockError = {
-        response: {
-          data: {
-            success: false,
-            message: "Already registered please login",
-          },
+      const mockResponse = {
+        data: {
+          success: false,
+          message: "Already registered please login",
         },
       };
 
-      mockedAxios.post.mockRejectedValueOnce(mockError);
+      mockedAxios.post.mockResolvedValueOnce(mockResponse);
 
       renderRegister();
 
@@ -308,16 +306,14 @@ describe("Register Integration Tests", () => {
 
     it("should handle validation errors from backend", async () => {
       const user = getUser();
-      const mockError = {
-        response: {
-          data: {
-            success: false,
-            message: "Password must be at least 6 characters",
-          },
+      const mockResponse = {
+        data: {
+          success: false,
+          message: "Password must be at least 6 characters",
         },
       };
 
-      mockedAxios.post.mockRejectedValueOnce(mockError);
+      mockedAxios.post.mockResolvedValueOnce(mockResponse);
 
       renderRegister();
 

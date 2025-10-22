@@ -196,16 +196,14 @@ describe("Login Integration Tests", () => {
   describe("Failed Login Flow", () => {
     it("should show error toast when login fails due to invalid credentials", async () => {
       const user = getUser();
-      const mockError = {
-        response: {
-          data: {
-            success: false,
-            message: "Invalid email or password",
-          },
+      const mockResponse = {
+        data: {
+          success: false,
+          message: "Invalid email or password",
         },
       };
 
-      mockedAxios.post.mockRejectedValueOnce(mockError);
+      mockedAxios.post.mockResolvedValueOnce(mockResponse);
 
       renderLogin();
 
