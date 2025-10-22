@@ -236,23 +236,42 @@ This project uses GitHub Actions to automate code quality and testing workflows.
 3. Richard Dominick ([@RichDom2185](https://github.com/RichDom2185))
 
    Overall contributions:
-   - Routing configurations
-   - Route guards (private routes, admin routes)
-   - Context-related custom hooks (auth, cart, search)
-   - Categories page
-   - Orders page
-   - Category controller tests
-   - Order controller tests
+   - Migrate frontend to TypeScript
+   - Migrate backend to TypeScript
+   - Fix various scripts and dependency issues from initial template
+   - Clean up initial template code
+   - Set up entire CI/CD pipeline with GitHub Actions
+   - Set up ESLint and Prettier for code linting and formatting, including in CI/CD pipeline
+   - Refactor routing configurations to use data router
+   - Refactor API client to separate folder for better organization
+   - Set up initial Playwright testing configuration
+   - Configure sonarqube for code analysis and coverage reports
+   - Refactor Context-related custom hooks for better safety
 
-   Key Areas of Ownership:
+   Unit Tests:
    - routes.ts – frontend
    - PrivateRoute.tsx – frontend
    - AdminRoute.tsx – frontend
    - context/auth.tsx – frontend
    - context/cart.tsx – frontend
    - context/search.tsx – frontend
-   - categoryController – backend
+   - categoryController.test.ts – backend
    - authController#getOrdersController – backend
+
+   Integration Tests:
+   - integration-tests/authRoute.int.test.ts - backend
+   - integration-tests/productRoutes.int.test.ts - backend
+   - integration-tests/categoryRoutes.int.test.ts - backend
+   - integration-tests/categoryController.int.test.ts - backend
+   - integration-tests/createCategoryController.int.test.ts - backend
+   - integration-tests/deleteCategoryController.int.test.ts - backend
+   - integration-tests/productCategoryController.int.test.ts - backend
+   - integration-tests/singleCategoryController.int.test.ts - backend
+
+   UI Tests (E2E):
+   - client/playwright/add-to-cart.user.spec.ts - frontend
+   - client/playwright/browse-dashboard.admin.spec.ts - frontend
+   - client/playwright/search-product.user.spec.ts - frontend
 
 4. Tan Jun Heng ([@Austintjh19](https://github.com/Austintjh19))
 
