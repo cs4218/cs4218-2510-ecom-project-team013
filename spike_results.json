@@ -1,0 +1,904 @@
+{
+  "options": {
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "p(90)",
+      "p(95)",
+      "p(99)",
+      "max"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  },
+  "state": {
+    "isStdOutTTY": true,
+    "isStdErrTTY": true,
+    "testRunDurationMs": 343744.1992
+  },
+  "metrics": {
+    "checks{txn:payment}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1482,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.90": {
+          "ok": true
+        }
+      }
+    },
+    "checks{txn:product_photo}": {
+      "thresholds": {
+        "rate>0.95": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1005,
+        "fails": 0
+      }
+    },
+    "latency_ms_products_list": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "p(95)": 13261.045125,
+        "p(99)": 14525.7624,
+        "max": 15858.2715,
+        "avg": 3009.3581460038954,
+        "min": 11.8531,
+        "med": 1479.1950499999998,
+        "p(90)": 11185.9429
+      }
+    },
+    "checks{txn:categories}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 0,
+        "rate": 1,
+        "passes": 924
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0.9999387142244285,
+        "passes": 16316,
+        "fails": 1
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "med": 0.44075,
+        "p(90)": 0.9712200000000001,
+        "p(95)": 1.1521849999999987,
+        "p(99)": 2.2827989999999994,
+        "max": 24.7271,
+        "avg": 0.4791564340101536
+      }
+    },
+    "checks{txn:product_detail}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1022,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      }
+    },
+    "error_rate_overall": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 741,
+        "rate": 0.0013477088948787063,
+        "passes": 1
+      }
+    },
+    "checks{txn:user_auth}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 0,
+        "rate": 1,
+        "passes": 840
+      },
+      "thresholds": {
+        "rate>0.97": {
+          "ok": true
+        }
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "min": 500,
+        "max": 500,
+        "value": 500
+      }
+    },
+    "latency_ms_product_photo": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 16.5061,
+        "med": 2076.0143,
+        "p(90)": 4025.2394600000002,
+        "p(95)": 4924.028119999999,
+        "p(99)": 7830.9168800000025,
+        "max": 8869.2988,
+        "avg": 1977.804309552237
+      }
+    },
+    "failures": {
+      "values": {
+        "rate": 0.002909140000987106,
+        "count": 1
+      },
+      "type": "counter",
+      "contains": "default"
+    },
+    "http_req_sending": {
+      "contains": "time",
+      "values": {
+        "p(99)": 0.5058819999999999,
+        "max": 3.7376,
+        "avg": 0.007221472081218273,
+        "min": 0,
+        "med": 0,
+        "p(90)": 0,
+        "p(95)": 0
+      },
+      "type": "trend"
+    },
+    "http_req_blocked": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(99)": 0.8598689999999999,
+        "max": 5.1148,
+        "avg": 0.023641135786802037,
+        "min": 0,
+        "med": 0,
+        "p(90)": 0,
+        "p(95)": 0
+      }
+    },
+    "latency_ms_products_page": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 5.2597,
+        "med": 800.3832,
+        "p(90)": 4379.286550000001,
+        "p(95)": 6866.5857,
+        "p(99)": 7482.30575,
+        "max": 7761.1648,
+        "avg": 1503.4634443469804
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 2573425,
+        "rate": 7486.453607040243
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 949.5482,
+        "p(90)": 6258.001360000005,
+        "p(95)": 10943.435229999997,
+        "p(99)": 31874.636006000004,
+        "max": 37784.9367,
+        "avg": 2661.7706395012374,
+        "min": 0
+      }
+    },
+    "latency_ms_product_detail": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "max": 15344.2663,
+        "avg": 2643.3301696673175,
+        "min": 10.8029,
+        "med": 2180.1828,
+        "p(90)": 5584.095109999999,
+        "p(95)": 8121.234984999998,
+        "p(99)": 13696.755283999997
+      }
+    },
+    "latency_ms_categories": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "avg": 1528.3108669913413,
+        "min": 5.6973,
+        "med": 1342.2651,
+        "p(90)": 2945.289080000001,
+        "p(95)": 3822.5159249999997,
+        "p(99)": 7212.770036,
+        "max": 7729.7678
+      }
+    },
+    "checks{txn:products_list}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1026,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      }
+    },
+    "latency_ms_product_count": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "p(95)": 6896.028275000001,
+        "p(99)": 7570.600125,
+        "max": 7830.9442,
+        "avg": 1513.7783734892794,
+        "min": 4.5886,
+        "med": 776.8956499999999,
+        "p(90)": 5052.5976
+      }
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 15760,
+        "rate": 45.84804641555679
+      }
+    },
+    "checks{txn:register}": {
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 0,
+        "rate": 1,
+        "passes": 2
+      }
+    },
+    "checks{txn:related_products}": {
+      "values": {
+        "rate": 1,
+        "passes": 967,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.98": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default"
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 2449728360,
+        "rate": 7126602.7636285415
+      }
+    },
+    "latency_ms_product_filters": {
+      "values": {
+        "med": 1005.3895,
+        "p(90)": 5187.9673,
+        "p(95)": 6498.6107250000005,
+        "p(99)": 8272.26475,
+        "max": 10527.9177,
+        "avg": 1875.7720681286544,
+        "min": 5.4493
+      },
+      "type": "trend",
+      "contains": "default"
+    },
+    "checks{txn:login}": {
+      "thresholds": {
+        "rate>0.97": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1684,
+        "fails": 0
+      }
+    },
+    "group_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 11585.483708741625,
+        "min": 25.2061,
+        "med": 6956.303449999999,
+        "p(90)": 34097.82238,
+        "p(95)": 38755.4341,
+        "p(99)": 43266.346566,
+        "max": 47623.588
+      }
+    },
+    "checks{txn:orders}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 755,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.95": {
+          "ok": true
+        }
+      }
+    },
+    "iteration_duration": {
+      "contains": "time",
+      "values": {
+        "p(95)": 89475.2309,
+        "p(99)": 97281.24823999988,
+        "max": 106373.5997,
+        "avg": 43620.333362690704,
+        "min": 7433.6078,
+        "med": 40540.5808,
+        "p(90)": 83929.0165
+      },
+      "type": "trend"
+    },
+    "checks{txn:braintree_token}": {
+      "contains": "default",
+      "values": {
+        "rate": 0.9986595174262735,
+        "passes": 745,
+        "fails": 1
+      },
+      "thresholds": {
+        "rate>0.93": {
+          "ok": true
+        }
+      },
+      "type": "rate"
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "med": 949.39575,
+        "p(90)": 6257.398360000002,
+        "p(95)": 10942.536554999999,
+        "p(99)": 31872.916832999996,
+        "max": 37782.9419,
+        "avg": 2661.133575577409
+      }
+    },
+    "checks{txn:product_category}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 857,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      }
+    },
+    "checks{txn:products_page}": {
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1026,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      },
+      "type": "rate"
+    },
+    "latency_ms_login": {
+      "values": {
+        "avg": 2228.1808071258897,
+        "min": 60.456,
+        "med": 1732.3501,
+        "p(90)": 5594.48869,
+        "p(95)": 6514.8193949999895,
+        "p(99)": 7692.613066,
+        "max": 7843.589
+      },
+      "type": "trend",
+      "contains": "default"
+    },
+    "latency_ms_search": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "avg": 1424.5817995126708,
+        "min": 4.5238,
+        "med": 822.4711,
+        "p(90)": 3883.27855,
+        "p(95)": 6000.7032,
+        "p(99)": 7390.182725000001,
+        "max": 7863.1844
+      }
+    },
+    "checks{txn:product_filters}": {
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1026,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      },
+      "type": "rate"
+    },
+    "latency_ms_register": {
+      "values": {
+        "avg": 276.8841,
+        "min": 276.8841,
+        "med": 276.8841,
+        "p(90)": 276.8841,
+        "p(95)": 276.8841,
+        "p(99)": 276.8841,
+        "max": 276.8841
+      },
+      "type": "trend",
+      "contains": "default"
+    },
+    "latency_ms_product_category": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "max": 23434.3768,
+        "avg": 5407.200900700118,
+        "min": 11.07,
+        "med": 4144.4299,
+        "p(90)": 12835.531399999998,
+        "p(95)": 15365.834859999977,
+        "p(99)": 21891.31016399998
+      }
+    },
+    "latency_ms_single_category": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "p(99)": 7138.724854,
+        "max": 7815.3012,
+        "avg": 1619.8966644518275,
+        "min": 5.2325,
+        "med": 1445.2487,
+        "p(90)": 3537.7597800000003,
+        "p(95)": 4804.992389999999
+      }
+    },
+    "latency_ms_user_auth": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "max": 361.0144,
+        "avg": 13.344023214285698,
+        "min": 0,
+        "med": 1.5216,
+        "p(90)": 37.90047,
+        "p(95)": 58.81055499999987,
+        "p(99)": 155.291456
+      }
+    },
+    "iterations": {
+      "contains": "default",
+      "values": {
+        "count": 721,
+        "rate": 2.097489940711703
+      },
+      "type": "counter"
+    },
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 0,
+        "p(95)": 0,
+        "p(99)": 0.6357919999999998,
+        "max": 5.1148,
+        "avg": 0.020580894670050753,
+        "min": 0,
+        "med": 0
+      }
+    },
+    "latency_ms_related_products": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "med": 1722.2182,
+        "p(90)": 5090.694839999999,
+        "p(95)": 7123.881009999996,
+        "p(99)": 12813.192252000026,
+        "max": 15392.6009,
+        "avg": 2283.0983258531533,
+        "min": 5.5353
+      }
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 0,
+        "avg": 0,
+        "min": 0,
+        "med": 0,
+        "p(90)": 0,
+        "p(95)": 0,
+        "p(99)": 0
+      }
+    },
+    "http_req_duration": {
+      "values": {
+        "p(95)": 10943.333364999999,
+        "p(99)": 31874.456512999997,
+        "max": 37784.9367,
+        "avg": 2661.6199534835023,
+        "min": 0,
+        "med": 949.4885999999999,
+        "p(90)": 6257.428780000002
+      },
+      "thresholds": {
+        "p(95)<1000": {
+          "ok": false
+        },
+        "p(99)<2000": {
+          "ok": false
+        }
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "checks{txn:search}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1026,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      }
+    },
+    "checks{txn:single_category}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 903,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      }
+    },
+    "latency_ms_braintree_token": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 261.9545,
+        "med": 446.5259,
+        "p(90)": 1119.40015,
+        "p(95)": 1483.959425,
+        "p(99)": 2278.858409999999,
+        "max": 5402.6543,
+        "avg": 648.7020485254691
+      }
+    },
+    "checks{txn:product_count}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1026,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      }
+    },
+    "latency_ms_payment": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "avg": 543.3143136302289,
+        "min": 374.5005,
+        "med": 489.743,
+        "p(90)": 752.5487,
+        "p(95)": 831.5035,
+        "p(99)": 1097.2248000000006,
+        "max": 1594.1338
+      }
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0.0000634517766497462,
+        "passes": 1,
+        "fails": 15759
+      },
+      "thresholds": {
+        "rate<0.02": {
+          "ok": true
+        }
+      }
+    },
+    "vus": {
+      "values": {
+        "value": 1,
+        "min": 1,
+        "max": 500
+      },
+      "type": "gauge",
+      "contains": "default"
+    },
+    "latency_ms_orders": {
+      "values": {
+        "p(90)": 33654.11022,
+        "p(95)": 34902.03419,
+        "p(99)": 36328.637394,
+        "max": 37784.9367,
+        "avg": 16481.78265589405,
+        "min": 8.1568,
+        "med": 16191.7506
+      },
+      "type": "trend",
+      "contains": "default"
+    }
+  },
+  "setup_data": {
+    "credentials": {
+      "email": "spike_1762739565341@test.com",
+      "password": "TestPass123!"
+    },
+    "timestamp": "2025-11-10T01:52:45.618Z"
+  },
+  "root_group": {
+    "groups": [
+      {
+        "checks": [
+          {
+            "name": "register 201",
+            "path": "::setup::register 201",
+            "id": "09b4317cf1f0cccb084b00576cc103e4",
+            "passes": 1,
+            "fails": 0
+          },
+          {
+            "id": "4fb472f9a5b666ceb592dfd3e210df30",
+            "passes": 1,
+            "fails": 0,
+            "name": "register success",
+            "path": "::setup::register success"
+          }
+        ],
+        "name": "setup",
+        "path": "::setup",
+        "id": "5c0f8025f7e0b6654089e5b00e950f1a",
+        "groups": []
+      },
+      {
+        "name": "Product Browsing",
+        "path": "::Product Browsing",
+        "id": "a13778f4c2d7ea0bfe79b100af2d3a63",
+        "groups": [],
+        "checks": [
+            {
+              "passes": 1026,
+              "fails": 0,
+              "name": "GET /product/get-product 200",
+              "path": "::Product Browsing::GET /product/get-product 200",
+              "id": "995f128be46c802684f29ab4ad3c2e90"
+            },
+            {
+              "fails": 0,
+              "name": "GET /product/product-count 200",
+              "path": "::Product Browsing::GET /product/product-count 200",
+              "id": "bb88a76ffd218110c954e32cf2a5dfac",
+              "passes": 1026
+            },
+            {
+              "path": "::Product Browsing::GET /product-list/:page 200",
+              "id": "ee3595a779be70e8701fae0647895a9c",
+              "passes": 1026,
+              "fails": 0,
+              "name": "GET /product-list/:page 200"
+            },
+            {
+              "name": "GET /search/:keyword 200",
+              "path": "::Product Browsing::GET /search/:keyword 200",
+              "id": "9f39444acc924d55c478e9ca4a039ab6",
+              "passes": 1026,
+              "fails": 0
+            },
+            {
+              "name": "POST /product/product-filters 200",
+              "path": "::Product Browsing::POST /product/product-filters 200",
+              "id": "f744df3764adfc5fb6fda51a20fd53eb",
+              "passes": 1026,
+              "fails": 0
+            }
+          ]
+      },
+      {
+        "id": "26acab17ffea26c9fb657c35bc8e4b94",
+        "groups": [],
+        "checks": [
+            {
+              "fails": 0,
+              "name": "GET /product/get-product/:slug 200",
+              "path": "::Product Details::GET /product/get-product/:slug 200",
+              "id": "22aef171c08e64b3f0001c9df821ea26",
+              "passes": 1022
+            },
+            {
+              "fails": 0,
+              "name": "GET /product-photo/:pid 200",
+              "path": "::Product Details::GET /product-photo/:pid 200",
+              "id": "659233bd9332dc613625f9b374c5396e",
+              "passes": 1005
+            },
+            {
+              "id": "188dfe7758115d5405c993ff4a0fa2d3",
+              "passes": 967,
+              "fails": 0,
+              "name": "GET /related-product/:pid/:cid 200",
+              "path": "::Product Details::GET /related-product/:pid/:cid 200"
+            }
+          ],
+        "name": "Product Details",
+        "path": "::Product Details"
+      },
+      {
+        "checks": [
+          {
+            "name": "GET /category/get-category 200",
+            "path": "::Category Browsing::GET /category/get-category 200",
+            "id": "6024679609fb50b8163afa4ee68cb64c",
+            "passes": 924,
+            "fails": 0
+          },
+          {
+            "path": "::Category Browsing::GET /single-category/:slug 200",
+            "id": "87729fa0a4c4f3f928aed3d27c2ef756",
+            "passes": 903,
+            "fails": 0,
+            "name": "GET /single-category/:slug 200"
+          },
+          {
+            "name": "GET /product-category/:slug 200",
+            "path": "::Category Browsing::GET /product-category/:slug 200",
+            "id": "11462eb4fc39d2876a4428aaf54d28a5",
+            "passes": 857,
+            "fails": 0
+          }
+        ],
+        "name": "Category Browsing",
+        "path": "::Category Browsing",
+        "id": "408348c23f0e4637543fe7ca20bec6d5",
+        "groups": []
+      },
+      {
+        "groups": [],
+        "checks": [
+            {
+              "id": "4d2ef240d4e8837c5e9ff26a45e7967f",
+              "passes": 842,
+              "fails": 0,
+              "name": "login 200",
+              "path": "::Authenticated User Flow::login 200"
+            },
+            {
+              "name": "login has token",
+              "path": "::Authenticated User Flow::login has token",
+              "id": "0c4fcee89a3c4b7e51a0452218e980c5",
+              "passes": 842,
+              "fails": 0
+            },
+            {
+              "name": "GET /auth/user-auth 200",
+              "path": "::Authenticated User Flow::GET /auth/user-auth 200",
+              "id": "34ed472ac798cc63bb17c6402ffda04f",
+              "passes": 840,
+              "fails": 0
+            },
+            {
+              "fails": 0,
+              "name": "GET /auth/orders 200",
+              "path": "::Authenticated User Flow::GET /auth/orders 200",
+              "id": "f09cec0d0cfaf35fcc9207cc6be813b6",
+              "passes": 755
+            },
+            {
+              "path": "::Authenticated User Flow::GET /braintree/token 200",
+              "id": "ef16939306b282c9f3c38364a30d9710",
+              "passes": 745,
+              "fails": 1,
+              "name": "GET /braintree/token 200"
+            },
+            {
+              "passes": 741,
+              "fails": 0,
+              "name": "POST /braintree/payment 2xx",
+              "path": "::Authenticated User Flow::POST /braintree/payment 2xx",
+              "id": "4dada29549a483afd792701cdcf5608f"
+            },
+            {
+              "name": "payment response ok",
+              "path": "::Authenticated User Flow::payment response ok",
+              "id": "05984d5b53e8599fc51d1c30ce41662b",
+              "passes": 741,
+              "fails": 0
+            }
+          ],
+        "name": "Authenticated User Flow",
+        "path": "::Authenticated User Flow",
+        "id": "634d66639cbcb0ad6b3b6a0c4a6fbadb"
+      }
+    ],
+    "checks": [],
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e"
+  }
+}
